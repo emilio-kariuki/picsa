@@ -3,13 +3,10 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:picsa/blocs/minimal_functionality/cubit/camera_cubit.dart';
-import 'package:picsa/domain/service/repository/camera_repository.dart';
+import 'package:picsa/blocs/app_functionality/camera/camera_cubit.dart';
 import 'package:picsa/utilities/router_config.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:camera/camera.dart';
 
-late CameraDescription camera;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -22,7 +19,6 @@ void main() async {
   HydratedBloc.storage = await HydratedStorage.build(
     storageDirectory: directory,
   );
-  camera = await CameraRepository().getCamera();
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
@@ -36,10 +32,12 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => CameraCubit(),
+      create: (context) => CameraCubit()..initialize(),
       child: MaterialApp.router(
+        theme: ThemeData.dark(),
         routerConfig: appRouter,
         title: 'Picsa',
+        debugShowCheckedModeBanner: false,
       ),
     );
   }
