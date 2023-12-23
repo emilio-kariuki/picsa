@@ -4,17 +4,28 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:picsa/blocs/minimal_functionality/navigation/navigation_cubit.dart';
-import 'package:picsa/ui/camera_page.dart';
+import 'package:picsa/domain/blocs/minimal_functionality/navigation/navigation_cubit.dart';
+import 'package:picsa/domain/service/repository/auth_repository.dart';
+import 'package:picsa/ui/camera/camera_page.dart';
+import 'package:picsa/ui/create/create_page.dart';
 
 class Home extends StatelessWidget {
   const Home({super.key});
 
   Widget getBody() {
     final pages = <Widget>[
-      Container(),
-     CameraPage(),
-      Container(),
+      CreatePage(),
+      CameraPage(),
+      Container(
+        child: Center(
+          child: ElevatedButton(
+            onPressed: () async {
+              AuthRepository().signOut();
+            },
+            child: const Text('Settings'),
+          ),
+        ),
+      ),
     ];
     return BlocBuilder<NavigationCubit, NavigationState>(
       builder: (context, state) {
@@ -31,7 +42,6 @@ class Home extends StatelessWidget {
     return BlocProvider(
       create: (context) => NavigationCubit(),
       child: Scaffold(
-        backgroundColor: const Color(0xffF6F6F6),
         // extendBody: true,
         body: getBody(),
         bottomNavigationBar: getFooter(context),
@@ -43,7 +53,7 @@ class Home extends StatelessWidget {
     final height = MediaQuery.of(context).size.height;
     final items = <Map<String, dynamic>>[
       {'icon': Icons.calendar_month_outlined, 'name': "Create"},
-      {'icon': Icons.camera_alt_outlined, 'name': "Cameras"},
+      {'icon': Icons.camera_alt_outlined, 'name': "Events"},
       {'icon': Icons.settings, 'name': "Settings"},
     ];
     return BlocBuilder<NavigationCubit, NavigationState>(
@@ -52,7 +62,7 @@ class Home extends StatelessWidget {
           height: height * 0.09,
           child: AnimatedBottomNavigationBar.builder(
             elevation: 0,
-            backgroundColor: Colors.black54,
+            backgroundColor: Colors.transparent,
             notchSmoothness: NotchSmoothness.softEdge,
             itemCount: items.length,
             safeAreaValues: const SafeAreaValues(
@@ -84,7 +94,7 @@ class Home extends StatelessWidget {
                         borderRadius: BorderRadius.circular(20)),
                     child: Icon(
                       itemz['icon'] as IconData,
-                      size: 24,
+                      size: 22,
                       color: Colors.grey[300],
                     ),
                   ),

@@ -2,9 +2,9 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:picsa/blocs/app_functionality/camera/camera_cubit.dart';
-import 'package:picsa/blocs/minimal_functionality/bool/bool_cubit.dart';
 
+import '../../domain/blocs/app_functionality/camera/camera_cubit.dart';
+import '../../domain/blocs/minimal_functionality/bool/bool_cubit.dart';
 import 'widgets/toggle_flash.dart';
 
 class CameraPage extends StatefulWidget {

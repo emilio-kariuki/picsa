@@ -23,15 +23,26 @@ class ImageRepository {
     }
   }
 
-  Future<bool> uploadImage({required String path}) async {
+  Future<bool> uploadImage({
+    required String path,
+    required String eventId,
+  }) async {
     try {
       File image = File(path);
+      final imageKey = 'images/${DateTime.now().millisecondsSinceEpoch}.jpg';
       final compressedImage = await compressImage(image: image);
       final result = await compressedImage.exists();
       await supabase.storage.from('picsa').upload(
-            'images/${DateTime.now().millisecondsSinceEpoch}.jpg',
+            imageKey,
             result ? compressedImage : image,
           );
+      final url = supabase.storage.from('picsa').getPublicUrl(imageKey);
+      await supabase.from('Images').insert({
+        'name': imageKey,
+        'url': url,
+        'userId': supabase.auth.currentUser!.id,
+        'eventId': eventId,
+      });
       return true;
     } catch (e) {
       debugPrint(e.toString());
@@ -39,7 +50,13 @@ class ImageRepository {
     }
   }
 
-  
-
-  
+  Future<bool> deleteImage({required String path}) async {
+    try {
+      await supabase.storage.from('picsa').remove([path]);
+      return true;
+    } catch (e) {
+      debugPrint(e.toString());
+      throw Exception('Error deleting image');
+    }
+  }
 }
