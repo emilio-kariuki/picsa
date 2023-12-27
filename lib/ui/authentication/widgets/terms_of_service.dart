@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:picsa/utilities/app_constants.dart';
 
 class TermsOfService extends StatelessWidget {
   const TermsOfService({
@@ -11,7 +12,7 @@ class TermsOfService extends StatelessWidget {
       textAlign: TextAlign.center,
       text: TextSpan(children: [
         TextSpan(
-          text: "By using Comp, You agree to our ",
+          text: "By using ${AppConstants.APP_NAME}, You agree to our ",
           style: Theme.of(context)
               .textTheme
               .displaySmall!

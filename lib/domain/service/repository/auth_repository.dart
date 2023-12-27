@@ -26,7 +26,6 @@ class AuthRepository {
           '203502494436-3c0s0cl8ie5u49ehrsbf9trk1grm3fhh.apps.googleusercontent.com';
 
       final GoogleSignIn googleSignIn = GoogleSignIn(
-        signInOption: SignInOption.standard,
         clientId: iosClientId,
         serverClientId: webClientId,
       );

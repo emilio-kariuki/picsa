@@ -22,7 +22,10 @@ void main() async {
     authOptions: const FlutterAuthClientOptions(
       autoRefreshToken: false,
     ),
-    debug: true  ,
+    debug: false  ,
+    storageOptions: const StorageClientOptions(
+      retryAttempts: 3,
+    )
   );
   final directory = await getApplicationDocumentsDirectory();
   HydratedBloc.storage = await HydratedStorage.build(

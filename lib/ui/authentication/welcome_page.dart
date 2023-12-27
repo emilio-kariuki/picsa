@@ -1,6 +1,8 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
@@ -64,7 +66,10 @@ class BackGroundImage extends StatelessWidget {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Logo(),
+                           SvgPicture.asset(AppConstants.APP_LOGO,
+                           height: height * 0.08,
+                            width: height * 0.08,
+                           ),
                           Gap(width * 0.05),
                           Text(
                             AppConstants.APP_NAME,
@@ -193,3 +198,5 @@ class GoogleButton extends StatelessWidget {
     );
   }
 }
+
+

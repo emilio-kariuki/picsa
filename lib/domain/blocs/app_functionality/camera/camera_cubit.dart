@@ -2,6 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:camera/camera.dart';
 import 'package:meta/meta.dart';
 import 'package:picsa/domain/service/repository/camera_repository.dart';
+import 'package:picsa/domain/service/repository/image_repository.dart';
 
 part 'camera_state.dart';
 
@@ -31,5 +32,9 @@ class CameraCubit extends Cubit<CameraState> {
 
   void toggleFlash({required CameraController controller, required bool isFlashOn}) async{
     await CameraRepository().toggleFlash(controller: controller, isFlashOn: isFlashOn);
+  }
+
+  void uploadImage({required String path}) async {
+    await ImageRepository().uploadImage(path: path);
   }
 }

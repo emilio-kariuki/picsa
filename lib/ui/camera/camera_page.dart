@@ -72,7 +72,7 @@ class _CameraPageState extends State<CameraPage> {
                           bottomRight: Radius.circular(20),
                           bottomLeft: Radius.circular(20),
                         )),
-                        height: MediaQuery.of(context).size.height * 0.88,
+                        // height: MediaQuery.of(context).size.height * 0.89,
                         child: ClipRRect(
                           borderRadius: const BorderRadius.only(
                             bottomRight: Radius.circular(20),
@@ -132,6 +132,7 @@ class _CameraPageState extends State<CameraPage> {
                       if (state is CameraCaptured) {
                         paths.add(state.path);
                         debugPrint(paths.toString());
+                        context.read<CameraCubit>().uploadImage(path: state.path);
                       }
                     },
                     builder: (context, state) {
@@ -141,9 +142,13 @@ class _CameraPageState extends State<CameraPage> {
                           alignment: Alignment.bottomCenter,
                           child: GestureDetector(
                             onTap: () {
-                              context
-                                  .read<CameraCubit>()
-                                  .captureImage(controller: controller);
+                              controller.value.isInitialized
+                                  ? context
+                                      .read<CameraCubit>()
+                                      .captureImage(controller: controller)
+                                  : context
+                                      .read<CameraCubit>()
+                                      .initialize();
                             },
                             child: Container(
                               padding: const EdgeInsets.all(2.5),
@@ -231,3 +236,5 @@ class _CameraPageState extends State<CameraPage> {
     );
   }
 }
+
+

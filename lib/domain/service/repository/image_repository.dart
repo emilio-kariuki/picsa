@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:picsa/utilities/supabase_config.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ImageRepository {
   Future<File> compressImage({required File image}) async {
@@ -25,23 +26,29 @@ class ImageRepository {
 
   Future<bool> uploadImage({
     required String path,
-    required String eventId,
+    // required String eventId,
   }) async {
     try {
       File image = File(path);
       final imageKey = 'images/${DateTime.now().millisecondsSinceEpoch}.jpg';
-      final compressedImage = await compressImage(image: image);
-      final result = await compressedImage.exists();
-      await supabase.storage.from('picsa').upload(
-            imageKey,
-            result ? compressedImage : image,
-          );
-      final url = supabase.storage.from('picsa').getPublicUrl(imageKey);
-      await supabase.from('Images').insert({
+      debugPrint('the image key: $imageKey');
+      // final compressedImage = await compressImage(image: image);
+      // final result = await compressedImage.exists();
+      await supabase.auth
+          .setSession(supabase.auth.currentSession!.refreshToken!);
+      await supabase.storage
+          .from('picsa')
+          .upload(imageKey, image,
+              retryAttempts: 3,
+              );
+      final url =
+          supabase.storage.from('picsa').getPublicUrl(imageKey);
+      await supabase.from('Images').upsert({
+        'id': DateTime.now().millisecondsSinceEpoch.toString(),
         'name': imageKey,
         'url': url,
         'userId': supabase.auth.currentUser!.id,
-        'eventId': eventId,
+        'eventId': 'adfsdf-sdfasdf-sdfasdf-asfsadf',
       });
       return true;
     } catch (e) {

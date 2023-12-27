@@ -1,10 +1,16 @@
 
+
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
 
 class Logo extends StatelessWidget {
-  const Logo({
+   Logo({
     super.key,
   });
+
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +29,7 @@ class Logo extends StatelessWidget {
         decoration: const BoxDecoration(
             shape: BoxShape.circle,
             border: Border.fromBorderSide(BorderSide(
-                color: Colors.deepOrange, width: 2))),
+                color: Color.fromARGB(255, 255, 87, 34), width: 2))),
         child: Container(
             height: 30,
             width: 30,
@@ -40,3 +46,4 @@ class Logo extends StatelessWidget {
     );
   }
 }
+
