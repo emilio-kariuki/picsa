@@ -152,6 +152,9 @@ class GoogleButton extends StatelessWidget {
                   child: OutlinedButton(
                     style: OutlinedButton.styleFrom(
                       backgroundColor: Colors.white,
+                      foregroundColor: Colors.white,
+                      surfaceTintColor: Colors.white,
+                      
                       side: const BorderSide(
                         color: Colors.white,
                         width: 2,

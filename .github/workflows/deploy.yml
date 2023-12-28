@@ -4,7 +4,12 @@ name: Android Release and Play Store deploy and Firebase Distribution
 on:
   pull_request:
     branches:
-      - main
+      - master
+
+  push:
+    branches:
+      - master
+
 jobs:
   build:
     runs-on: ubuntu-latest

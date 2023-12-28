@@ -15,6 +15,7 @@ class CameraRepository {
         cameras[0],
         ResolutionPreset.max,
       );
+      await controller.setFlashMode(FlashMode.off);
       await controller.initialize();
       return controller;
     } on CameraException catch (e) {
@@ -25,12 +26,12 @@ class CameraRepository {
 
   Future<String> takePicture({required CameraController controller}) async {
     try {
+      final path = await controller.takePicture();
       await AssetsAudioPlayer.newPlayer().open(
         Audio("assets/audio/capture.mp3"),
         autoStart: true,
         showNotification: false,
       );
-      final path = await controller.takePicture();
       return path.path;
     } on CameraDescription catch (e) {
       debugPrint(e.toString());

@@ -26,7 +26,7 @@ class ImageRepository {
 
   Future<bool> uploadImage({
     required String path,
-    // required String eventId,
+    required String eventId,
   }) async {
     try {
       File image = File(path);
@@ -48,7 +48,7 @@ class ImageRepository {
         'name': imageKey,
         'url': url,
         'userId': supabase.auth.currentUser!.id,
-        'eventId': 'adfsdf-sdfasdf-sdfasdf-asfsadf',
+        'eventId': eventId,
       });
       return true;
     } catch (e) {

@@ -52,6 +52,7 @@ class AuthRepository {
         email: response.user!.email!,
         url: response.user?.userMetadata?['avatar_url'],
       );
+      debugPrint('user: $user');
       return user;
     } catch (e) {
       debugPrint(e.toString());

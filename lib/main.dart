@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:picsa/domain/blocs/app_functionality/event/event/event_cubit.dart';
 import 'package:picsa/ui/authentication/welcome_page.dart';
 import 'package:picsa/ui/home.dart';
 import 'package:picsa/utilities/app_themes.dart';
@@ -51,6 +52,10 @@ class MainApp extends StatelessWidget {
         ),
         BlocProvider(
           create: (context) => CameraCubit()..initialize(),
+          lazy: false,
+        ),
+         BlocProvider(
+          create: (context) => EventCubit()..getEvents(),
           lazy: false,
         ),
       ],

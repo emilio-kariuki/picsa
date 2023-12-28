@@ -5,15 +5,16 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:picsa/domain/blocs/app_functionality/auth/auth/auth_cubit.dart';
+import 'package:picsa/domain/blocs/app_functionality/event/event/event_cubit.dart';
 import 'package:picsa/domain/blocs/minimal_functionality/bool/bool_cubit.dart';
-import 'package:picsa/ui/authentication/welcome_page.dart';
+import 'package:picsa/domain/blocs/minimal_functionality/navigation/navigation_cubit.dart';
 import 'package:picsa/utilities/app_images.dart';
 import 'package:picsa/utilities/color_constants.dart';
 import 'package:picsa/utilities/common_widgets/input_field.dart';
+import 'package:picsa/utilities/common_widgets/loading_circle.dart';
+import 'package:picsa/utilities/extension.dart';
 
 import '../../utilities/app_constants.dart';
-import '../authentication/widgets/logo_container.dart';
 
 class CreatePage extends StatelessWidget {
   const CreatePage({super.key});
@@ -81,10 +82,11 @@ class BackgroundCreate extends StatelessWidget {
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   children: [
-                                    SvgPicture.asset(AppConstants.APP_LOGO,
-                           height: height * 0.08,
-                            width: height * 0.08,
-                           ),
+                                    SvgPicture.asset(
+                                      AppConstants.APP_LOGO,
+                                      height: height * 0.08,
+                                      width: height * 0.08,
+                                    ),
                                     Gap(width * 0.05),
                                     Text(
                                       AppConstants.APP_NAME,
@@ -99,7 +101,7 @@ class BackgroundCreate extends StatelessWidget {
                                 Gap(height * 0.02),
                                 InputField(
                                   controller: eventController,
-                                  prefixIcon:  Icon(
+                                  prefixIcon: Icon(
                                     Icons.edit_outlined,
                                     color: Colors.grey[500]!,
                                     size: 20,
@@ -111,9 +113,13 @@ class BackgroundCreate extends StatelessWidget {
                                   },
                                   validator: (value) {
                                     if (value!.isEmpty) {
-                                     context.read<BoolCubit>().change(value: true);
+                                      context
+                                          .read<BoolCubit>()
+                                          .change(value: true);
                                     } else {
-                                      context.read<BoolCubit>().change(value: false);
+                                      context
+                                          .read<BoolCubit>()
+                                          .change(value: false);
                                     }
                                     return null;
                                   },
@@ -151,8 +157,12 @@ class BackgroundCreate extends StatelessWidget {
                                             ],
                                           ),
                                         ))
-                                    : CreateButton(height: height, width: width),
-                                    Gap(height * 0.015),
+                                    : CreateButton(
+                                        height: height,
+                                        width: width,
+                                        eventController: eventController,
+                                      ),
+                                Gap(height * 0.015),
                               ],
                             ),
                           );
@@ -170,56 +180,81 @@ class BackgroundCreate extends StatelessWidget {
   }
 }
 
-
 class CreateButton extends StatelessWidget {
   const CreateButton({
     super.key,
     required this.height,
     required this.width,
+    required this.eventController,
   });
 
   final double height;
   final double width;
+  final TextEditingController eventController;
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: SizedBox(
-        height: height * 0.085,
-        width: width,
-        child: OutlinedButton(
-          style: OutlinedButton.styleFrom(
-            backgroundColor: const Color.fromARGB(255, 216, 50, 0),
-            side:  BorderSide.none,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(13),
-            ),
-          ),
-          onPressed: () {
-            context.read<AuthCubit>().signInWithGoogle();
-          },
-          child:  Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    
-                    Text(
-                      'Continue',
-                      style: GoogleFonts.inter(
-                        color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                      const Gap(10),
-                      const Icon(
-                        Icons.arrow_forward,
-                        color: Colors.white,
-                        size: 20,
-                    ),
-                  ],
+    return BlocProvider(
+      create: (context) => EventCubit(),
+      child: BlocConsumer<EventCubit, EventState>(
+        listener: (context, state) {
+          if (state is EventCreated) {
+            context
+              ..read<EventCubit>().getEvents()
+              ..read<NavigationCubit>().changePage(page: 1);
+          }
+          if (state is EventError) {
+            context.showErrorToast(
+                title: "Error",
+                message: "Error creating an event",
+                context: context);
+          }
+        },
+        builder: (context, state) {
+          return Center(
+              child: SizedBox(
+            height: height * 0.085,
+            width: width,
+            child: OutlinedButton(
+              style: OutlinedButton.styleFrom(
+                backgroundColor: const Color.fromARGB(255, 216, 50, 0),
+                side: BorderSide.none,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(13),
                 ),
-        ),
-      )
+              ),
+              onPressed: () {
+                context.read<EventCubit>().createEvent(
+                      name: eventController.text,
+                    );
+              },
+              child: state is EventLoading
+                  ? const Center(
+                      child: LoadingCircle(),
+                    )
+                  : Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          'Continue',
+                          style: GoogleFonts.inter(
+                            color: Colors.white,
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const Gap(10),
+                        const Icon(
+                          Icons.arrow_forward,
+                          color: Colors.white,
+                          size: 20,
+                        ),
+                      ],
+                    ),
+            ),
+          ));
+        },
+      ),
     );
   }
 }

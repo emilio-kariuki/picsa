@@ -9,7 +9,7 @@ part 'camera_state.dart';
 class CameraCubit extends Cubit<CameraState> {
   CameraCubit() : super(CameraInitial());
 
-  Future<void> captureImage({required CameraController controller}) async {
+  Future<void> captureImage({required CameraController controller, }) async {
     final path =await CameraRepository().takePicture(controller: controller);
     emit(CameraCaptured(path: path));
   }
@@ -34,7 +34,7 @@ class CameraCubit extends Cubit<CameraState> {
     await CameraRepository().toggleFlash(controller: controller, isFlashOn: isFlashOn);
   }
 
-  void uploadImage({required String path}) async {
-    await ImageRepository().uploadImage(path: path);
+  void uploadImage({required String path, required String eventId}) async {
+    await ImageRepository().uploadImage(path: path, eventId:eventId);
   }
 }

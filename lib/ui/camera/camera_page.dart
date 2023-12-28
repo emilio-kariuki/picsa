@@ -2,6 +2,7 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../domain/blocs/app_functionality/camera/camera_cubit.dart';
 import '../../domain/blocs/minimal_functionality/bool/bool_cubit.dart';
@@ -10,13 +11,17 @@ import 'widgets/toggle_flash.dart';
 class CameraPage extends StatefulWidget {
   const CameraPage({
     super.key,
+    required this.eventId,
   });
+
+  final String eventId;
 
   @override
   State<CameraPage> createState() => _CameraPageState();
 }
 
 class _CameraPageState extends State<CameraPage> {
+  String get eventId => widget.eventId;
   late CameraController controller;
   bool isCameraChanged = false;
   bool isFlashOn = false;
@@ -30,11 +35,14 @@ class _CameraPageState extends State<CameraPage> {
     super.dispose();
   }
 
+  
+
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
     return BlocConsumer<CameraCubit, CameraState>(
+      bloc: context.read<CameraCubit>()..initialize(),
       listener: (context, state) {
         if (state is CameraChanged) {
           controller = state.controller;
@@ -132,7 +140,10 @@ class _CameraPageState extends State<CameraPage> {
                       if (state is CameraCaptured) {
                         paths.add(state.path);
                         debugPrint(paths.toString());
-                        context.read<CameraCubit>().uploadImage(path: state.path);
+                        context.read<CameraCubit>().uploadImage(
+                              path: state.path,
+                              eventId: eventId,
+                            );
                       }
                     },
                     builder: (context, state) {
@@ -146,9 +157,7 @@ class _CameraPageState extends State<CameraPage> {
                                   ? context
                                       .read<CameraCubit>()
                                       .captureImage(controller: controller)
-                                  : context
-                                      .read<CameraCubit>()
-                                      .initialize();
+                                  : context.read<CameraCubit>().initialize();
                             },
                             child: Container(
                               padding: const EdgeInsets.all(2.5),
@@ -214,16 +223,26 @@ class _CameraPageState extends State<CameraPage> {
                   left: width * 0.04,
                   child: Align(
                     alignment: Alignment.topLeft,
-                    child: Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors.black.withOpacity(0.4),
-                      ),
-                      child: const Icon(
-                        Icons.arrow_back_ios_new,
-                        color: Colors.white,
-                        size: 15,
+                    child: GestureDetector(
+                      onTap: () {
+                          context.pop();
+                        },
+                      child: Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.black.withOpacity(0.4),
+                        ),
+                        child: GestureDetector(
+                          onTap: () {
+                            context.pop();
+                          },
+                          child: const Icon(
+                            Icons.arrow_back_ios_new,
+                            color: Colors.white,
+                            size: 15,
+                          ),
+                        ),
                       ),
                     ),
                   ),
@@ -236,5 +255,3 @@ class _CameraPageState extends State<CameraPage> {
     );
   }
 }
-
-
