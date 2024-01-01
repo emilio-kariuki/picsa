@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:picsa/domain/blocs/app_functionality/event/event/event_cubit.dart';
+import 'package:picsa/domain/service/repository/event_repository.dart';
 import 'package:picsa/ui/authentication/welcome_page.dart';
 import 'package:picsa/ui/home.dart';
 import 'package:picsa/utilities/app_themes.dart';
@@ -17,17 +18,16 @@ import 'utilities/common_widgets/loading_circle.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Supabase.initialize(
-    url: 'https://pvotaaukwfeabaqtahfu.supabase.co',
-    anonKey:
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB2b3RhYXVrd2ZlYWJhcXRhaGZ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDI5OTQwMDcsImV4cCI6MjAxODU3MDAwN30.Xv5gQJklMkH9NKq222NHYdGLlE722QemDe8__Bg2pl4',
-    authOptions: const FlutterAuthClientOptions(
-      autoRefreshToken: false,
-    ),
-    debug: false  ,
-    storageOptions: const StorageClientOptions(
-      retryAttempts: 3,
-    )
-  );
+      url: 'https://pvotaaukwfeabaqtahfu.supabase.co',
+      anonKey:
+          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB2b3RhYXVrd2ZlYWJhcXRhaGZ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDI5OTQwMDcsImV4cCI6MjAxODU3MDAwN30.Xv5gQJklMkH9NKq222NHYdGLlE722QemDe8__Bg2pl4',
+      authOptions: const FlutterAuthClientOptions(
+        autoRefreshToken: false,
+      ),
+      debug: false,
+      storageOptions: const StorageClientOptions(
+        retryAttempts: 3,
+      ));
   final directory = await getApplicationDocumentsDirectory();
   HydratedBloc.storage = await HydratedStorage.build(
     storageDirectory: directory,
@@ -54,14 +54,13 @@ class MainApp extends StatelessWidget {
           create: (context) => CameraCubit()..initialize(),
           lazy: false,
         ),
-         BlocProvider(
+        BlocProvider(
           create: (context) => EventCubit()..getEvents(),
           lazy: false,
         ),
       ],
       child: MaterialApp.router(
         darkTheme: darkTheme,
-        
         themeMode: ThemeMode.dark,
         routerConfig: appRouter,
         title: 'Picsa',

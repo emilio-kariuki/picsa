@@ -5,17 +5,13 @@ sealed class EventState extends Equatable {
 
   @override
   List<Object> get props => [];
-
-
 }
 
 final class EventInitial extends EventState {}
 
 final class EventLoading extends EventState {}
 
-final class EventCreated extends EventState {
-
-}
+final class EventCreated extends EventState {}
 
 final class EventSuccess extends EventState {
   final List<EventModel> events;
@@ -24,6 +20,15 @@ final class EventSuccess extends EventState {
 
   @override
   List<Object> get props => [events];
+}
+
+final class EventImages extends EventState {
+  const EventImages({required this.images});
+
+  final List<ImageModel> images;
+
+  @override
+  List<Object> get props => [images];
 }
 
 final class EventError extends EventState {

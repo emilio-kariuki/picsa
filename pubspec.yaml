@@ -39,6 +39,7 @@ dependencies:
   supabase_flutter: ^2.0.2
   toastification: ^1.0.0
   uuid: ^3.0.1
+  vibration: ^1.8.4
 
 dev_dependencies:
   flutter_test:

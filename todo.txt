@@ -1,0 +1,10 @@
+Todo
+    - exporting pictures to google photos
+    - save pictures to gallery
+    - see the person who posted the picture on the platform
+    - share the application event via a link and qr code
+    - join other events created by others
+    - see the people joined to a particular event
+    - add an event as favourite
+    - add a help desk to the application for customer support
+    - delete an event

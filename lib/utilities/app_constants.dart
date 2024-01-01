@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 class AppConstants {
   static const String APP_NAME = "Picsa";
   static const String APP_VERSION = "0.0.1";
@@ -8,3 +10,4 @@ class AppConstants {
   static const String APP_LOGO_TEXT_LIGHT = "assets/logo_text_light.png";
 
 }
+

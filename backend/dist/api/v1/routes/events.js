@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { prisma } from '../../../db.js';
+import { prisma } from '../../../../prisma/db';
 const router = Router();
 router.get('/:id', async (req, res) => {
     try {

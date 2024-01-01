@@ -1,6 +1,6 @@
-import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:vibration/vibration.dart';
 
 class CameraRepository {
   Future<List<CameraDescription>> getCamera() async {
@@ -14,9 +14,11 @@ class CameraRepository {
       CameraController controller = CameraController(
         cameras[0],
         ResolutionPreset.max,
+        imageFormatGroup: ImageFormatGroup.jpeg
       );
-      await controller.setFlashMode(FlashMode.off);
+
       await controller.initialize();
+      await controller.setFlashMode(FlashMode.off);
       return controller;
     } on CameraException catch (e) {
       debugPrint(e.toString());
@@ -26,12 +28,13 @@ class CameraRepository {
 
   Future<String> takePicture({required CameraController controller}) async {
     try {
+      final hasVibration = await Vibration.hasVibrator();
+      if (hasVibration != null && hasVibration) {
+        Vibration.vibrate(duration: 115
+        );
+      }
       final path = await controller.takePicture();
-      await AssetsAudioPlayer.newPlayer().open(
-        Audio("assets/audio/capture.mp3"),
-        autoStart: true,
-        showNotification: false,
-      );
+      
       return path.path;
     } on CameraDescription catch (e) {
       debugPrint(e.toString());

@@ -1,6 +1,7 @@
 import 'package:go_router/go_router.dart';
 import 'package:picsa/main.dart';
 import 'package:picsa/ui/event/event_create_page.dart';
+import 'package:picsa/ui/event/images_page.dart';
 import 'package:picsa/ui/home.dart';
 
 import '../ui/camera/camera_page.dart';
@@ -30,6 +31,14 @@ final appRouter = GoRouter(initialLocation: '/checker', routes: [
         final data = state.extra;
         return EventCreatePage(
           name: (data as Map)['name'],
+        );
+      }),
+      GoRoute(
+      path: '/images-page',
+      builder: (context, state) {
+        final data = state.extra;
+        return ImagesPage(
+          eventId: (data as Map)['eventId'],
         );
       })
 ]);

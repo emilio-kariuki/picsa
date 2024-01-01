@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:picsa/domain/blocs/app_functionality/event/event/event_cubit.dart';
 import 'package:picsa/domain/blocs/minimal_functionality/bool/bool_cubit.dart';
-import 'package:picsa/domain/blocs/minimal_functionality/navigation/navigation_cubit.dart';
 import 'package:picsa/utilities/app_images.dart';
 import 'package:picsa/utilities/color_constants.dart';
 import 'package:picsa/utilities/common_widgets/input_field.dart';
@@ -198,11 +198,6 @@ class CreateButton extends StatelessWidget {
       create: (context) => EventCubit(),
       child: BlocConsumer<EventCubit, EventState>(
         listener: (context, state) {
-          if (state is EventCreated) {
-            context
-              ..read<EventCubit>().getEvents()
-              ..read<NavigationCubit>().changePage(page: 1);
-          }
           if (state is EventError) {
             context.showErrorToast(
                 title: "Error",

@@ -27,7 +27,6 @@ class EventPage extends StatelessWidget {
             context.read<EventCubit>().getEvents();
           },
           child: ListView(
-            
             children: [
               Text(
                 'Events',
@@ -47,7 +46,6 @@ class EventPage extends StatelessWidget {
                 ),
               ),
               Gap(height * 0.02),
-              
               BlocBuilder<EventCubit, EventState>(
                 builder: (context, state) {
                   if (state is EventLoading) {
@@ -100,7 +98,6 @@ class EventContainer extends StatelessWidget {
         DateFormat.yMMMd().format(DateTime.parse(event.createdAt));
     return Row(
       children: [
-       
         ImageContainer(
           imageUrl: AppImages.defaultImage,
           borderRadius: BorderRadius.circular(15),
@@ -204,125 +201,137 @@ class SecondContainer extends StatelessWidget {
     final width = MediaQuery.sizeOf(context).width;
     String formattedDate =
         DateFormat.yMMMd().format(DateTime.parse(event.createdAt));
-    return Container(
-      padding: const EdgeInsets.all(15),
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(30),
-          color: Colors.transparent,
-          border: Border.all(
-            color: Colors.grey[500]!,
-            width: 0.3,
-          )),
-      child: Column(children: [
-        Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(15),
-              decoration: BoxDecoration(
-                  shape: BoxShape.circle, color: Colors.grey[800]),
-              child: const Center(
-                  child: Icon(
-                Icons.favorite,
-                size: 20,
+    return GestureDetector(
+      onTap: () {
+        context.push('/images-page', extra: {'eventId': event.id});
+      },
+      child: Container(
+        padding: const EdgeInsets.all(15),
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            color: Colors.transparent,
+           ),
+        child: Column(children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                    shape: BoxShape.circle, color: Colors.grey[800]),
+                child: const Center(
+                    child: Icon(
+                  Icons.favorite,
+                  size: 15,
+                  color: Colors.white,
+                )),
+              ),
+              const Spacer(),
+              
+              
+              const Icon(
+                Icons.more_vert,
+                size: 25,
                 color: Colors.white,
-              )),
-            ),
-            const Spacer(),
-            Container(
-              padding: const EdgeInsets.symmetric(vertical: 7, horizontal: 17),
-              decoration: BoxDecoration(
-                  color: Colors.grey[800],
-                  borderRadius: BorderRadius.circular(20)),
-              child: Row(
+              )
+            ],
+          ),
+          Gap(height * 0.015),
+          Row(
+            children: [
+              
+              ImageContainer(
+                imageUrl: AppImages.defaultImage,
+                borderRadius: BorderRadius.circular(8),
+                height: height * 0.06,
+                width: height * 0.06,
+              ),
+              Gap(width * 0.04),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SvgPicture.asset(
-                    AppImages.pin,
-                    height: height * 0.02,
-                    width: height * 0.02,
-                  ),
-                  Gap(height * 0.01),
                   Text(
-                    "Hosting",
-                    style: GoogleFonts.inter(
+                    event.name,
+                    overflow: TextOverflow.ellipsis,
+                    style: GoogleFonts.quicksand(
                       fontSize: 16,
+                      color: Colors.grey[400],
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  Gap(height * 0.002),
+                  Text(
+                    formattedDate,
+                    style: GoogleFonts.inter(
+                      fontSize: 12,
+                      color: Colors.grey[600],
                       fontWeight: FontWeight.w500,
-                      color: Colors.white,
                     ),
                   ),
                 ],
               ),
-            ),
-            const Spacer(),
-            const Icon(
-              Icons.more_vert,
-              size: 25,
-              color: Colors.white,
-            )
-          ],
-        ),
-        Gap(height * 0.025),
-        Row(
-          children: [
-             const Gap(15),
-            ImageContainer(
-              imageUrl: AppImages.defaultImage,
-              borderRadius: BorderRadius.circular(15),
-              height: height * 0.09,
-              width: height * 0.085,
-            ),
-            Gap(width * 0.04),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  formattedDate,
-                  style: GoogleFonts.inter(
-                    fontSize: 14,
-                    color: Colors.grey[600],
-                    fontWeight: FontWeight.w500,
-                  ),
+const Spacer(),
+              Container(
+                padding:
+                    const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                    color: Colors.grey[800],
+                    borderRadius: BorderRadius.circular(20)),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.calendar_month,
+                      size: 9,
+                      color: Colors.grey[500],
+                    ),
+                    Gap(height * 0.004),
+                    Text(
+                      "Hosting",
+                      style: GoogleFonts.inter(
+                        fontSize: 9,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.grey[500],
+                      ),
+                    ),
+                  ],
                 ),
-                Gap(height * 0.002),
-                Text(
-                  event.name,
-                  style: GoogleFonts.inter(
-                    fontSize: 20,
-                    color: Colors.grey[300],
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-        Gap(height * 0.02),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            SvgContainer(
-              height: height,
-              icon: AppImages.camera,
-              function: () {},
-            ),
-            SvgContainer(
-              height: height,
-              icon: AppImages.edit,
-              function: () {},
-            ),
-            SvgContainer(
-              height: height,
-              icon: AppImages.share,
-              function: () {},
-            ),
-            SvgContainer(
-              height: height,
-              icon: AppImages.qr,
-              function: () {},
-            )
-          ],
-        )
-      ]),
+              ),
+            ],
+          ),
+          Gap(height * 0.01),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              SvgContainer(
+                height: height,
+                icon: AppImages.camera,
+                function: () {
+                  context.push('/camera-page', extra: {
+                    'eventId': event.id,
+                  });
+                },
+              ),
+              SvgContainer(
+                height: height,
+                icon: AppImages.edit,
+                function: () {},
+              ),
+              SvgContainer(
+                height: height,
+                icon: AppImages.share,
+                function: () {},
+              ),
+              SvgContainer(
+                height: height,
+                icon: AppImages.qr,
+                function: () {},
+              )
+            ],
+          )
+        ]),
+      ),
     );
   }
 }
@@ -344,16 +353,71 @@ class SvgContainer extends StatelessWidget {
     return GestureDetector(
       onTap: function,
       child: Container(
-        padding: const EdgeInsets.all(25),
+        padding: EdgeInsets.all(height * 0.015),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(25),
+          borderRadius: BorderRadius.circular(20),
           color: Colors.grey[800],
         ),
         child: SvgPicture.asset(
           icon,
-          height: height * 0.03,
-          width: height * 0.03,
+          height: height * 0.02,
+          width: height * 0.02,
         ),
+      ),
+    );
+  }
+}
+
+class CustomAvatars extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 80,
+      child: Stack(
+        children: <Widget>[
+          Align(
+            alignment: Alignment.centerRight,
+            child: CircleAvatar(
+              backgroundColor: Colors.white,
+              child: CircleAvatar(
+                radius: 18,
+                backgroundColor: Colors.red,
+                child: Image.asset(
+                  AppImages.welcome,
+                  fit: BoxFit.cover,
+                ), // Provide your custom image
+              ),
+            ),
+          ),
+          Align(
+            alignment: Alignment.center,
+            child: CircleAvatar(
+              backgroundColor: Colors.white,
+              child: CircleAvatar(
+                radius: 18,
+                backgroundColor: Colors.red,
+                child: Image.asset(
+                  AppImages.welcome,
+                  fit: BoxFit.cover,
+                ), // Provide your custom image
+              ),
+            ),
+          ),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: CircleAvatar(
+              backgroundColor: Colors.white,
+              child: CircleAvatar(
+                radius: 18,
+                backgroundColor: Colors.red,
+                child: Image.asset(
+                  AppImages.welcome,
+                  fit: BoxFit.cover,
+                ), // Provide your custom image
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

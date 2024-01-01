@@ -18,7 +18,7 @@ class EventCubit extends Cubit<EventState> {
           : emit(const EventError(message: 'Error creating event'));
     } catch (e) {
       emit(EventError(message: e.toString()));
-    }
+    }       
   }
 
   Future<void> getEvents() async {
