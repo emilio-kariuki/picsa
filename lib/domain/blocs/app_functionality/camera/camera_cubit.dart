@@ -3,7 +3,6 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:meta/meta.dart';
-import 'package:picsa/domain/blocs/minimal_functionality/count/count_cubit.dart';
 import 'package:picsa/domain/service/repository/camera_repository.dart';
 import 'package:picsa/domain/service/repository/image_repository.dart';
 
@@ -41,7 +40,7 @@ class CameraCubit extends Cubit<CameraState> {
         .toggleFlash(controller: controller, isFlashOn: isFlashOn);
   }
 
-  void uploadImage({required String path, required String eventId, }) async {
+  void uploadImage({required String path, required String eventId,}) async {
     await ImageRepository().uploadImage(path: path, eventId: eventId);
   }
 }
