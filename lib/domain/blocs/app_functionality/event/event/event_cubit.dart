@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:picsa/domain/models/events_model.dart';
+import 'package:picsa/domain/models/images_model.dart';
 import 'package:picsa/domain/service/repository/event_repository.dart';
 
 part 'event_state.dart';
@@ -20,7 +21,7 @@ class EventCubit extends Cubit<EventState> {
     }
   }
 
-  Future<void> getEvents()async{
+  Future<void> getEvents() async {
     try {
       emit(EventLoading());
       final response = await EventRepository().getUserEvents();
@@ -28,5 +29,11 @@ class EventCubit extends Cubit<EventState> {
     } catch (e) {
       emit(EventError(message: e.toString()));
     }
+  }
+
+  Future<void> getEventImages({required String eventId}) async {
+    emit(EventLoading());
+    final images = await EventRepository().getEventImages(uid: eventId);
+    emit(EventImages(images: images));
   }
 }
