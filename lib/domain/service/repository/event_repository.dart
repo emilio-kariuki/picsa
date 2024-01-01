@@ -14,7 +14,7 @@ class EventRepository {
         'name': name,
         'userId': userId,
       });
-     
+
       return true;
     } catch (e) {
       debugPrint(e.toString());
@@ -41,7 +41,12 @@ class EventRepository {
 
   Future<List<ImageModel>> getEventImages({required String uid}) async {
     try {
-      final response = await supabase.from('Images').select().eq('eventId', uid);
+      final userId = supabase.auth.currentUser!.id;
+      final response = await supabase
+          .from('Images')
+          .select()
+          .eq('eventId', uid)
+          .eq('userId', userId);
       List<ImageModel> images =
           response.map((e) => ImageModel.fromJson(e)).toList();
       return images;
@@ -60,4 +65,6 @@ class EventRepository {
       throw Exception('Error deleting event');
     }
   }
+
+
 }
