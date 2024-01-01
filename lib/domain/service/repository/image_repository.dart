@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:picsa/utilities/supabase_config.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ImageRepository {
   Future<File> compressImage({required File image}) async {
@@ -15,7 +14,7 @@ class ImageRepository {
       final result = await FlutterImageCompress.compressAndGetFile(
         image.absolute.path,
         outPath,
-        quality: 5,
+        quality: 50,
       );
       return File(result!.path);
     } catch (e) {
@@ -31,25 +30,24 @@ class ImageRepository {
     try {
       File image = File(path);
       final imageKey = 'images/${DateTime.now().millisecondsSinceEpoch}.jpg';
-      debugPrint('the image key: $imageKey');
-      // final compressedImage = await compressImage(image: image);
-      // final result = await compressedImage.exists();
+      final compressedImage = await compressImage(image: image);
       await supabase.auth
           .setSession(supabase.auth.currentSession!.refreshToken!);
-      await supabase.storage
-          .from('picsa')
-          .upload(imageKey, image,
-              retryAttempts: 3,
-              );
-      final url =
-          supabase.storage.from('picsa').getPublicUrl(imageKey);
-      await supabase.from('Images').upsert({
-        'id': DateTime.now().millisecondsSinceEpoch.toString(),
-        'name': imageKey,
-        'url': url,
-        'userId': supabase.auth.currentUser!.id,
-        'eventId': eventId,
-      });
+      await supabase.storage.from('picsa').upload(
+            imageKey,
+            compressedImage,
+            retryAttempts: 3,
+          );
+      await supabase.from('Images').upsert(
+        {
+          'id': DateTime.now().millisecondsSinceEpoch.toString(),
+          'name': imageKey,
+          'url': supabase.storage.from('picsa').getPublicUrl(imageKey),
+          'userId': supabase.auth.currentUser!.id,
+          'eventId': eventId,
+        },
+      );
+      debugPrint("The image has been inserted");
       return true;
     } catch (e) {
       debugPrint(e.toString());
@@ -64,6 +62,21 @@ class ImageRepository {
     } catch (e) {
       debugPrint(e.toString());
       throw Exception('Error deleting image');
+    }
+  }
+
+    Future<int> imagesTaken({required String eventId}) async {
+    try {
+      final userId = supabase.auth.currentUser!.id;
+      final images = await supabase
+          .from('Images')
+          .select()
+          .eq('eventId', eventId)
+          .eq('userId', userId);
+      return images.length;
+    } catch (e) {
+      debugPrint(e.toString());
+      return 0;
     }
   }
 }
