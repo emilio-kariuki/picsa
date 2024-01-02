@@ -208,9 +208,9 @@ class SecondContainer extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(15),
         decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-            color: Colors.transparent,
-           ),
+          borderRadius: BorderRadius.circular(10),
+          color: Colors.transparent,
+        ),
         child: Column(children: [
           Row(
             children: [
@@ -226,8 +226,6 @@ class SecondContainer extends StatelessWidget {
                 )),
               ),
               const Spacer(),
-              
-              
               const Icon(
                 Icons.more_vert,
                 size: 25,
@@ -238,7 +236,6 @@ class SecondContainer extends StatelessWidget {
           Gap(height * 0.015),
           Row(
             children: [
-              
               ImageContainer(
                 imageUrl: AppImages.defaultImage,
                 borderRadius: BorderRadius.circular(8),
@@ -270,10 +267,9 @@ class SecondContainer extends StatelessWidget {
                   ),
                 ],
               ),
-const Spacer(),
+              const Spacer(),
               Container(
-                padding:
-                    const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
                     color: Colors.grey[800],
                     borderRadius: BorderRadius.circular(20)),
