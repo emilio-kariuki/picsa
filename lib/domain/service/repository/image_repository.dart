@@ -4,7 +4,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:picsa/utilities/supabase_config.dart';
 
-class ImageRepository {
+abstract class ImageTemplate {
+  Future<File> compressImage({required File image});
+  Future<bool> uploadImage({required String path, required String eventId});
+  Future<bool> deleteImage({required String path});
+  Future<int> imagesTaken({required String eventId});
+}
+
+class ImageRepository extends ImageTemplate {
+  @override
   Future<File> compressImage({required File image}) async {
     try {
       final filePath = image.absolute.path;
@@ -23,6 +31,7 @@ class ImageRepository {
     }
   }
 
+  @override
   Future<bool> uploadImage({
     required String path,
     required String eventId,
@@ -55,6 +64,7 @@ class ImageRepository {
     }
   }
 
+  @override
   Future<bool> deleteImage({required String path}) async {
     try {
       await supabase.storage.from('picsa').remove([path]);
@@ -65,7 +75,8 @@ class ImageRepository {
     }
   }
 
-    Future<int> imagesTaken({required String eventId}) async {
+  @override
+  Future<int> imagesTaken({required String eventId}) async {
     try {
       final userId = supabase.auth.currentUser!.id;
       final images = await supabase

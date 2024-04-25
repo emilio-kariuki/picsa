@@ -4,7 +4,14 @@ import 'package:picsa/domain/models/user_model.dart';
 import 'package:picsa/utilities/supabase_config.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-class AuthRepository {
+abstract class AuthTemplate {
+  Future<bool> isSignedIn();
+  Future<UserModel> signInWithGoogle();
+  Future<void> signOut();
+}
+
+class AuthRepository extends AuthTemplate {
+  @override
   Future<bool> isSignedIn() async {
     try {
       final response = supabase.auth.currentUser;
@@ -18,6 +25,7 @@ class AuthRepository {
     }
   }
 
+  @override
   Future<UserModel> signInWithGoogle() async {
     try {
       const webClientId =
@@ -60,6 +68,7 @@ class AuthRepository {
     }
   }
 
+  @override
   Future<void> signOut() async {
     try {
       await supabase.auth.signOut();

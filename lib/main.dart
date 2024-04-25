@@ -1,22 +1,14 @@
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hydrated_bloc/hydrated_bloc.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:picsa/domain/blocs/app_functionality/event/event/event_cubit.dart';
-import 'package:picsa/domain/service/repository/event_repository.dart';
-import 'package:picsa/ui/authentication/welcome_page.dart';
-import 'package:picsa/ui/home.dart';
-import 'package:picsa/utilities/app_themes.dart';
-import 'package:picsa/utilities/router_config.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:picsa/domain/blocs/app/user_cubit.dart';
+import 'package:picsa/domain/service/service_locator.dart';
+import 'package:picsa/utilities/packages.dart';
 
-import 'domain/blocs/app_functionality/auth/authentication/authentication_cubit.dart';
-import 'domain/blocs/app_functionality/camera/camera_cubit.dart';
-import 'utilities/common_widgets/loading_circle.dart';
+import 'domain/blocs/app/auth/authentication/authentication_cubit.dart';
+import 'domain/blocs/app/camera/camera_cubit.dart';
+import 'common_widgets/loading_circle.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  initLocator();
   await Supabase.initialize(
       url: 'https://pvotaaukwfeabaqtahfu.supabase.co',
       anonKey:
@@ -51,21 +43,28 @@ class MainApp extends StatelessWidget {
           lazy: false,
         ),
         BlocProvider(
-          create: (context) => CameraCubit()..initialize(),
+          create: (context) => UserCubit()..getUser(),
           lazy: false,
         ),
+        // BlocProvider(
+        //   create: (context) => CameraCubit()..initialize(),
+        //   lazy: false,
+        // ),
         BlocProvider(
           create: (context) => EventCubit()..getEvents(),
           lazy: false,
         ),
       ],
-      child: MaterialApp.router(
-        darkTheme: darkTheme,
-        themeMode: ThemeMode.dark,
-        routerConfig: appRouter,
-        title: 'Picsa',
-        debugShowCheckedModeBanner: false,
-      ),
+      child: LayoutBuilder(builder: (context, constraints) {
+        SizeConfig().init(constraints);
+        return MaterialApp.router(
+          darkTheme: darkTheme,
+          themeMode: ThemeMode.dark,
+          routerConfig: appRouter,
+          title: 'Picsa',
+          debugShowCheckedModeBanner: false,
+        );
+      }),
     );
   }
 }

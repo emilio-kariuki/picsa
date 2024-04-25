@@ -1,14 +1,10 @@
-import 'package:camera/camera.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:gap/gap.dart';
+
 import 'package:picsa/ui/camera/widgets/shots_container.dart';
 import 'package:picsa/utilities/app_images.dart';
+import 'package:picsa/utilities/packages.dart';
 
-import '../../domain/blocs/app_functionality/camera/camera_cubit.dart';
-import '../../domain/blocs/minimal_functionality/bool/bool_cubit.dart';
+import '../../domain/blocs/app/camera/camera_cubit.dart';
+import '../../domain/blocs/minimal/bool/bool_cubit.dart';
 import 'widgets/back_button.dart';
 
 class CameraPage extends StatelessWidget {

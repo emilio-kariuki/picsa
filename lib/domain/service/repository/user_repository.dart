@@ -2,7 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:picsa/domain/models/user_model.dart';
 import 'package:picsa/utilities/supabase_config.dart';
 
-class UserRepository {
+abstract class UserTemplate {
+  Future<bool> createUser({required UserModel user});
+  Future<UserModel> getUser();
+}
+
+class UserRepository extends UserTemplate {
+  @override
   Future<bool> createUser({required UserModel user}) async {
     try {
       final response = await supabase.from('User').select().eq('id', user.id);
@@ -21,9 +27,12 @@ class UserRepository {
     }
   }
 
-  Future<UserModel> getUser({required String uid}) async {
+  @override
+  Future<UserModel> getUser() async {
     try {
-      final response = await supabase.from('Users').select().eq('id', uid);
+      final id = supabase.auth.currentUser!.id;
+      debugPrint("id: $id");
+      final response = await supabase.from('User').select().eq('id', id);
       final user = UserModel.fromJson(response.first);
       return user;
     } catch (e) {

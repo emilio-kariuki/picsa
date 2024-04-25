@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -11,34 +8,44 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(uuid())
-  email     String   @unique
-  name      String?
-  url      String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  Events    Events[]
-  Images    Images[]
+  id           String         @id @default(uuid())
+  email        String         @unique
+  name         String?
+  createdAt    DateTime       @default(now())
+  url          String?
+  Events       Events[]
+  Images       Images[]
+  EventsGuests EventsGuests[]
 }
 
 model Events {
+  id           String         @id @default(uuid())
+  name         String
+  userId       String
+  createdAt    DateTime       @default(now())
+  url          String?        @default("https://pvotaaukwfeabaqtahfu.supabase.co/storage/v1/object/public/picsa/frame_picsa.png")
+  user         User           @relation(fields: [userId], references: [id])
+  Images       Images[]
+  EventsGuests EventsGuests[]
+}
+
+model EventsGuests {
   id        String   @id @default(uuid())
-  name      String
-  userId    String
-  user      User     @relation(fields: [userId], references: [id])
+  eventId   String
+  guestId   String
+  guestName String
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  Images    Images[]
+  event     Events   @relation(fields: [eventId], references: [id])
+  guest     User     @relation(fields: [guestId], references: [id])
 }
 
 model Images {
   id        String   @id @default(uuid())
   name      String
-  url      String
   userId    String
-  user      User     @relation(fields: [userId], references: [id])
   eventId   String
-  event     Events   @relation(fields: [eventId], references: [id])
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  url       String
+  event     Events   @relation(fields: [eventId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
 }

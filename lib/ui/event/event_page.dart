@@ -1,15 +1,7 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:gap/gap.dart';
-import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:picsa/domain/blocs/app_functionality/event/event/event_cubit.dart';
-import 'package:picsa/domain/models/events_model.dart';
-import 'package:picsa/utilities/app_images.dart';
-import 'package:picsa/utilities/common_widgets/image_container.dart';
-import 'package:picsa/utilities/common_widgets/loading_circle.dart';
-import 'package:intl/intl.dart';
+import 'package:picsa/common_widgets/image_container.dart';
+import 'package:picsa/common_widgets/loading_circle.dart';
+import 'package:picsa/domain/models/models.dart';
+import 'package:picsa/utilities/packages.dart';
 
 class EventPage extends StatelessWidget {
   const EventPage({super.key});
@@ -17,149 +9,182 @@ class EventPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
-    final width = MediaQuery.of(context).size.width;
     return Scaffold(
-        body: SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.all(15),
-        child: RefreshIndicator(
-          onRefresh: () async {
-            context.read<EventCubit>().getEvents();
-          },
-          child: ListView(
-            children: [
-              Text(
-                'Events',
-                style: GoogleFonts.inter(
-                  fontSize: 25,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.grey[400],
+        body: Stack(
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 15),
+          child: RefreshIndicator(
+            onRefresh: () async {
+              context.read<EventCubit>().getEvents();
+            },
+            child: ListView(
+              children: [
+                // Gap(MediaQuery.of(context).padding.top),
+                Text(
+                  'Events',
+                  style: GoogleFonts.inter(
+                    fontSize: 2.9 * SizeConfig.textMultiplier,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.grey[400],
+                  ),
                 ),
-              ),
-              Gap(height * 0.03),
-              Text(
-                'Hosting',
-                style: GoogleFonts.inter(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.grey[400],
+                Gap(1 * SizeConfig.heightMultiplier),
+                Text(
+                  'Hosting',
+                  style: GoogleFonts.inter(
+                    fontSize: 2 * SizeConfig.textMultiplier,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.grey[400],
+                  ),
                 ),
-              ),
-              Gap(height * 0.02),
-              BlocBuilder<EventCubit, EventState>(
-                builder: (context, state) {
-                  if (state is EventLoading) {
-                    return const Center(
-                      child: LoadingCircle(),
-                    );
-                  } else if (state is EventSuccess) {
-                    return ListView.separated(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemBuilder: (context, index) {
-                        final data = state.events[index];
-                        return SecondContainer(event: data);
+                Gap(2 * SizeConfig.heightMultiplier),
+                BlocProvider(
+                  create: (context) => EventCubit()..getEvents(),
+                  child: Builder(builder: (context) {
+                    return BlocBuilder<EventCubit, EventState>(
+                      builder: (context, state) {
+                        switch (state.status) {
+                          case EventStatus.loading:
+                            return const Center(
+                              child: LoadingCircle(),
+                            );
+                          case EventStatus.success:
+                            return ListView.separated(
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              itemBuilder: (context, index) {
+                                final data = state.events[index];
+                                return EventContainer(event: data);
+                              },
+                              separatorBuilder: (context, index) {
+                                return Gap(1.5 * SizeConfig.heightMultiplier);
+                              },
+                              itemCount: state.events.length,
+                            );
+                          default:
+                            return const Center(
+                              child: Text('No Events'),
+                            );
+                        }
                       },
-                      separatorBuilder: (context, index) {
-                        return Gap(height * 0.02);
-                      },
-                      itemCount: state.events.length,
                     );
-                  } else {
-                    return const Center(
-                      child: Text('No Events'),
-                    );
-                  }
-                },
-              )
-            ],
+                  }),
+                )
+              ],
+            ),
           ),
         ),
-      ),
+        Positioned.fill(
+          top: MediaQuery.of(context).padding.top,
+          right: 10,
+            child: Align(
+              alignment: Alignment.topRight,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 15,vertical: 8),
+                        decoration: BoxDecoration(
+                color: const Color.fromARGB(255, 28, 28, 28),
+                borderRadius: BorderRadius.circular(
+                  20,
+                )),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        const Icon(
+                                          Icons.qr_code_scanner_outlined,
+                                          size: 15,
+                                          color: Colors.white,
+                                        ),
+                                        Gap(0.8 * SizeConfig.widthMultiplier),
+                                        Text(
+                                          "Join",
+                                          style: GoogleFonts.rubikBubbles(
+                                              fontSize: 2 * SizeConfig.textMultiplier,
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.w500),
+                                        )
+                                      ],
+                        ),
+                      ),
+            ))
+      ],
     ));
   }
 }
 
 class EventContainer extends StatelessWidget {
-  EventContainer({
+  const EventContainer({
     super.key,
-    required this.width,
-    required this.height,
     required this.event,
   });
 
-  final double width;
-  final double height;
-  final EventModel event;
+  final Event event;
 
   @override
   Widget build(BuildContext context) {
     String formattedDate =
         DateFormat.yMMMd().format(DateTime.parse(event.createdAt));
-    return Row(
-      children: [
-        ImageContainer(
-          imageUrl: AppImages.defaultImage,
-          borderRadius: BorderRadius.circular(15),
-          height: height * 0.12,
-          width: height * 0.085,
-        ),
-        Gap(width * 0.04),
-        Expanded(
-          child: Column(
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 15),
+      decoration: BoxDecoration(
+          color: const Color.fromARGB(255, 28, 28, 28),
+          borderRadius: BorderRadius.circular(15)),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Text(
+            event.name,
+            textAlign: TextAlign.center,
+            style: GoogleFonts.notoSans(
+                fontSize: 3 * SizeConfig.textMultiplier,
+                fontWeight: FontWeight.w600,
+                color: Colors.white,
+                height: 1.2),
+          ),
+          Gap(1 * SizeConfig.heightMultiplier),
+          Text(
+            formattedDate,
+            textAlign: TextAlign.center,
+            style: GoogleFonts.notoSans(
+                fontSize: 1.8 * SizeConfig.textMultiplier,
+                fontWeight: FontWeight.w600,
+                color: const Color.fromARGB(255, 108, 108, 108),
+                height: 1.2),
+          ),
+          Gap(2 * SizeConfig.heightMultiplier),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                event.name,
-                style: GoogleFonts.inter(
-                  fontSize: 17,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.white,
-                ),
+              const Spacer(),
+              IconContainer(
+                icon: Icons.camera_alt_outlined,
+                function: () {
+                  context.push('/camera-page', extra: {
+                    'eventId': event.id,
+                  });
+                },
               ),
-              Gap(height * 0.003),
-              Text(
-                formattedDate,
-                style: GoogleFonts.inter(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w400,
-                  color: Colors.grey[400],
-                ),
+              const Spacer(),
+              IconContainer(
+                icon: Icons.cloud_upload_outlined,
+                function: () {},
               ),
-              Gap(height * 0.02),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  IconContainer(
-                    icon: Icons.camera_alt_outlined,
-                    function: () {
-                      context.push('/camera-page', extra: {
-                        'eventId': event.id,
-                      });
-                    },
-                  ),
-                  const Spacer(),
-                  IconContainer(
-                    icon: Icons.edit_outlined,
-                    function: () {},
-                  ),
-                  const Spacer(),
-                  IconContainer(
-                    icon: Icons.share_outlined,
-                    function: () {},
-                  ),
-                  const Spacer(),
-                  IconContainer(
-                    icon: Icons.qr_code,
-                    function: () {},
-                  ),
-                ],
+              const Spacer(),
+              IconContainer(
+                icon: Icons.ios_share_rounded,
+                function: () {},
               ),
+              const Spacer(),
+              IconContainer(
+                icon: Icons.qr_code,
+                function: () {},
+              ),
+              const Spacer(),
             ],
           ),
-        )
-      ],
+        ],
+      ),
     );
   }
 }
@@ -179,154 +204,12 @@ class IconContainer extends StatelessWidget {
     return GestureDetector(
       onTap: function,
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 22),
+        padding: const EdgeInsets.symmetric(vertical: 22, horizontal: 22),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(30),
-          color: Colors.grey[800],
-        ),
-        child: Icon(icon, size: 18, color: Colors.grey[300]),
-      ),
-    );
-  }
-}
-
-class SecondContainer extends StatelessWidget {
-  const SecondContainer({super.key, required this.event});
-
-  final EventModel event;
-
-  @override
-  Widget build(BuildContext context) {
-    final height = MediaQuery.sizeOf(context).height;
-    final width = MediaQuery.sizeOf(context).width;
-    String formattedDate =
-        DateFormat.yMMMd().format(DateTime.parse(event.createdAt));
-    return GestureDetector(
-      onTap: () {
-        context.push('/images-page', extra: {'eventId': event.id});
-      },
-      child: Container(
-        padding: const EdgeInsets.all(15),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-          color: Colors.transparent,
-        ),
-        child: Column(children: [
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                    shape: BoxShape.circle, color: Colors.grey[800]),
-                child: const Center(
-                    child: Icon(
-                  Icons.favorite,
-                  size: 15,
-                  color: Colors.white,
-                )),
-              ),
-              const Spacer(),
-              const Icon(
-                Icons.more_vert,
-                size: 25,
-                color: Colors.white,
-              )
-            ],
-          ),
-          Gap(height * 0.015),
-          Row(
-            children: [
-              ImageContainer(
-                imageUrl: AppImages.defaultImage,
-                borderRadius: BorderRadius.circular(8),
-                height: height * 0.06,
-                width: height * 0.06,
-              ),
-              Gap(width * 0.04),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    event.name,
-                    overflow: TextOverflow.ellipsis,
-                    style: GoogleFonts.quicksand(
-                      fontSize: 16,
-                      color: Colors.grey[400],
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  Gap(height * 0.002),
-                  Text(
-                    formattedDate,
-                    style: GoogleFonts.inter(
-                      fontSize: 12,
-                      color: Colors.grey[600],
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ],
-              ),
-              const Spacer(),
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                    color: Colors.grey[800],
-                    borderRadius: BorderRadius.circular(20)),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.calendar_month,
-                      size: 9,
-                      color: Colors.grey[500],
-                    ),
-                    Gap(height * 0.004),
-                    Text(
-                      "Hosting",
-                      style: GoogleFonts.inter(
-                        fontSize: 9,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.grey[500],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          Gap(height * 0.01),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              SvgContainer(
-                height: height,
-                icon: AppImages.camera,
-                function: () {
-                  context.push('/camera-page', extra: {
-                    'eventId': event.id,
-                  });
-                },
-              ),
-              SvgContainer(
-                height: height,
-                icon: AppImages.edit,
-                function: () {},
-              ),
-              SvgContainer(
-                height: height,
-                icon: AppImages.share,
-                function: () {},
-              ),
-              SvgContainer(
-                height: height,
-                icon: AppImages.qr,
-                function: () {},
-              )
-            ],
-          )
-        ]),
+            borderRadius: BorderRadius.circular(15),
+            color: const Color.fromARGB(255, 35, 35, 35)),
+        child: Icon(icon,
+            size: 20, color: const Color.fromARGB(255, 103, 103, 103)),
       ),
     );
   }

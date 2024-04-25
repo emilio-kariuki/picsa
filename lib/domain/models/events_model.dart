@@ -4,24 +4,24 @@
 
 import 'dart:convert';
 
-List<EventModel> eventModelFromJson(String str) => List<EventModel>.from(json.decode(str).map((x) => EventModel.fromJson(x)));
+List<Event> eventModelFromJson(String str) => List<Event>.from(json.decode(str).map((x) => Event.fromJson(x)));
 
-String eventModelToJson(List<EventModel> data) => json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
+String eventModelToJson(List<Event> data) => json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
-class EventModel {
+class Event {
     String id;
     String name;
     String userId;
     String createdAt;
 
-    EventModel({
+    Event({
         required this.id,
         required this.name,
         required this.userId,
         required this.createdAt,
     });
 
-    factory EventModel.fromJson(Map<String, dynamic> json) => EventModel(
+    factory Event.fromJson(Map<String, dynamic> json) => Event(
         id: json["id"],
         name: json["name"],
         userId: json["userId"],

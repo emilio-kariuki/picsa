@@ -1,7 +1,6 @@
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
+
 import 'package:picsa/utilities/color_constants.dart';
+import 'package:picsa/utilities/packages.dart';
 
 final ThemeData darkTheme = ThemeData(
     useMaterial3: true,

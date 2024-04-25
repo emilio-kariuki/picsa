@@ -4,7 +4,16 @@ import 'package:picsa/domain/models/images_model.dart';
 import 'package:picsa/utilities/supabase_config.dart';
 import 'package:uuid/uuid.dart' as uuid;
 
-class EventRepository {
+abstract class EventTemplate {
+  Future<bool> createEvent({required String name});
+  Future<List<Event>> getUserEvents();
+  Future<List<ImageModel>> getEventImages({required String uid});
+  Future<bool> deleteEvent({required String uid});
+
+}
+
+class EventRepository extends EventTemplate{
+  @override
   Future<bool> createEvent({required String name}) async {
     try {
       final userId = supabase.auth.currentUser!.id;
@@ -14,31 +23,32 @@ class EventRepository {
         'name': name,
         'userId': userId,
       });
-
       return true;
     } catch (e) {
       debugPrint(e.toString());
-      return false;
+      throw Exception(e.toString());
     }
   }
 
-  Future<List<EventModel>> getUserEvents() async {
+  @override
+  Future<List<Event>> getUserEvents() async {
     try {
-      final userId = supabase.auth.currentUser!.id;
+      // final userId = supabase.auth.currentUser!.id;
       final response = await supabase
           .from('Events')
           .select('*')
-          .eq('userId', userId)
+          .eq('userId', "0c0881fd-18a4-40c9-b930-ae73ca7fa0ae")
           .order('createdAt');
-      List<EventModel> events =
-          response.map((e) => EventModel.fromJson(e)).toList();
+      List<Event> events =
+          response.map((e) => Event.fromJson(e)).toList();
       return events;
     } catch (e) {
       debugPrint(e.toString());
-      throw Exception('Error getting events');
+      throw Exception(e.toString());
     }
   }
 
+  @override
   Future<List<ImageModel>> getEventImages({required String uid}) async {
     try {
       final userId = supabase.auth.currentUser!.id;
@@ -52,10 +62,11 @@ class EventRepository {
       return images;
     } catch (e) {
       debugPrint(e.toString());
-      throw Exception('Error getting images');
+      throw Exception(e.toString());
     }
   }
 
+  @override
   Future<bool> deleteEvent({required String uid}) async {
     try {
       await supabase.from('Events').delete().eq('id', uid);

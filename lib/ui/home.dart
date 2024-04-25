@@ -1,13 +1,9 @@
-import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:gap/gap.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:picsa/domain/blocs/minimal_functionality/navigation/navigation_cubit.dart';
+
+import 'package:picsa/domain/blocs/minimal/navigation/navigation_cubit.dart';
 import 'package:picsa/ui/event/create_page.dart';
-import 'package:picsa/ui/event/event_create_page.dart';
 import 'package:picsa/ui/event/event_page.dart';
+import 'package:picsa/ui/settings/settings_page.dart';
+import 'package:picsa/utilities/packages.dart';
 
 class Home extends StatelessWidget {
   const Home({super.key});
@@ -15,8 +11,9 @@ class Home extends StatelessWidget {
   Widget getBody() {
     final pages = <Widget>[
       CreatePage(),
+      // CameraPage(eventId: "47c2adb1-1390-4899-8a0d-f95cbbaaf7ca",),
       EventPage(),
-      EventCreatePage(name: "Emilio"),
+      SettingsPage()
     ];
     return BlocBuilder<NavigationCubit, NavigationState>(
       builder: (context, state) {

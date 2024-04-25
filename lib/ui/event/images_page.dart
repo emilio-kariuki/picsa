@@ -1,11 +1,6 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:gap/gap.dart';
-import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:picsa/domain/blocs/app_functionality/event/event/event_cubit.dart';
-import 'package:picsa/utilities/common_widgets/image_container.dart';
-import 'package:picsa/utilities/common_widgets/loading_circle.dart';
+import 'package:picsa/common_widgets/image_container.dart';
+import 'package:picsa/common_widgets/loading_circle.dart';
+import 'package:picsa/utilities/packages.dart';
 
 class ImagesPage extends StatelessWidget {
   const ImagesPage({super.key, required this.eventId});
@@ -66,33 +61,38 @@ class ImagesPage extends StatelessWidget {
                   EventCubit()..getEventImages(eventId: eventId),
               child: BlocBuilder<EventCubit, EventState>(
                 builder: (context, state) {
-                  if (state is EventImages) {
-                    return RefreshIndicator(
-                      onRefresh: () {
-                        context
-                            .read<EventCubit>()
-                            .getEventImages(eventId: eventId);
-                        return Future.value();
-                      },
-                      child: GridView.builder(
-                          itemCount: state.images.length,
-                          gridDelegate:
-                              const SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: 3,
-                                  mainAxisSpacing: 10,
-                                  crossAxisSpacing: 10),
-                          itemBuilder: (context, index) {
-                            return ImageContainer(
-                                imageUrl: state.images[index].url,
-                                borderRadius: BorderRadius.circular(10),
-                                height: height,
-                                width: width);
-                          }),
-                    );
-                  } else {
-                    return const Center(
-                      child: LoadingCircle(),
-                    );
+                  switch (state.status) {
+                    case EventStatus.loading:
+                      return const Center(
+                        child: LoadingCircle(),
+                      );
+                    case EventStatus.success:
+                      return RefreshIndicator(
+                        onRefresh: () {
+                          context
+                              .read<EventCubit>()
+                              .getEventImages(eventId: eventId);
+                          return Future.value();
+                        },
+                        child: GridView.builder(
+                            itemCount: state.images.length,
+                            gridDelegate:
+                                const SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: 3,
+                                    mainAxisSpacing: 10,
+                                    crossAxisSpacing: 10),
+                            itemBuilder: (context, index) {
+                              return ImageContainer(
+                                  imageUrl: state.images[index].url,
+                                  borderRadius: BorderRadius.circular(10),
+                                  height: height,
+                                  width: width);
+                            }),
+                      );
+                    default:
+                      return const Center(
+                        child: LoadingCircle(),
+                      );
                   }
                 },
               ),
