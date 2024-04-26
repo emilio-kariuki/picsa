@@ -1,7 +1,7 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:picsa/domain/blocs/app/camera/camera_cubit.dart';
+import 'package:picsa/domain/blocs/app/camera_cubit.dart';
 
 class CameraCapture extends StatelessWidget {
   const CameraCapture({
@@ -23,7 +23,7 @@ class CameraCapture extends StatelessWidget {
           onTap: () {
             context
                 .read<CameraCubit>()
-                .captureImage(controller: controller);
+                .captureImage();
           },
           child: Container(
             padding: const EdgeInsets.all(2.5),

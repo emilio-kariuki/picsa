@@ -1,5 +1,4 @@
 
-import 'package:picsa/utilities/color_constants.dart';
 import 'package:picsa/utilities/packages.dart';
 
 final ThemeData darkTheme = ThemeData(

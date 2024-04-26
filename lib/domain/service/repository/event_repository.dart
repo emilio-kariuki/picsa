@@ -33,12 +33,13 @@ class EventRepository extends EventTemplate{
   @override
   Future<List<Event>> getUserEvents() async {
     try {
-      // final userId = supabase.auth.currentUser!.id;
+      final userId = supabase.auth.currentUser!.id;
       final response = await supabase
           .from('Events')
           .select('*')
-          .eq('userId', "0c0881fd-18a4-40c9-b930-ae73ca7fa0ae")
+          .eq('userId', userId)
           .order('createdAt');
+
       List<Event> events =
           response.map((e) => Event.fromJson(e)).toList();
       return events;

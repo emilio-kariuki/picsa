@@ -1,44 +1,84 @@
-import 'package:go_router/go_router.dart';
-import 'package:picsa/main.dart';
 import 'package:picsa/ui/event/event_create_page.dart';
 import 'package:picsa/ui/event/images_page.dart';
-import 'package:picsa/ui/home.dart';
+import 'package:picsa/utilities/packages.dart';
 
 import '../ui/camera/camera_page.dart';
 
-final appRouter = GoRouter(initialLocation: '/checker', routes: [
-  GoRoute(
-      path: '/camera-page',
-      builder: (context, state) {
-        final data = state.extra;
-        return CameraPage(
-          eventId: (data as Map)['eventId'],
-        );
-      }),
-  GoRoute(
+final appRouter = GoRouter(
+  initialLocation: '/welcome',
+  routes: [
+    GoRoute(
+        path: '/camera',
+        pageBuilder: (context, state) {
+          final data = state.extra;
+          return CustomTransitionPage<void>(
+            key: state.pageKey,
+            child: CameraPage(
+              eventId: (data as Map)['eventId'],
+            ),
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) =>
+                    FadeTransition(opacity: animation, child: child),
+          );
+        }),
+    GoRoute(
       path: '/home',
-      builder: (context, state) {
-        return const Home();
-      }),
-  GoRoute(
-      path: '/checker',
-      builder: (context, state) {
-        return const Checker();
-      }),
-  GoRoute(
-      path: '/event-create-page',
-      builder: (context, state) {
-        final data = state.extra;
-        return EventCreatePage(
-          name: (data as Map)['name'],
-        );
-      }),
-      GoRoute(
-      path: '/images-page',
-      builder: (context, state) {
-        final data = state.extra;
-        return ImagesPage(
-          eventId: (data as Map)['eventId'],
-        );
-      })
-]);
+      name: Routes.home,
+      pageBuilder: (context, state) => CustomTransitionPage<void>(
+        key: state.pageKey,
+        child: const Home(),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) =>
+            FadeTransition(opacity: animation, child: child),
+      ),
+    ),
+    GoRoute(
+      path: '/welcome',
+      name: Routes.welcome,
+      pageBuilder: (context, state) => CustomTransitionPage<void>(
+        key: state.pageKey,
+        child: WelcomePage(),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) =>
+            FadeTransition(opacity: animation, child: child),
+      ),
+    ),
+    GoRoute(
+        path: '/event-create-page',
+        builder: (context, state) {
+          final data = state.extra;
+          return EventCreatePage(
+            name: (data as Map)['name'],
+          );
+        }),
+    GoRoute(
+        path: '/images-page',
+        builder: (context, state) {
+          final data = state.extra;
+          return ImagesPage(
+            eventId: (data as Map)['eventId'],
+          );
+        })
+  ],
+  redirect: (BuildContext context, GoRouterState state) async {
+    final bool loggedIn = supabase.auth.currentUser != null;
+    final bool loggingIn = state.matchedLocation == Routes.welcome;
+    if (!loggedIn) return Routes.welcome;
+    if (loggingIn) return Routes.home;
+    // no need to redirect at all
+    return null;
+  },
+);
+
+class Routes {
+  static const String welcome = '/welcome';
+  static const String home = '/home';
+}
+
+class GoRouterRefreshStream extends ChangeNotifier {
+  GoRouterRefreshStream(Stream stream) {
+    stream.listen(
+      (value) {
+        notifyListeners();
+      },
+    );
+  }
+}

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:picsa/domain/blocs/minimal/bool/bool_cubit.dart';
 
-import '../../../domain/blocs/app/camera/camera_cubit.dart';
+import '../../../domain/blocs/app/camera_cubit.dart';
 
 class ToggleCamera extends StatelessWidget {
   const ToggleCamera({
@@ -32,7 +32,6 @@ class ToggleCamera extends StatelessWidget {
                 .read<BoolCubit>()
                 .change(value: isCameraChanged);
             context.read<CameraCubit>().toggleCamera(
-                  controller: controller,
                   isCameraChanged: isCameraChanged,
                 );
           },

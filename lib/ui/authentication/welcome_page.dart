@@ -6,7 +6,8 @@ import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:picsa/domain/blocs/app/auth/auth/auth_cubit.dart';
+import 'package:picsa/domain/blocs/app/auth_cubit.dart';
+import 'package:picsa/domain/blocs/app/user_cubit.dart';
 import 'package:picsa/ui/authentication/widgets/terms_of_service.dart';
 import 'package:picsa/utilities/app_constants.dart';
 import 'package:picsa/utilities/app_images.dart';
@@ -62,10 +63,11 @@ class BackGroundImage extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                         SvgPicture.asset(AppConstants.APP_LOGO,
-                         height: height * 0.08,
+                        SvgPicture.asset(
+                          AppConstants.APP_LOGO,
+                          height: height * 0.08,
                           width: height * 0.08,
-                         ),
+                        ),
                         Gap(width * 0.05),
                         Text(
                           AppConstants.APP_NAME,
@@ -90,7 +92,7 @@ class BackGroundImage extends StatelessWidget {
                         ),
                       ),
                     ),
-                     Gap(3 * SizeConfig.heightMultiplier),
+                    Gap(3 * SizeConfig.heightMultiplier),
                     GoogleButton(height: height, width: width),
                     const Padding(
                       padding: EdgeInsets.symmetric(vertical: 20),
@@ -123,17 +125,19 @@ class GoogleButton extends StatelessWidget {
       child: BlocProvider(
         create: (context) => AuthCubit(),
         child: Builder(builder: (context) {
-          return BlocConsumer<AuthCubit, AuthState>(
+          return BlocConsumer<AuthCubit, AuthenticationState>(
             listener: (context, state) {
-              if (state is AuthSuccess) {
-                context
-                  ..read<AuthCubit>().createUser(user: state.user)
-                  ..go('/home');
-              } else if (state is AuthFailure) {
-                context.showErrorToast(
-                    title: "Error",
-                    message: "Authentication failed",
-                    context: context);
+              switch (state.status) {
+                case AuthStatus.success:
+                  context
+                    ..read<AuthCubit>().createUser(user: state.user!)
+                    ..read<UserCubit>().getUser()
+                    ..go('/home');
+                case AuthStatus.error:
+                  context.showErrorToast(
+                      title: "Error", message: state.message, context: context);
+                default:
+                  debugPrint("the default");
               }
             },
             builder: (context, state) {
@@ -149,7 +153,6 @@ class GoogleButton extends StatelessWidget {
                       backgroundColor: Colors.white,
                       foregroundColor: Colors.white,
                       surfaceTintColor: Colors.white,
-                      
                       side: const BorderSide(
                         color: Colors.white,
                         width: 2,
@@ -161,10 +164,12 @@ class GoogleButton extends StatelessWidget {
                     onPressed: () {
                       context.read<AuthCubit>().signInWithGoogle();
                     },
-                    child: state is AuthLoading
+                    child: state.status == AuthStatus.loading
                         ? const Center(
                             child: LoadingCircle(
-                              color: Colors.deepOrange,
+                              color:  Color(
+                  0xff70B93E,
+                ),
                             ),
                           )
                         : Row(
@@ -196,5 +201,3 @@ class GoogleButton extends StatelessWidget {
     );
   }
 }
-
-

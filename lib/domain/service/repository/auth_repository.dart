@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:picsa/domain/models/user_model.dart';
@@ -9,6 +11,16 @@ abstract class AuthTemplate {
   Future<UserModel> signInWithGoogle();
   Future<void> signOut();
 }
+
+const webClientId =
+    '203502494436-b2e9a7prusv18vog9tmge6chpeg00sto.apps.googleusercontent.com';
+const iosClientId =
+    '203502494436-3c0s0cl8ie5u49ehrsbf9trk1grm3fhh.apps.googleusercontent.com';
+
+final GoogleSignIn googleSignIn = GoogleSignIn(
+  clientId: iosClientId,
+  serverClientId: webClientId,
+);
 
 class AuthRepository extends AuthTemplate {
   @override
@@ -28,20 +40,10 @@ class AuthRepository extends AuthTemplate {
   @override
   Future<UserModel> signInWithGoogle() async {
     try {
-      const webClientId =
-          '203502494436-b2e9a7prusv18vog9tmge6chpeg00sto.apps.googleusercontent.com';
-      const iosClientId =
-          '203502494436-3c0s0cl8ie5u49ehrsbf9trk1grm3fhh.apps.googleusercontent.com';
-
-      final GoogleSignIn googleSignIn = GoogleSignIn(
-        clientId: iosClientId,
-        serverClientId: webClientId,
-      );
       final googleUser = await googleSignIn.signIn();
       final googleAuth = await googleUser!.authentication;
       final accessToken = googleAuth.accessToken;
       final idToken = googleAuth.idToken;
-
       if (accessToken == null) {
         throw 'No Access Token found.';
       }
@@ -60,18 +62,19 @@ class AuthRepository extends AuthTemplate {
         email: response.user!.email!,
         url: response.user?.userMetadata?['avatar_url'],
       );
-      debugPrint('user: $user');
       return user;
     } catch (e) {
       debugPrint(e.toString());
-      throw Exception('Error signing in');
+      throw Exception(e.toString());
     }
   }
 
   @override
-  Future<void> signOut() async {
+  Future<bool> signOut() async {
     try {
       await supabase.auth.signOut();
+      await googleSignIn.signOut();
+      return true;
     } catch (e) {
       debugPrint(e.toString());
       throw Exception('Error signing out');

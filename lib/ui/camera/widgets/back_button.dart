@@ -1,6 +1,6 @@
-
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:picsa/utilities/packages.dart';
 
 class PopButton extends StatelessWidget {
   const PopButton({
@@ -30,19 +30,18 @@ class PopButton extends StatelessWidget {
               color: Colors.black.withOpacity(0.4),
             ),
             child: GestureDetector(
-              onTap: () {
-                context.pop();
-              },
-              child: const Icon(
-                Icons.arrow_back_ios_new,
-                color: Colors.white,
-                size: 15,
-              ),
-            ),
+                onTap: () {
+                  context.pop();
+                },
+                child: SvgPicture.asset(
+                  AppImages.back,
+                  height: 2.5 * SizeConfig.heightMultiplier,
+                  width: 2.5 * SizeConfig.heightMultiplier,
+                  color: Colors.grey[400],
+                )),
           ),
         ),
       ),
     );
   }
 }
-

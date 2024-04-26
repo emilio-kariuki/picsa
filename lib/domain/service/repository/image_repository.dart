@@ -22,7 +22,7 @@ class ImageRepository extends ImageTemplate {
       final result = await FlutterImageCompress.compressAndGetFile(
         image.absolute.path,
         outPath,
-        quality: 50,
+        quality: 40,
       );
       return File(result!.path);
     } catch (e) {
@@ -38,10 +38,10 @@ class ImageRepository extends ImageTemplate {
   }) async {
     try {
       File image = File(path);
-      final imageKey = 'images/${DateTime.now().millisecondsSinceEpoch}.jpg';
+      final id = supabase.auth.currentUser!.id;
+      final imageKey =
+          'images/$id/${DateTime.now().millisecondsSinceEpoch}.jpg';
       final compressedImage = await compressImage(image: image);
-      await supabase.auth
-          .setSession(supabase.auth.currentSession!.refreshToken!);
       await supabase.storage.from('picsa').upload(
             imageKey,
             compressedImage,
@@ -49,7 +49,7 @@ class ImageRepository extends ImageTemplate {
           );
       await supabase.from('Images').upsert(
         {
-          'id': DateTime.now().millisecondsSinceEpoch.toString(),
+          'id': "$eventId${DateTime.now().millisecondsSinceEpoch.toString()}",
           'name': imageKey,
           'url': supabase.storage.from('picsa').getPublicUrl(imageKey),
           'userId': supabase.auth.currentUser!.id,

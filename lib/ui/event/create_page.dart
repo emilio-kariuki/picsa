@@ -1,4 +1,3 @@
-import 'dart:ui';
 
 import 'package:picsa/domain/blocs/minimal/bool/bool_cubit.dart';
 import 'package:picsa/common_widgets/input_field.dart';
@@ -77,10 +76,14 @@ class CreatePage extends StatelessWidget {
                               Gap(height * 0.02),
                               InputField(
                                 controller: _eventController,
-                                prefixIcon: Icon(
-                                  Icons.edit_outlined,
-                                  color: Colors.grey[500]!,
-                                  size: 20,
+                                prefixIcon: Padding(
+                                  padding: const EdgeInsets.all(12.0),
+                                  child: SvgPicture.asset(
+                                    AppImages.edit,
+                                    color: Colors.grey[300],
+                                    height: 1 * SizeConfig.heightMultiplier,
+                                    width: 1 * SizeConfig.heightMultiplier,
+                                  ),
                                 ),
                                 borderRadius: 15,
                                 onChanged: (value) {

@@ -1,5 +1,5 @@
-import 'package:picsa/common_widgets/image_container.dart';
 import 'package:picsa/common_widgets/loading_circle.dart';
+import 'package:picsa/domain/blocs/app/app_cubit.dart';
 import 'package:picsa/domain/models/models.dart';
 import 'package:picsa/utilities/packages.dart';
 
@@ -8,7 +8,6 @@ class EventPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final height = MediaQuery.of(context).size.height;
     return Scaffold(
         body: Stack(
       children: [
@@ -76,36 +75,37 @@ class EventPage extends StatelessWidget {
           ),
         ),
         Positioned.fill(
-          top: MediaQuery.of(context).padding.top,
-          right: 10,
+            top: MediaQuery.of(context).padding.top,
+            right: 10,
             child: Align(
               alignment: Alignment.topRight,
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 15,vertical: 8),
-                        decoration: BoxDecoration(
-                color: const Color.fromARGB(255, 28, 28, 28),
-                borderRadius: BorderRadius.circular(
-                  20,
-                )),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        const Icon(
-                                          Icons.qr_code_scanner_outlined,
-                                          size: 15,
-                                          color: Colors.white,
-                                        ),
-                                        Gap(0.8 * SizeConfig.widthMultiplier),
-                                        Text(
-                                          "Join",
-                                          style: GoogleFonts.rubikBubbles(
-                                              fontSize: 2 * SizeConfig.textMultiplier,
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.w500),
-                                        )
-                                      ],
-                        ),
-                      ),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
+                decoration: BoxDecoration(
+                    color: const Color.fromARGB(255, 28, 28, 28),
+                    borderRadius: BorderRadius.circular(
+                      20,
+                    )),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(
+                      Icons.qr_code_scanner_outlined,
+                      size: 15,
+                      color: Colors.white,
+                    ),
+                    Gap(0.8 * SizeConfig.widthMultiplier),
+                    Text(
+                      "Join",
+                      style: GoogleFonts.rubikBubbles(
+                          fontSize: 2 * SizeConfig.textMultiplier,
+                          color: Colors.white,
+                          fontWeight: FontWeight.w500),
+                    )
+                  ],
+                ),
+              ),
             ))
       ],
     ));
@@ -132,14 +132,18 @@ class EventContainer extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Text(
-            event.name,
-            textAlign: TextAlign.center,
-            style: GoogleFonts.notoSans(
-                fontSize: 3 * SizeConfig.textMultiplier,
-                fontWeight: FontWeight.w600,
-                color: Colors.white,
-                height: 1.2),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Text(
+              event.name,
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              style: GoogleFonts.inter(
+                  fontSize: 3 * SizeConfig.textMultiplier,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.white,
+                  height: 1.2),
+            ),
           ),
           Gap(1 * SizeConfig.heightMultiplier),
           Text(
@@ -160,7 +164,7 @@ class EventContainer extends StatelessWidget {
               IconContainer(
                 icon: Icons.camera_alt_outlined,
                 function: () {
-                  context.push('/camera-page', extra: {
+                  context.push('/camera', extra: {
                     'eventId': event.id,
                   });
                 },
@@ -171,14 +175,45 @@ class EventContainer extends StatelessWidget {
                 function: () {},
               ),
               const Spacer(),
-              IconContainer(
-                icon: Icons.ios_share_rounded,
-                function: () {},
+              BlocProvider(
+                create: (context) => AppCubit(),
+                child: Builder(builder: (context) {
+                  return BlocBuilder<AppCubit, AppState>(
+                    builder: (context, state) {
+                      return IconContainer(
+                        icon: Icons.ios_share_rounded,
+                        function: () {
+                          context.read<AppCubit>().shareContent(
+                                subject:
+                                    "Share this event with friends and family",
+                                text:
+                                    "${AppConstants.APP_URL}/event/${event.id}",
+                              );
+                        },
+                      );
+                    },
+                  );
+                }),
               ),
               const Spacer(),
               IconContainer(
                 icon: Icons.qr_code,
-                function: () {},
+                function: () => showModalBottomSheet(
+                    clipBehavior: Clip.antiAlias,
+                    isScrollControlled: true,
+                    backgroundColor: const Color(0xff1E1E1E),
+                    barrierColor: Colors.black.withOpacity(0.6),
+                    elevation: 5,
+                    shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(15),
+                            topRight: Radius.circular(15))),
+                    context: context,
+                    builder: (context) {
+                      return EventQr(
+                        eventId: event.id,
+                      );
+                    }),
               ),
               const Spacer(),
             ],
@@ -204,7 +239,7 @@ class IconContainer extends StatelessWidget {
     return GestureDetector(
       onTap: function,
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 22, horizontal: 22),
+        padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(15),
             color: const Color.fromARGB(255, 35, 35, 35)),
@@ -232,11 +267,10 @@ class SvgContainer extends StatelessWidget {
     return GestureDetector(
       onTap: function,
       child: Container(
-        padding: EdgeInsets.all(height * 0.015),
+        padding: const EdgeInsets.symmetric(vertical: 22, horizontal: 22),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
-          color: Colors.grey[800],
-        ),
+            borderRadius: BorderRadius.circular(15),
+            color: const Color.fromARGB(255, 35, 35, 35)),
         child: SvgPicture.asset(
           icon,
           height: height * 0.02,
@@ -297,6 +331,122 @@ class CustomAvatars extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class EventQr extends StatelessWidget {
+  const EventQr({super.key, required this.eventId});
+  final String eventId;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: const Color(0xff212121),
+      child: Padding(
+        padding: EdgeInsets.symmetric(
+            horizontal: 2 * SizeConfig.widthMultiplier,
+            vertical: 3 * SizeConfig.heightMultiplier),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Center(
+              child: Container(
+                height: 5,
+                width: 10 * SizeConfig.widthMultiplier,
+                decoration: BoxDecoration(
+                    color: Colors.grey[600],
+                    borderRadius: BorderRadius.circular(8)),
+              ),
+            ),
+            Gap(2 * SizeConfig.heightMultiplier),
+            Row(
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    context.pop();
+                  },
+                  child: SvgPicture.asset(
+                    AppImages.back,
+                    height: 3 * SizeConfig.heightMultiplier,
+                    width: 3 * SizeConfig.heightMultiplier,
+                    color: Colors.grey[600],
+                  ),
+                ),
+                Gap(3 * SizeConfig.heightMultiplier),
+                Text(
+                  'Scan QR Code',
+                  style: GoogleFonts.inter(
+                    fontSize: 2.5 * SizeConfig.textMultiplier,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.grey[600],
+                  ),
+                ),
+                const Spacer(),
+                GestureDetector(
+                  onTap: () {
+                    context.pop();
+                  },
+                  child: SvgPicture.asset(
+                    AppImages.uplaod,
+                    height: 2.5 * SizeConfig.heightMultiplier,
+                    width: 2.5 * SizeConfig.heightMultiplier,
+                    color: Colors.grey[600],
+                  ),
+                ),
+                Gap(2 * SizeConfig.heightMultiplier),
+              ],
+            ),
+            Gap(5 * SizeConfig.heightMultiplier),
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                  color: Colors.white, borderRadius: BorderRadius.circular(10)),
+              child: QrImageView(
+                data: "${AppConstants.APP_URL}/event/$eventId",
+                version: QrVersions.auto,
+                size: 180.0,
+              ),
+            ),
+            Gap(5 * SizeConfig.heightMultiplier),
+            BlocProvider(
+              create: (context) => AppCubit(),
+              child: Builder(builder: (context) {
+                return GestureDetector(
+                  onTap: () => context.read<AppCubit>().copyToClipboard(
+                        text: "${AppConstants.APP_URL}/event/$eventId",
+                      ),
+                  child: Container(
+                    height: 7 * SizeConfig.heightMultiplier,
+                    margin: const EdgeInsets.symmetric(horizontal: 10),
+                    width: MediaQuery.sizeOf(context).width,
+                    decoration: BoxDecoration(
+                      color: const Color(0xff1C1C1C),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: BlocBuilder<AppCubit, AppState>(
+                      builder: (context, state) {
+                        return Center(
+                          child: Text(
+                            state.status == AppStatus.success
+                                ? 'Copied'
+                                : 'Copy Link',
+                            style: GoogleFonts.inter(
+                              fontSize: 2 * SizeConfig.textMultiplier,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.grey[600],
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                );
+              }),
+            )
+          ],
+        ),
       ),
     );
   }

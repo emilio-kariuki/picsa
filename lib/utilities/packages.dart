@@ -20,3 +20,8 @@ export 'package:camera/camera.dart';
 export 'package:get_it/get_it.dart';
 export "package:intl/intl.dart" hide TextDirection;
 export "package:picsa/utilities/utilities.dart";
+export 'package:qr_flutter/qr_flutter.dart';
+export 'package:share_plus/share_plus.dart';
+export 'package:shimmer/shimmer.dart';
+
+
