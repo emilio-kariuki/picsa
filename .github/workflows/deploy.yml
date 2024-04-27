@@ -71,11 +71,11 @@ jobs:
       - name: Create 'whatsnew' Directory
         run: mkdir -p distribution/
       
-      - name: Deploy to Internal Sharing
+      - name: Deploy to Closed testing
         uses: r0adkll/upload-google-play@v1
         with:
           serviceAccountJson: service_account.json
           packageName: com.ecoville.picsa
           releaseFiles: build/app/outputs/bundle/release/app-release.aab
-          track: production
+          track: closed
           whatsNewDirectory: distribution/
