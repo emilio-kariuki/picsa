@@ -51,7 +51,7 @@ android {
         applicationId "com.ecoville.picsa"
         minSdkVersion 21
         targetSdkVersion flutter.targetSdkVersion
-        versionCode 4
+        versionCode 11
         versionName "0.0.11"
     }
 
