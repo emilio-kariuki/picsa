@@ -58,8 +58,8 @@ class AppRepository extends AppTemplate {
   @override
   Future<bool> downloadImage({required BuildContext context,required String url}) async {
     try {
-      final _flutterMediaDownloaderPlugin = MediaDownload();
-      _flutterMediaDownloaderPlugin.downloadMedia(context, url);
+      final flutterMediaDownloaderPlugin = MediaDownload();
+      flutterMediaDownloaderPlugin.downloadMedia(context, url, "Picsa");
     
 
       return true;
