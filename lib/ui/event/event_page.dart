@@ -45,8 +45,16 @@ class EventPage extends StatelessWidget {
                       builder: (context, state) {
                         switch (state.status) {
                           case EventStatus.loading:
-                            return const Center(
-                              child: LoadingCircle(),
+                            return ListView.separated(
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              itemBuilder: (context, index) {
+                                return const EventContainerShimmer();
+                              },
+                              separatorBuilder: (context, index) {
+                                return Gap(1.5 * SizeConfig.heightMultiplier);
+                              },
+                              itemCount: 5,
                             );
                           case EventStatus.success:
                             return ListView.separated(
@@ -112,6 +120,140 @@ class EventPage extends StatelessWidget {
   }
 }
 
+class EventContainerShimmer extends StatelessWidget {
+  const EventContainerShimmer({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 15),
+      decoration: BoxDecoration(
+          color: const Color.fromARGB(255, 28, 28, 28),
+          borderRadius: BorderRadius.circular(15)),
+      child: Column(
+        children: [
+          Shimmer.fromColors(
+            baseColor: const Color.fromARGB(255, 35, 35, 35),
+                highlightColor: const Color.fromARGB(255, 49, 49, 49),
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 400),
+              height: 2 * SizeConfig.heightMultiplier,
+              width: 30 * SizeConfig.widthMultiplier,
+              decoration: BoxDecoration(
+                  color: Colors.grey[800],
+                  borderRadius: BorderRadius.circular(20)),
+            ),
+          ),
+          Gap(1 * SizeConfig.heightMultiplier),
+          Shimmer.fromColors(
+           baseColor: const Color.fromARGB(255, 35, 35, 35),
+                highlightColor: const Color.fromARGB(255, 49, 49, 49),
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 400),
+              height: 2 * SizeConfig.heightMultiplier,
+              width: 15 * SizeConfig.widthMultiplier,
+              decoration: BoxDecoration(
+                  color: Colors.grey[800],
+                  borderRadius: BorderRadius.circular(20)),
+            ),
+          ),
+          Gap(1 * SizeConfig.heightMultiplier),
+          Shimmer.fromColors(
+            baseColor: const Color.fromARGB(255, 35, 35, 35),
+                highlightColor: const Color.fromARGB(255, 49, 49, 49),
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 400),
+              height: 2 * SizeConfig.heightMultiplier,
+              width: 20 * SizeConfig.widthMultiplier,
+              decoration: BoxDecoration(
+                  color: Colors.grey[800],
+                  borderRadius: BorderRadius.circular(20)),
+            ),
+          ),
+          Gap(2 * SizeConfig.heightMultiplier),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Spacer(),
+              Shimmer.fromColors(
+                baseColor: const Color.fromARGB(255, 35, 35, 35),
+                highlightColor: const Color.fromARGB(255, 49, 49, 49),
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 400),
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(15),
+                      color: const Color.fromARGB(255, 35, 35, 35)),
+                  child: const Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: SizedBox.shrink(),
+                  ),
+                ),
+              ),
+              const Spacer(),
+              Shimmer.fromColors(
+                baseColor: const Color.fromARGB(255, 35, 35, 35),
+                highlightColor: const Color.fromARGB(255, 49, 49, 49),
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 400),
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(15),
+                      color: const Color.fromARGB(255, 35, 35, 35)),
+                  child: const Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: SizedBox.shrink(),
+                  ),
+                ),
+              ),
+              const Spacer(),
+              Shimmer.fromColors(
+                baseColor: const Color.fromARGB(255, 35, 35, 35),
+                highlightColor: const Color.fromARGB(255, 49, 49, 49),
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 400),
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(15),
+                      color: const Color.fromARGB(255, 35, 35, 35)),
+                  child: const Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: SizedBox.shrink(),
+                  ),
+                ),
+              ),
+              const Spacer(),
+              Shimmer.fromColors(
+                baseColor: const Color.fromARGB(255, 35, 35, 35),
+                highlightColor: const Color.fromARGB(255, 49, 49, 49),
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 400),
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(15),
+                      color: const Color.fromARGB(255, 35, 35, 35)),
+                  child: const Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: SizedBox.shrink(),
+                  ),
+                ),
+              ),
+              const Spacer()
+            ],
+          )
+        ],
+      ),
+    );
+  }
+}
+
 class EventContainer extends StatelessWidget {
   const EventContainer({
     super.key,
@@ -124,115 +266,122 @@ class EventContainer extends StatelessWidget {
   Widget build(BuildContext context) {
     String formattedDate =
         DateFormat.yMMMd().format(DateTime.parse(event.createdAt));
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 15),
-      decoration: BoxDecoration(
-          color: const Color.fromARGB(255, 28, 28, 28),
-          borderRadius: BorderRadius.circular(15)),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Text(
-              event.name,
+
+    return GestureDetector(
+      onTap: () => context.push(
+        '/images/${event.id}',
+      ),
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 15),
+        decoration: BoxDecoration(
+            color: const Color.fromARGB(255, 28, 28, 28),
+            borderRadius: BorderRadius.circular(15)),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Text(
+                event.name,
+                textAlign: TextAlign.center,
+                maxLines: 2,
+                style: GoogleFonts.inter(
+                    fontSize: 3 * SizeConfig.textMultiplier,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
+                    height: 1.2),
+              ),
+            ),
+            Gap(1 * SizeConfig.heightMultiplier),
+            Text(
+              formattedDate,
               textAlign: TextAlign.center,
-              maxLines: 2,
-              style: GoogleFonts.inter(
-                  fontSize: 3 * SizeConfig.textMultiplier,
+              style: GoogleFonts.notoSans(
+                  fontSize: 1.8 * SizeConfig.textMultiplier,
                   fontWeight: FontWeight.w600,
-                  color: Colors.white,
+                  color: const Color.fromARGB(255, 108, 108, 108),
                   height: 1.2),
             ),
-          ),
-          Gap(1 * SizeConfig.heightMultiplier),
-          Text(
-            formattedDate,
-            textAlign: TextAlign.center,
-            style: GoogleFonts.notoSans(
-                fontSize: 1.8 * SizeConfig.textMultiplier,
-                fontWeight: FontWeight.w600,
-                color: const Color.fromARGB(255, 108, 108, 108),
-                height: 1.2),
-          ),
-          Gap(2 * SizeConfig.heightMultiplier),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Spacer(),
-              IconContainer(
-                icon: Icons.camera_alt_outlined,
-                function: () {
-                  context.push('/camera', extra: {
-                    'eventId': event.id,
-                  });
-                },
-              ),
-              const Spacer(),
-              IconContainer(
-                icon: Icons.cloud_upload_outlined,
-                function: () {},
-              ),
-              const Spacer(),
-              BlocProvider(
-                create: (context) => AppCubit(),
-                child: Builder(builder: (context) {
-                  return BlocBuilder<AppCubit, AppState>(
-                    builder: (context, state) {
-                      return IconContainer(
-                        icon: Icons.ios_share_rounded,
-                        function: () {
-                          context.read<AppCubit>().shareContent(
-                                subject:
-                                    "Share this event with friends and family",
-                                text:
-                                    "${AppConstants.APP_URL}/event/${event.id}",
-                              );
-                        },
-                      );
-                    },
-                  );
-                }),
-              ),
-              const Spacer(),
-              IconContainer(
-                icon: Icons.qr_code,
-                function: () => showModalBottomSheet(
-                    clipBehavior: Clip.antiAlias,
-                    isScrollControlled: true,
-                    backgroundColor: const Color(0xff1E1E1E),
-                    barrierColor: Colors.black.withOpacity(0.6),
-                    elevation: 5,
-                    shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(15),
-                            topRight: Radius.circular(15))),
-                    context: context,
-                    builder: (context) {
-                      return EventQr(
-                        eventId: event.id,
-                      );
-                    }),
-              ),
-              const Spacer(),
-            ],
-          ),
-        ],
+            Gap(2 * SizeConfig.heightMultiplier),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Spacer(),
+                IconContainer(
+                  icon: Icons.camera_alt_outlined,
+                  function: () {
+                    context.push(
+                      '/camera/${event.id}',
+                    );
+                  },
+                ),
+                const Spacer(),
+                IconContainer(
+                  icon: Icons.cloud_upload_outlined,
+                  function: () {},
+                ),
+                const Spacer(),
+                BlocProvider(
+                  create: (context) => AppCubit(),
+                  child: Builder(builder: (context) {
+                    return BlocBuilder<AppCubit, AppState>(
+                      builder: (context, state) {
+                        return IconContainer(
+                          icon: Icons.ios_share_rounded,
+                          function: () {
+                            context.read<AppCubit>().shareContent(
+                                  subject:
+                                      "Share this event with friends and family",
+                                  text:
+                                      "${AppConstants.APP_URL}/event/${event.id}",
+                                );
+                          },
+                        );
+                      },
+                    );
+                  }),
+                ),
+                const Spacer(),
+                IconContainer(
+                  icon: Icons.qr_code,
+                  function: () => showModalBottomSheet(
+                      clipBehavior: Clip.antiAlias,
+                      isScrollControlled: true,
+                      backgroundColor: const Color(0xff1E1E1E),
+                      barrierColor: Colors.black.withOpacity(0.6),
+                      elevation: 5,
+                      shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(15),
+                              topRight: Radius.circular(15))),
+                      context: context,
+                      builder: (context) {
+                        return EventQr(
+                          eventId: event.id,
+                        );
+                      }),
+                ),
+                const Spacer(),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
 }
 
 class IconContainer extends StatelessWidget {
-  const IconContainer({
-    super.key,
-    required this.icon,
-    required this.function,
-  });
+  const IconContainer(
+      {super.key,
+      required this.icon,
+      required this.function,
+      this.isLoading = false});
 
   final IconData icon;
   final Function() function;
+  final bool? isLoading;
 
   @override
   Widget build(BuildContext context) {
@@ -243,8 +392,13 @@ class IconContainer extends StatelessWidget {
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(15),
             color: const Color.fromARGB(255, 35, 35, 35)),
-        child: Icon(icon,
-            size: 20, color: const Color.fromARGB(255, 103, 103, 103)),
+        child: isLoading ?? false
+            ? LoadingCircle(
+                color: Colors.grey[500],
+                size: 20,
+              )
+            : Icon(icon,
+                size: 20, color: const Color.fromARGB(255, 103, 103, 103)),
       ),
     );
   }
@@ -284,7 +438,7 @@ class SvgContainer extends StatelessWidget {
 class CustomAvatars extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       width: 80,
       child: Stack(
         children: <Widget>[

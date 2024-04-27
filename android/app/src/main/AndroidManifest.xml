@@ -10,7 +10,22 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>
-    
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
+    <queries>
+    <intent>
+        <action android:name="android.intent.action.VIEW" />
+        <data android:scheme="sms" />
+    </intent>
+    <intent>
+        <action android:name="android.intent.action.VIEW" />
+        <data android:scheme="tel" />
+    </intent>
+    <intent>
+        <action android:name="android.support.customtabs.action.CustomTabsService" />
+    </intent>
+    </queries>
+        
     <application
         android:label="picsa"
         android:name="${applicationName}"
@@ -53,6 +68,15 @@
                 <action android:name="android.intent.action.DEVICE_STORAGE_OK"/>
             </intent-filter>
             </receiver>        
+            <provider
+    android:name="androidx.core.content.FileProvider"
+    android:authorities="${applicationId}.provider"
+    android:exported="false"
+    android:grantUriPermissions="true">
+    <meta-data
+        android:name="android.support.FILE_PROVIDER_PATHS"
+        android:resource="@xml/provider_paths" />
+</provider>
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />

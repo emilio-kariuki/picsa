@@ -26,8 +26,8 @@ class AuthCubit extends Cubit<AuthenticationState> {
     }
   }
 
-  Future<void> createUser({required UserModel user}) async {
-    await UserRepository().createUser(user: user);
+  Future<void> createUser() async {
+    await UserRepository().createUser(user: state.user!);
   }
 
   Future<void> signOut() async {

@@ -23,7 +23,10 @@ class CameraCubit extends Cubit<CameraState> {
     final path =
         await _cameraProvider.takePicture(controller: state.controller!);
     emit(state.copyWith(
-        path: path, status: CameraStatus.captured, message: "Image captured"));
+      status: CameraStatus.captured,
+        path: path, message: "Image captured"),
+        
+        );
   }
 
   void toggleCamera({

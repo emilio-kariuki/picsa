@@ -18,10 +18,7 @@ void main() async {
       storageOptions: const StorageClientOptions(
         retryAttempts: 3,
       ));
-  final directory = await getApplicationDocumentsDirectory();
-  HydratedBloc.storage = await HydratedStorage.build(
-    storageDirectory: directory,
-  );
+
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,

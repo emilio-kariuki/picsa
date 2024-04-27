@@ -44,6 +44,63 @@ class AppCubit extends Cubit<AppState> {
       ));
     }
   }
+
+  Future<void> launchBrowser({required String url}) async {
+    try {
+      emit(state.copyWith(
+        status: AppStatus.loading,
+        message: "opening privacy...",
+      ));
+      await _appProvider.launchBrowser(url: url);
+      emit(state.copyWith(
+        status: AppStatus.success,
+        message: "Opened the privacy policy",
+      ));
+    } catch (error) {
+      emit(state.copyWith(
+        status: AppStatus.error,
+        message: error.toString().toException(),
+      ));
+    }
+  }
+
+   Future<void> shareImage({required String url}) async {
+    try {
+      emit(state.copyWith(
+        status: AppStatus.loading,
+        message: "Sharing image...",
+      ));
+      await _appProvider.shareImage(url: url);
+      emit(state.copyWith(
+        status: AppStatus.success,
+        message: "Shared the image",
+      ));
+    } catch (error) {
+      emit(state.copyWith(
+        status: AppStatus.error,
+        message: error.toString().toException(),
+      ));
+    }
+  }
+
+   Future<void> downloadImage({required BuildContext context,required String url}) async {
+    try {
+      emit(state.copyWith(
+        status: AppStatus.loading,
+        message: "Downloading image...",
+      ));
+      await _appProvider.downloadImage(context: context,url: url);
+      emit(state.copyWith(
+        status: AppStatus.success,
+        message: "Downloaded the image",
+      ));
+    } catch (error) {
+      emit(state.copyWith(
+        status: AppStatus.error,
+        message: error.toString().toException(),
+      ));
+    }
+  }
 }
 
 enum AppStatus { initial, loading, success, error }

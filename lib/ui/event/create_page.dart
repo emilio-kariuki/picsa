@@ -1,4 +1,6 @@
 
+// ignore_for_file: must_be_immutable
+
 import 'package:picsa/domain/blocs/minimal/bool/bool_cubit.dart';
 import 'package:picsa/common_widgets/input_field.dart';
 import 'package:picsa/common_widgets/loading_circle.dart';
@@ -77,7 +79,7 @@ class CreatePage extends StatelessWidget {
                               InputField(
                                 controller: _eventController,
                                 prefixIcon: Padding(
-                                  padding: const EdgeInsets.all(12.0),
+                                  padding: const EdgeInsets.all(15.0),
                                   child: SvgPicture.asset(
                                     AppImages.edit,
                                     color: Colors.grey[300],

@@ -12,8 +12,8 @@ class UserRepository extends UserTemplate {
   Future<bool> createUser({required UserModel user}) async {
     try {
       final response = await supabase.from('User').select().eq('id', user.id);
-      if (response.first.isEmpty) {
-        await supabase.from('Users').insert({
+      if (response.isEmpty) {
+        await supabase.from('User').insert({
           'id': user.id,
           'name': user.name,
           'email': user.email,

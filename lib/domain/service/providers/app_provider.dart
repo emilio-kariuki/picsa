@@ -1,4 +1,5 @@
 import 'package:picsa/domain/service/repository/repository.dart';
+import 'package:picsa/utilities/packages.dart';
 
 class AppProvider extends AppTemplate {
   final AppRepository _appRepository;
@@ -13,5 +14,20 @@ class AppProvider extends AppTemplate {
   @override
   Future<bool> shareContent({required String text, required String subject}) {
     return _appRepository.shareContent(text: text, subject: subject);
+  }
+
+  @override
+  Future<void> launchBrowser({required String url}) {
+    return _appRepository.launchBrowser(url: url);
+  }
+
+  @override
+  Future<bool> shareImage({required String url}) {
+    return _appRepository.shareImage(url: url);
+  }
+
+  @override
+  Future<bool> downloadImage({required BuildContext context,required String url}) {
+    return _appRepository.downloadImage(context: context,url: url);
   }
 }

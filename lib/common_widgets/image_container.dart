@@ -30,7 +30,7 @@ class ImageContainer extends StatelessWidget {
       imageUrl: imageUrl,
       fit: fit,
       cacheKey: imageUrl,
-      fadeInDuration: const Duration(milliseconds: 100),
+      fadeInDuration: const Duration(milliseconds: 1),
       errorWidget: (context, url, error) => Container(
         height: height,
         width: width,

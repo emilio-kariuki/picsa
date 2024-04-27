@@ -26,4 +26,29 @@ class EventProvider extends EventTemplate {
   Future<bool> deleteEvent({required String uid}) {
     return _eventRepository.deleteEvent(uid: uid);
   }
+
+  @override
+  Future<List<Event>> getJoinedEvents() {
+    return _eventRepository.getJoinedEvents();
+  }
+
+  @override
+  Future<Event> getEventById({required String id}) {
+    return _eventRepository.getEventById(id: id);
+  }
+
+  @override
+  Future<List<ImageModel>> getUserImages({required String eventId}) {
+    return _eventRepository.getUserImages(eventId: eventId);
+  }
+
+  @override
+  Future<int> getEventImagesTaken({required String eventId}) {
+    return _eventRepository.getEventImagesTaken(eventId: eventId);
+  }
+
+  @override
+  Future<int> getUsersJoined({required String eventId}) {
+    return _eventRepository.getUsersJoined(eventId: eventId);
+  }
 }

@@ -1,5 +1,6 @@
 // ignore_for_file: must_be_immutable
 
+import 'package:picsa/common_widgets/loading_circle.dart';
 import 'package:picsa/domain/blocs/app/app_cubit.dart';
 import 'package:picsa/utilities/packages.dart';
 
@@ -27,36 +28,43 @@ class CameraPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
+
     return BlocConsumer<CameraCubit, CameraState>(
+      listenWhen: (previous, current) => current.status == CameraStatus.loaded,
+      buildWhen: (previous, current) => current.status == CameraStatus.loaded,
       listener: (context, state) {
-        if (state.controller == null) {
+        if (state.status == CameraStatus.error) {
           context.read<CameraCubit>().initialize();
         }
+
+        debugPrint(state.status.toString());
       },
       builder: (context, state) {
-        return AnnotatedRegion<SystemUiOverlayStyle>(
-          value: const SystemUiOverlayStyle(
-            statusBarColor: Colors.transparent,
-            statusBarBrightness: Brightness.light,
-          ),
-          child: Scaffold(
-            body: SizedBox(
-              height: height,
-              child: CameraPreview(
-                state.controller!,
-                child: Stack(
-                  fit: StackFit.loose,
-                  children: [
-                    toggleCamera(height, width),
-                    captureImage(height),
-                    topMenu(height, width),
-                    PopButton(height: height, width: width),
-                  ],
+      
+          return AnnotatedRegion<SystemUiOverlayStyle>(
+              value: const SystemUiOverlayStyle(
+                statusBarColor: Colors.transparent,
+                statusBarBrightness: Brightness.light,
+              ),
+              child: Scaffold(
+                body: SizedBox(
+                  height: height,
+                  child: CameraPreview(
+                    state.controller!,
+                    child: Stack(
+                      fit: StackFit.loose,
+                      children: [
+                        toggleCamera(height, width),
+                        captureImage(height),
+                        topMenu(height, width),
+                        PopButton(height: height, width: width),
+                      ],
+                    ),
+                  ),
                 ),
               ),
-            ),
-          ),
-        );
+            );
+        
       },
     );
   }

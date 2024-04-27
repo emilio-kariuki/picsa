@@ -130,14 +130,14 @@ class GoogleButton extends StatelessWidget {
               switch (state.status) {
                 case AuthStatus.success:
                   context
-                    ..read<AuthCubit>().createUser(user: state.user!)
+                    ..read<AuthCubit>().createUser()
                     ..read<UserCubit>().getUser()
                     ..go('/home');
                 case AuthStatus.error:
                   context.showErrorToast(
                       title: "Error", message: state.message, context: context);
                 default:
-                  debugPrint("the default");
+                  debugPrint("");
               }
             },
             builder: (context, state) {

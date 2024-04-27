@@ -1,4 +1,5 @@
 import 'package:picsa/ui/event/event_create_page.dart';
+import 'package:picsa/ui/event/image_preview.dart';
 import 'package:picsa/ui/event/images_page.dart';
 import 'package:picsa/utilities/packages.dart';
 
@@ -8,14 +9,13 @@ final appRouter = GoRouter(
   initialLocation: '/welcome',
   routes: [
     GoRoute(
-        path: '/camera',
+        path: '/camera/:id',
+        name: Routes.camera,
         pageBuilder: (context, state) {
-          final data = state.extra;
+          final id = state.pathParameters['id'];
           return CustomTransitionPage<void>(
             key: state.pageKey,
-            child: CameraPage(
-              eventId: (data as Map)['eventId'],
-            ),
+            child: CameraPage(eventId: id!),
             transitionsBuilder:
                 (context, animation, secondaryAnimation, child) =>
                     FadeTransition(opacity: animation, child: child),
@@ -50,27 +50,47 @@ final appRouter = GoRouter(
           );
         }),
     GoRoute(
-        path: '/images-page',
-        builder: (context, state) {
-          final data = state.extra;
-          return ImagesPage(
-            eventId: (data as Map)['eventId'],
+        path: '/images/:id',
+        pageBuilder: (context, state) {
+          final id = state.pathParameters['id'];
+          return CustomTransitionPage<void>(
+            arguments: id,
+            key: state.pageKey,
+            child: ImagesPage(
+              eventId: id!,
+            ),
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) =>
+                    FadeTransition(opacity: animation, child: child),
           );
-        })
+        }),
+    GoRoute(
+      path: '/preview',
+      builder: (context, state) {
+        final data = state.extra;
+        return ImagePreview(
+          url: (data as Map)['url']
+        );
+      },
+    )
   ],
   redirect: (BuildContext context, GoRouterState state) async {
+    // get route state
     final bool loggedIn = supabase.auth.currentUser != null;
     final bool loggingIn = state.matchedLocation == Routes.welcome;
     if (!loggedIn) return Routes.welcome;
-    if (loggingIn) return Routes.home;
-    // no need to redirect at all
+    if (loggingIn) {
+      return Routes.home;
+    }
     return null;
+    // no need to redirect at all
   },
 );
 
 class Routes {
   static const String welcome = '/welcome';
   static const String home = '/home';
+  static const String camera = '/camera';
 }
 
 class GoRouterRefreshStream extends ChangeNotifier {

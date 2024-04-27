@@ -5,6 +5,7 @@ class AppImages {
   static const String notification = 'assets/notification.png';
   static const String logo = 'assets/logo.svg';
   static const String camera = 'assets/svg/camera.svg';
+    static const String imagesPage = 'assets/camera.jpg';
   static const String edit = 'assets/svg/edit.svg';
   static const String pin = 'assets/pin.svg';
   static const String qr = 'assets/svg/qr.svg';
@@ -23,6 +24,8 @@ class AppImages {
   static const String flashOff = 'assets/svg/flash_off.svg';
     static const String back = 'assets/svg/back.svg';
         static const String close = 'assets/svg/close.svg';
+                static const String user = 'assets/svg/user.svg';
+
 
 
 

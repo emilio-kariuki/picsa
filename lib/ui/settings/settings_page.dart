@@ -1,4 +1,5 @@
 import 'package:picsa/common_widgets/image_container.dart';
+import 'package:picsa/domain/blocs/app/app_cubit.dart';
 import 'package:picsa/domain/blocs/app/auth_cubit.dart';
 import 'package:picsa/domain/blocs/app/user_cubit.dart';
 import 'package:picsa/utilities/packages.dart';
@@ -46,10 +47,30 @@ class SettingsPage extends StatelessWidget {
                         ),
                       ),
                       Gap(1 * SizeConfig.heightMultiplier),
-                      SettingButton(
-                        icon: AppImages.policy,
-                        title: "Privacy Policy",
-                        function: () {},
+                      BlocProvider(
+                        create: (context) => AppCubit(),
+                        child: Builder(builder: (context) {
+                          return BlocConsumer<AppCubit, AppState>(
+                            listener: (context, state) {
+                              if (state.status == AppStatus.error) {
+                                context.showErrorToast(
+                                    title: "Error",
+                                    message: state.message,
+                                    context: context);
+                              }
+                            },
+                            builder: (context, state) {
+                              return SettingButton(
+                                icon: AppImages.policy,
+                                title: "Privacy Policy",
+                                function: () => context
+                                    .read<AppCubit>()
+                                    .launchBrowser(
+                                        url: AppConstants.APP_PRIVACY),
+                              );
+                            },
+                          );
+                        }),
                       ),
                       SettingButton(
                         icon: AppImages.logout,
@@ -211,11 +232,17 @@ class ProfileContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<UserCubit, UserState>(
+    return BlocConsumer<UserCubit, UserState>(
+      listener: (context, state) {
+        if (state.user == null) {
+          context.read<UserCubit>().getUser();
+        }
+      },
       builder: (context, state) {
         switch (state.status) {
           case UserStatus.success:
             return Container(
+              width: MediaQuery.sizeOf(context).width,
               padding: const EdgeInsets.all(15),
               decoration: BoxDecoration(
                   color: const Color(0xff1C1C1C),
@@ -231,26 +258,31 @@ class ProfileContainer extends StatelessWidget {
                     borderRadius: BorderRadius.zero,
                   ),
                   Gap(2 * SizeConfig.widthMultiplier),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        state.user?.name ?? "",
-                        style: GoogleFonts.notoSans(
-                          fontSize: 2.2 * SizeConfig.textMultiplier,
-                          fontWeight: FontWeight.w600,
+                  SizedBox(
+                    width: 28 * SizeConfig.widthMultiplier,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          state.user?.name ?? "",
+                          overflow: TextOverflow.ellipsis,
+                          style: GoogleFonts.notoSans(
+                            fontSize: 2.2 * SizeConfig.textMultiplier,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
-                      ),
-                      Gap(0.3 * SizeConfig.heightMultiplier),
-                      Text(
-                        state.user?.email ?? "",
-                        style: GoogleFonts.notoSans(
-                          fontSize: 2 * SizeConfig.textMultiplier,
-                          fontWeight: FontWeight.w600,
+                        Gap(0.3 * SizeConfig.heightMultiplier),
+                        Text(
+                          state.user?.email ?? "",
+                          overflow: TextOverflow.ellipsis,
+                          style: GoogleFonts.notoSans(
+                            fontSize: 2 * SizeConfig.textMultiplier,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ],
               ),
@@ -268,63 +300,60 @@ class UserShimmer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Shimmer.fromColors(
-      baseColor: const Color(0xff1C1C1C),
-      highlightColor: const Color(0xff1C1C1C),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 300),
-        padding: const EdgeInsets.all(15),
-        decoration: BoxDecoration(
-            color: const Color(0xff1C1C1C),
-            borderRadius: BorderRadius.circular(20)),
-        child: Row(
-          children: [
-            Gap(2 * SizeConfig.widthMultiplier),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Shimmer.fromColors(
-                  baseColor: const Color.fromARGB(255, 50, 50, 50),
-                  highlightColor: const Color.fromARGB(255, 50, 50, 50),
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 300),
-                    height: 10 * SizeConfig.heightMultiplier,
-                    width: 10 * SizeConfig.heightMultiplier,
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: const Color.fromARGB(255, 50, 50, 50),
-                    ),
-                  ),
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 300),
+      padding: const EdgeInsets.all(15),
+      decoration: BoxDecoration(
+          color: const Color(0xff1C1C1C),
+          borderRadius: BorderRadius.circular(20)),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Shimmer.fromColors(
+            baseColor: const Color.fromARGB(255, 50, 50, 50),
+            highlightColor: const Color.fromARGB(255, 50, 50, 50),
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 300),
+              height: 10 * SizeConfig.heightMultiplier,
+              width: 10 * SizeConfig.heightMultiplier,
+              decoration: const BoxDecoration(
+                shape: BoxShape.circle,
+                color:  Color.fromARGB(255, 50, 50, 50),
+              ),
+            ),
+          ),
+          Gap(2 * SizeConfig.widthMultiplier),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Shimmer.fromColors(
+                baseColor: Colors.grey[800]!,
+                highlightColor: Colors.grey[700]!,
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 400),
+                  height: 2 * SizeConfig.heightMultiplier,
+                  width: 20 * SizeConfig.widthMultiplier,
+                  decoration: BoxDecoration(
+                      color: Colors.grey[800],
+                      borderRadius: BorderRadius.circular(20)),
                 ),
-                Shimmer.fromColors(
-                  baseColor: const Color(0xff1C1C1C),
-                  highlightColor: const Color.fromARGB(255, 50, 50, 50),
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 300),
-                    height: 2 * SizeConfig.heightMultiplier,
-                    width: 12 * SizeConfig.widthMultiplier,
-                    decoration: BoxDecoration(
-                        color: const Color.fromARGB(255, 44, 44, 44),
-                        borderRadius: BorderRadius.circular(20)),
-                  ),
+              ),
+              Gap(0.5 * SizeConfig.heightMultiplier),
+              Shimmer.fromColors(
+                baseColor: Colors.grey[800]!,
+                highlightColor: Colors.grey[700]!,
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 400),
+                  height: 2 * SizeConfig.heightMultiplier,
+                  width: 30 * SizeConfig.widthMultiplier,
+                  decoration: BoxDecoration(
+                      color: Colors.grey[800],
+                      borderRadius: BorderRadius.circular(20)),
                 ),
-                Gap(0.3 * SizeConfig.heightMultiplier),
-                Shimmer.fromColors(
-                  baseColor: const Color.fromARGB(255, 50, 50, 50),
-                  highlightColor: const Color.fromARGB(255, 50, 50, 50),
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 300),
-                    height: 2 * SizeConfig.heightMultiplier,
-                    width: 18 * SizeConfig.widthMultiplier,
-                    decoration: BoxDecoration(
-                        color: const Color.fromARGB(255, 44, 44, 44),
-                        borderRadius: BorderRadius.circular(20)),
-                  ),
-                ),
-              ],
-            )
-          ],
-        ),
+              ),
+            ],
+          )
+        ],
       ),
     );
   }
