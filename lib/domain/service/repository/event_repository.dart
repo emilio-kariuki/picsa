@@ -127,6 +127,7 @@ class EventRepository extends EventTemplate {
       } else {
         throw Exception('Error fetching images');
       }
+
     } catch (e) {
       debugPrint(e.toString());
       throw Exception(e.toString());
