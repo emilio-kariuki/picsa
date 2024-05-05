@@ -2,7 +2,7 @@ import 'package:get_it/get_it.dart';
 import 'package:picsa/domain/service/providers/app_provider.dart';
 
 import 'providers/providers.dart';
-import 'providers/user_repository.dart';
+import 'providers/user_provider.dart';
 import 'repository/repository.dart';
 
 final service = GetIt.instance;

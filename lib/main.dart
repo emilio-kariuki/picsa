@@ -33,7 +33,6 @@ class MainApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        
         BlocProvider(
           create: (context) => UserCubit()..getUser(),
           lazy: false,

@@ -3,7 +3,7 @@ import 'package:picsa/domain/models/user_model.dart';
 import 'package:picsa/domain/service/service_locator.dart';
 import 'package:picsa/utilities/packages.dart';
 
-import '../../service/providers/user_repository.dart';
+import '../../service/providers/user_provider.dart';
 
 class UserCubit extends Cubit<UserState> {
   final _userProvider = service<UserProvider>();
