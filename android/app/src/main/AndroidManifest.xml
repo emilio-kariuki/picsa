@@ -69,8 +69,8 @@
                 <action android:name="android.intent.action.DEVICE_STORAGE_OK"/>
             </intent-filter>
             </receiver>    
-            <service android:name="BillingService" />
-            <receiver android:name="BillingReceiver">
+            <service android:name="BillingService" android:exported="true"/>
+            <receiver android:name="BillingReceiver" android:exported="true">
             <intent-filter>
                 <action android:name="com.android.vending.billing.IN_APP_NOTIFY" />
                 <action android:name="com.android.vending.billing.RESPONSE_CODE" />
