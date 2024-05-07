@@ -27,7 +27,6 @@ class CameraRepository extends CameraTemplate {
       CameraController controller = CameraController(
           cameras[0], ResolutionPreset.max,
           imageFormatGroup: ImageFormatGroup.jpeg);
-
       await controller.initialize();
       await controller.setFlashMode(FlashMode.off);
       return controller;

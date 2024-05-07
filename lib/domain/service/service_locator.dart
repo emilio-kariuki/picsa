@@ -26,5 +26,9 @@ void initLocator() {
     ..registerLazySingleton<CameraRepository>(() => CameraRepository())
     ..registerLazySingleton<AppProvider>(
         () => AppProvider(appRepository: service()))
-    ..registerLazySingleton<AppRepository>(() => AppRepository());
+    ..registerLazySingleton<AppRepository>(() => AppRepository())
+    ..registerLazySingleton<SubscriptionProvider>(
+        () => SubscriptionProvider(subscriptionRepository: service()))
+    ..registerLazySingleton<SubscriptionRepository>(
+        () => SubscriptionRepository());
 }

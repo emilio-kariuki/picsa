@@ -30,6 +30,10 @@ class AuthCubit extends Cubit<AuthenticationState> {
     await UserRepository().createUser(user: state.user!);
   }
 
+  Future<void> isSignedIn() async {
+    await AuthRepository().isSignedIn();
+  }
+
   Future<void> signOut() async {
     try {
       emit(state.copyWith(

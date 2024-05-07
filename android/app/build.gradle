@@ -48,10 +48,10 @@ android {
 
     defaultConfig {
         applicationId "com.ecoville.picsa"
-        minSdkVersion 21
+        minSdkVersion 24
         targetSdkVersion flutter.targetSdkVersion
-        versionCode 14
-        versionName "0.0.14"
+        versionCode 15
+        versionName "0.0.15"
     }
 
     signingConfigs {

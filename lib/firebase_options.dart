@@ -28,10 +28,7 @@ class DefaultFirebaseOptions {
       case TargetPlatform.iOS:
         return ios;
       case TargetPlatform.macOS:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for macos - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return macos;
       case TargetPlatform.windows:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for windows - '
@@ -59,12 +56,23 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyC-hhrP3lA2EDyJ1_z3R8YfXDhyZYHW_Iw',
-    appId: '1:203502494436:ios:9149163b21b71f281242f1',
+    appId: '1:203502494436:ios:5b96692ea2b7cdc01242f1',
     messagingSenderId: '203502494436',
     projectId: 'projo-f83ae',
     storageBucket: 'projo-f83ae.appspot.com',
-    androidClientId: '203502494436-1ud3nj5ieph04a18p4ivm9b7ipv83lhj.apps.googleusercontent.com',
-    iosClientId: '203502494436-3c0s0cl8ie5u49ehrsbf9trk1grm3fhh.apps.googleusercontent.com',
-    iosBundleId: 'com.example.picsa',
+    androidClientId: '203502494436-1isq5j6b48didr3fr9n76f5q0u2a045d.apps.googleusercontent.com',
+    iosClientId: '203502494436-89ia030nta7apafp5u2gv6qaiq603ijm.apps.googleusercontent.com',
+    iosBundleId: 'com.ecoville.picsa',
+  );
+
+  static const FirebaseOptions macos = FirebaseOptions(
+    apiKey: 'AIzaSyC-hhrP3lA2EDyJ1_z3R8YfXDhyZYHW_Iw',
+    appId: '1:203502494436:ios:efbb57371ed570b31242f1',
+    messagingSenderId: '203502494436',
+    projectId: 'projo-f83ae',
+    storageBucket: 'projo-f83ae.appspot.com',
+    androidClientId: '203502494436-1isq5j6b48didr3fr9n76f5q0u2a045d.apps.googleusercontent.com',
+    iosClientId: '203502494436-knveumv58jg6vc5mha1375m3i3eta2bg.apps.googleusercontent.com',
+    iosBundleId: 'com.example.picsa.RunnerTests',
   );
 }

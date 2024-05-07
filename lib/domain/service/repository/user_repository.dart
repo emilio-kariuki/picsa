@@ -8,6 +8,7 @@ abstract class UserTemplate {
 }
 
 class UserRepository extends UserTemplate {
+  
   @override
   Future<bool> createUser({required UserModel user}) async {
     try {

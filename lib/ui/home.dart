@@ -1,19 +1,52 @@
-
+import 'package:picsa/domain/blocs/app/user_cubit.dart';
 import 'package:picsa/domain/blocs/minimal/navigation/navigation_cubit.dart';
 import 'package:picsa/ui/event/create_page.dart';
 import 'package:picsa/ui/event/event_page.dart';
 import 'package:picsa/ui/settings/settings_page.dart';
 import 'package:picsa/utilities/packages.dart';
+import 'package:purchases_flutter/purchases_flutter.dart';
 
-class Home extends StatelessWidget {
+class Home extends StatefulWidget {
   const Home({super.key});
+
+  @override
+  State<Home> createState() => _HomeState();
+}
+
+class _HomeState extends State<Home> {
+  @override
+  void initState() {
+    super.initState();
+    Purchases.addCustomerInfoUpdateListener((customerInfo) {
+      debugPrint("Customer Info: ${customerInfo.activeSubscriptions}");
+      if (customerInfo.activeSubscriptions.isNotEmpty) {
+        // context.read<UserCubit>().getUser();
+      }
+    });
+    supabase
+        .channel('public:User')
+        .onPostgresChanges(
+            event: PostgresChangeEvent.update,
+            schema: 'public',
+            table: 'User',
+            filter: PostgresChangeFilter(
+              type: PostgresChangeFilterType.eq,
+              column: 'id',
+              value: supabase.auth.currentUser!.id,
+            ),
+            callback: (payload) {
+              debugPrint('Change received: ${payload.toString()}');
+              context.read<UserCubit>().getUser();
+            })
+        .subscribe();
+  }
 
   Widget getBody() {
     final pages = <Widget>[
       CreatePage(),
       // CameraPage(eventId: "47c2adb1-1390-4899-8a0d-f95cbbaaf7ca",),
-      EventPage(),
-      SettingsPage()
+      const EventPage(),
+      const SettingsPage()
     ];
     return BlocBuilder<NavigationCubit, NavigationState>(
       builder: (context, state) {

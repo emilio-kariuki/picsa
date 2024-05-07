@@ -7,6 +7,7 @@ import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:picsa/domain/blocs/app/auth_cubit.dart';
+import 'package:picsa/domain/blocs/app/subscription_cubit.dart';
 import 'package:picsa/domain/blocs/app/user_cubit.dart';
 import 'package:picsa/ui/authentication/widgets/terms_of_service.dart';
 import 'package:picsa/utilities/app_constants.dart';
@@ -132,6 +133,10 @@ class GoogleButton extends StatelessWidget {
                   context
                     ..read<AuthCubit>().createUser()
                     ..read<UserCubit>().getUser()
+                    ..read<UserCubit>().loginRevenueCat()
+                    ..read<SubscriptionCubit>().isSubscribed()
+                    ..read<SubscriptionCubit>().getOffers()
+                    ..read<SubscriptionCubit>().getPackages()
                     ..go('/home');
                 case AuthStatus.error:
                   context.showErrorToast(
@@ -167,9 +172,9 @@ class GoogleButton extends StatelessWidget {
                     child: state.status == AuthStatus.loading
                         ? const Center(
                             child: LoadingCircle(
-                              color:  Color(
-                  0xff70B93E,
-                ),
+                              color: Color(
+                                0xff70B93E,
+                              ),
                             ),
                           )
                         : Row(

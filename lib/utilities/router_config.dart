@@ -68,14 +68,13 @@ final appRouter = GoRouter(
       path: '/preview',
       builder: (context, state) {
         final data = state.extra;
-        return ImagePreview(
-          url: (data as Map)['url']
-        );
+        return ImagePreview(url: (data as Map)['url']);
       },
     )
   ],
   redirect: (BuildContext context, GoRouterState state) async {
     // get route state
+
     final bool loggedIn = supabase.auth.currentUser != null;
     final bool loggingIn = state.matchedLocation == Routes.welcome;
     if (!loggedIn) return Routes.welcome;

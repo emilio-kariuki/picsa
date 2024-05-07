@@ -8,6 +8,6 @@ class AppConstants {
   static const String APP_LOGO_TEXT_DARK = "assets/logo_text_dark.png";
   static const String APP_LOGO_TEXT_LIGHT = "assets/logo_text_light.png";
   static const String APP_URL = "https://picsa.pro";
-    static const String APP_PRIVACY = "https://picsa.pro/privacy";
-
+  static const String APP_PRIVACY = "https://picsa.pro/privacy";
+  static const String ENTITLEMENT_ID = "pro";
 }

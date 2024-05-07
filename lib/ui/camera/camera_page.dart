@@ -1,6 +1,5 @@
 // ignore_for_file: must_be_immutable
 
-import 'package:picsa/common_widgets/loading_circle.dart';
 import 'package:picsa/domain/blocs/app/app_cubit.dart';
 import 'package:picsa/utilities/packages.dart';
 

@@ -1,9 +1,11 @@
 import 'dart:async';
 
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:picsa/domain/models/user_model.dart';
 import 'package:picsa/utilities/supabase_config.dart';
+import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 abstract class AuthTemplate {
@@ -30,6 +32,11 @@ class AuthRepository extends AuthTemplate {
       if (response == null) {
         return false;
       }
+      final token = await FirebaseMessaging.instance.getToken();
+      await Purchases.logIn(response.id);
+      await Purchases.setEmail(response.email!);
+      await Purchases.setPushToken(token!);
+      await Purchases.syncPurchases();
       return true;
     } catch (e) {
       debugPrint(e.toString());
@@ -56,11 +63,19 @@ class AuthRepository extends AuthTemplate {
         idToken: idToken,
         accessToken: accessToken,
       );
+      await Purchases.logIn(response.user!.id);
+      await Purchases.setEmail(response.user!.email!);
+      await Purchases.setDisplayName(
+          response.user!.userMetadata?['full_name']!);
+      await Purchases.syncPurchases();
+      final token = await FirebaseMessaging.instance.getToken();
+      await Purchases.setPushToken(token!);
       final user = UserModel(
         id: response.user!.id,
         name: response.user?.userMetadata?['full_name'],
         email: response.user!.email!,
         url: response.user?.userMetadata?['avatar_url'],
+        pro: false
       );
       return user;
     } catch (e) {
