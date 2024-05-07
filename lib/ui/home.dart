@@ -18,7 +18,7 @@ class _HomeState extends State<Home> {
   void initState() {
     super.initState();
     Purchases.addCustomerInfoUpdateListener((customerInfo) {
-      debugPrint("Customer Info: ${customerInfo.activeSubscriptions}");
+      debugPrint("Customer Info: ${customerInfo}");
       if (customerInfo.activeSubscriptions.isNotEmpty) {
         // context.read<UserCubit>().getUser();
       }

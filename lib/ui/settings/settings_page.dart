@@ -166,7 +166,6 @@ class SettingsPage extends StatelessWidget {
                             });
                           },
                         ),
-                        
                       ],
                     ),
                   ),
@@ -317,16 +316,14 @@ class ProfileContainer extends StatelessWidget {
                                       }),
                               child: Row(
                                 children: [
-                                 state.isPro? Icon(
-                                    Icons.diamond_outlined,
-                                    size: 2 * SizeConfig.heightMultiplier,
-                                    color:Colors.orange
-                                  ) : const SizedBox.shrink(),
+                                  state.isPro
+                                      ? Icon(Icons.diamond_outlined,
+                                          size: 2 * SizeConfig.heightMultiplier,
+                                          color: Colors.orange)
+                                      : const SizedBox.shrink(),
                                   Gap(0.5 * SizeConfig.widthMultiplier),
                                   Text(
-                                    state.isPro
-                                        ? "Premium Plan"
-                                        : "Free Plan",
+                                    state.isPro ? "Premium Plan" : "Free Plan",
                                     overflow: TextOverflow.ellipsis,
                                     style: GoogleFonts.notoSans(
                                         fontSize: 2 * SizeConfig.textMultiplier,
@@ -436,13 +433,23 @@ class SubscriptionContainer extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            "Subscription",
-            style: GoogleFonts.inter(
-              fontSize: 2.4 * SizeConfig.textMultiplier,
-              fontWeight: FontWeight.w700,
-              color: const Color.fromARGB(255, 77, 77, 77),
-            ),
+          Row(
+            children: [
+              Icon(
+                Icons.diamond_outlined,
+                size: 2.4 * SizeConfig.heightMultiplier,
+                color: Colors.orange,
+              ),
+              Gap(0.8 * SizeConfig.widthMultiplier),
+              Text(
+                "Subscription",
+                style: GoogleFonts.inter(
+                  fontSize: 2.4 * SizeConfig.textMultiplier,
+                  fontWeight: FontWeight.w700,
+                  color: const Color.fromARGB(255, 77, 77, 77),
+                ),
+              ),
+            ],
           ),
           Gap(1 * SizeConfig.heightMultiplier),
           Text(
