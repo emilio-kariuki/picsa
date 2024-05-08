@@ -4,6 +4,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:picsa/domain/models/user_model.dart';
+import 'package:picsa/domain/service/repository/repository.dart';
 import 'package:picsa/utilities/supabase_config.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -70,13 +71,7 @@ class AuthRepository extends AuthTemplate {
       await Purchases.syncPurchases();
       final token = await FirebaseMessaging.instance.getToken();
       await Purchases.setPushToken(token!);
-      final user = UserModel(
-        id: response.user!.id,
-        name: response.user?.userMetadata?['full_name'],
-        email: response.user!.email!,
-        url: response.user?.userMetadata?['avatar_url'],
-        pro: false
-      );
+      final user = await UserRepository().getUser();
       return user;
     } catch (e) {
       debugPrint(e.toString());
@@ -89,6 +84,7 @@ class AuthRepository extends AuthTemplate {
     try {
       await supabase.auth.signOut();
       await googleSignIn.signOut();
+      await Purchases.logOut();
       return true;
     } catch (e) {
       debugPrint(e.toString());

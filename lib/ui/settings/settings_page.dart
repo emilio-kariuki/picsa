@@ -5,7 +5,6 @@ import 'package:picsa/domain/blocs/app/auth_cubit.dart';
 import 'package:picsa/domain/blocs/app/subscription_cubit.dart';
 import 'package:picsa/domain/blocs/app/user_cubit.dart';
 import 'package:picsa/utilities/packages.dart';
-import 'package:purchases_ui_flutter/purchases_ui_flutter.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
@@ -284,7 +283,7 @@ class ProfileContainer extends StatelessWidget {
                             fontWeight: FontWeight.w600,
                           ),
                         ),
-                        Gap(0.3 * SizeConfig.heightMultiplier),
+                        Gap(0.2 * SizeConfig.heightMultiplier),
                         Text(
                           state.user?.email ?? "",
                           overflow: TextOverflow.ellipsis,
@@ -293,7 +292,7 @@ class ProfileContainer extends StatelessWidget {
                             fontWeight: FontWeight.w600,
                           ),
                         ),
-                        Gap(0.3 * SizeConfig.heightMultiplier),
+                        Gap(0.6 * SizeConfig.heightMultiplier),
                         BlocBuilder<UserCubit, UserState>(
                           builder: (context, state) {
                             return GestureDetector(
