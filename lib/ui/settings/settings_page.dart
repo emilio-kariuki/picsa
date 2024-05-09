@@ -109,7 +109,7 @@ class SettingsPage extends StatelessWidget {
                         ),
                         const SettingsDivider(),
                         Text(
-                          'Follow us',
+                          'Socials',
                           style: GoogleFonts.inter(
                             fontSize: 2.4 * SizeConfig.textMultiplier,
                             fontWeight: FontWeight.w700,
@@ -216,7 +216,7 @@ class SettingButton extends StatelessWidget {
           children: [
             SvgPicture.asset(
               icon,
-              color: const Color.fromARGB(255, 12, 12, 12),
+              color: Color.fromARGB(255, 63, 63, 63),
               height: 3.5 * SizeConfig.heightMultiplier,
               width: 3.5 * SizeConfig.heightMultiplier,
             ),

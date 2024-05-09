@@ -24,8 +24,6 @@ class CameraPage extends StatelessWidget {
 
   double zoom = 0;
 
-  List<double> zooms = [0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5];
-
   bool isFrontCamera = false;
 
   List<String> paths = [];

@@ -18,6 +18,7 @@ class InputField extends StatelessWidget {
     this.minLines = 1,
     this.maxLines = 5,
     this.fillColor = Colors.transparent,
+    this.focusNode,
     this.borderRadius = 10,
   });
   final TextEditingController controller;
@@ -34,11 +35,13 @@ class InputField extends StatelessWidget {
   final TextInputType? textInputType;
   final Color? fillColor;
   final double borderRadius;
+  final FocusNode ?focusNode;
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
       validator: validator,
+      focusNode: focusNode,
       controller: controller,
       obscureText: obScureText,
       enabled: isEnabled ?? true,
@@ -50,13 +53,12 @@ class InputField extends StatelessWidget {
       onTapOutside: (event) {
         FocusScope.of(context).unfocus();
       },
-      
       onChanged: onChanged,
       decoration: InputDecoration(
         hintText: hintText,
         suffixIcon: suffixIcon,
         prefixIcon: prefixIcon,
-        
+
         enabledBorder: OutlineInputBorder(
             borderSide: Theme.of(context)
                 .inputDecorationTheme

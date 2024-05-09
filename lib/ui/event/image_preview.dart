@@ -1,6 +1,6 @@
 import 'package:picsa/common_widgets/image_container.dart';
 import 'package:picsa/domain/blocs/app/app_cubit.dart';
-import 'package:picsa/ui/event/event_page.dart';
+import 'package:picsa/ui/event/widgets/icon_container.dart';
 import 'package:picsa/utilities/packages.dart';
 
 class ImagePreview extends StatelessWidget {
@@ -13,11 +13,13 @@ class ImagePreview extends StatelessWidget {
     return Scaffold(
       body: Stack(
         children: [
-          ImageContainer(
-            imageUrl: url,
-            borderRadius: BorderRadius.zero,
-            height: MediaQuery.sizeOf(context).height,
-            width: MediaQuery.sizeOf(context).width,
+          GestureDetector(
+            child: ImageContainer(
+              imageUrl: url,
+              borderRadius: BorderRadius.zero,
+              height: MediaQuery.sizeOf(context).height,
+              width: MediaQuery.sizeOf(context).width,
+            ),
           ),
           Positioned.fill(
               bottom: 3 * SizeConfig.heightMultiplier,
@@ -34,8 +36,6 @@ class ImagePreview extends StatelessWidget {
                           child: Builder(builder: (context) {
                             return BlocConsumer<AppCubit, AppState>(
                               listener: (context, state) {
-                               
-
                                 if (state.status == AppStatus.error) {
                                   context.showErrorToast(
                                       title: "Error",
@@ -49,7 +49,8 @@ class ImagePreview extends StatelessWidget {
                                   icon: Icons.file_download_outlined,
                                   function: () => context
                                       .read<AppCubit>()
-                                      .downloadImage(context: context,url: url),
+                                      .downloadImage(
+                                          context: context, url: url),
                                 );
                               },
                             );

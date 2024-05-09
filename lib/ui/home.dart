@@ -66,7 +66,7 @@ class _HomeState extends State<Home> {
               ),
               callback: (payload) {
                 debugPrint('Change received: ${payload.toString()}');
-                context.read<EventCubit>().getEvents();
+                context.read<EventCubit>().getGuestEvents();
               })
           .subscribe();
   }

@@ -1,10 +1,13 @@
 import 'dart:async';
 
 import 'package:mobile_scanner/mobile_scanner.dart';
-import 'package:picsa/common_widgets/loading_circle.dart';
-import 'package:picsa/domain/blocs/app/app_cubit.dart';
-import 'package:picsa/domain/models/models.dart';
+import 'package:picsa/domain/blocs/minimal/navigation_cubit.dart';
+import 'package:picsa/ui/event/create_page.dart';
+import 'package:picsa/ui/event/widgets/event_container_shimmer.dart';
+import 'package:picsa/ui/event/widgets/qr_scanner.dart';
 import 'package:picsa/utilities/packages.dart';
+
+import 'widgets/event_container.dart';
 
 class EventPage extends StatefulWidget {
   const EventPage({super.key});
@@ -84,18 +87,108 @@ class _EventPageState extends State<EventPage> {
                               itemCount: 5,
                             );
                           case EventStatus.success:
-                            return ListView.separated(
-                              shrinkWrap: true,
-                              physics: const NeverScrollableScrollPhysics(),
-                              itemBuilder: (context, index) {
-                                final data = state.events[index];
-                                return EventContainer(event: data);
-                              },
-                              separatorBuilder: (context, index) {
-                                return Gap(1.5 * SizeConfig.heightMultiplier);
-                              },
-                              itemCount: state.events.length,
-                            );
+                            return state.events.isEmpty
+                                ? SizedBox(
+                                    height: state.guestEvents.isEmpty
+                                        ? MediaQuery.sizeOf(context).height *
+                                            0.3
+                                        : MediaQuery.sizeOf(context).height *
+                                            0.3,
+                                    child: Center(
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          context
+                                              .read<NavigationCubit>()
+                                              .changePage(page: 0);
+                                              focusNode.requestFocus();
+                                         
+                                        },
+                                        child: Container(
+                                          height:
+                                              25 * SizeConfig.heightMultiplier,
+                                          width:
+                                              MediaQuery.sizeOf(context).width,
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 35, horizontal: 25),
+                                          decoration: BoxDecoration(
+                                            color:
+                                                Colors.black.withOpacity(0.4),
+                                            borderRadius:
+                                                BorderRadius.circular(15),
+                                          ),
+                                          child: Center(
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  children: [
+                                                    SvgPicture.asset(
+                                                      AppImages.add,
+                                                      height: 2.5 *
+                                                          SizeConfig
+                                                              .heightMultiplier,
+                                                      width: 2.5 *
+                                                          SizeConfig
+                                                              .heightMultiplier,
+                                                      color: Colors.grey[400],
+                                                    ),
+                                                    Gap(0.2 *
+                                                        SizeConfig
+                                                            .widthMultiplier),
+                                                    Text(
+                                                      'Add Event',
+                                                      style:
+                                                          GoogleFonts.notoSans(
+                                                        fontSize: 2.2 *
+                                                            SizeConfig
+                                                                .textMultiplier,
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                        color: Colors.grey[400],
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                                Gap(1 *
+                                                    SizeConfig
+                                                        .heightMultiplier),
+                                                Text(
+                                                  'You have not created any events yet. Create an event to get started.',
+                                                  textAlign: TextAlign.center,
+                                                  style: GoogleFonts.notoSans(
+                                                    fontSize: 2 *
+                                                        SizeConfig
+                                                            .textMultiplier,
+                                                    fontWeight: FontWeight.w500,
+                                                    color: Colors.grey[400],
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                : ListView.separated(
+                                    shrinkWrap: true,
+                                    physics:
+                                        const NeverScrollableScrollPhysics(),
+                                    itemBuilder: (context, index) {
+                                      final data = state.events[index];
+                                      return EventContainer(event: data);
+                                    },
+                                    separatorBuilder: (context, index) {
+                                      return Gap(
+                                          1.5 * SizeConfig.heightMultiplier);
+                                    },
+                                    itemCount: state.events.length,
+                                  );
                           default:
                             return const Center(
                               child: Text('No Events'),
@@ -104,13 +197,19 @@ class _EventPageState extends State<EventPage> {
                       },
                     ),
                     Gap(2 * SizeConfig.heightMultiplier),
-                    Text(
-                      'Guest Events',
-                      style: GoogleFonts.inter(
-                        fontSize: 2 * SizeConfig.textMultiplier,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.grey[400],
-                      ),
+                    BlocBuilder<EventCubit, EventState>(
+                      builder: (context, state) {
+                        return state.guestEvents.isEmpty
+                            ? const SizedBox.shrink()
+                            : Text(
+                                'Guest Events',
+                                style: GoogleFonts.inter(
+                                  fontSize: 2 * SizeConfig.textMultiplier,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.grey[400],
+                                ),
+                              );
+                      },
                     ),
                     Gap(2 * SizeConfig.heightMultiplier),
                     BlocBuilder<EventCubit, EventState>(
@@ -155,7 +254,7 @@ class _EventPageState extends State<EventPage> {
               ),
             ),
             Positioned.fill(
-                top: MediaQuery.of(context).padding.top-20,
+                top: MediaQuery.of(context).padding.top - 20,
                 right: 10,
                 child: Align(
                   alignment: Alignment.topRight,
@@ -207,660 +306,6 @@ class _EventPageState extends State<EventPage> {
         ),
       ),
     ));
-  }
-}
-
-class ScanQr extends StatefulWidget {
-  const ScanQr({super.key});
-
-  @override
-  State<ScanQr> createState() => _ScanQrState();
-}
-
-class _ScanQrState extends State<ScanQr> {
-  final controller = MobileScannerController(
-    detectionSpeed: DetectionSpeed.noDuplicates,
-  );
-
-  @override
-  Widget build(BuildContext context) {
-    return IntrinsicHeight(
-      child: Container(
-          width: MediaQuery.sizeOf(context).width,
-          padding: const EdgeInsets.all(15),
-          color: const Color(0xff212121),
-          child: Column(
-            children: [
-              Center(
-                child: Container(
-                  height: 5,
-                  width: 10 * SizeConfig.widthMultiplier,
-                  decoration: BoxDecoration(
-                      color: Colors.grey[600],
-                      borderRadius: BorderRadius.circular(8)),
-                ),
-              ),
-              Gap(2 * SizeConfig.heightMultiplier),
-              Row(
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      context.pop();
-                    },
-                    child: SvgPicture.asset(
-                      AppImages.back,
-                      height: 3 * SizeConfig.heightMultiplier,
-                      width: 3 * SizeConfig.heightMultiplier,
-                      color: Colors.grey[600],
-                    ),
-                  ),
-                  Gap(3 * SizeConfig.heightMultiplier),
-                  Text(
-                    'Scan QR Code',
-                    style: GoogleFonts.inter(
-                      fontSize: 2.5 * SizeConfig.textMultiplier,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.grey[600],
-                    ),
-                  ),
-                  const Spacer(),
-                  GestureDetector(
-                    onTap: () {
-                      context.pop();
-                    },
-                    child: SvgPicture.asset(
-                      AppImages.uplaod,
-                      height: 2.5 * SizeConfig.heightMultiplier,
-                      width: 2.5 * SizeConfig.heightMultiplier,
-                      color: Colors.grey[600],
-                    ),
-                  ),
-                  Gap(2 * SizeConfig.heightMultiplier),
-                ],
-              ),
-              Gap(5 * SizeConfig.heightMultiplier),
-              SizedBox(
-                height: 30 * SizeConfig.heightMultiplier,
-                width: 40 * SizeConfig.heightMultiplier,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(5),
-                  child: MobileScanner(
-                    controller: MobileScannerController(
-                      detectionSpeed: DetectionSpeed.noDuplicates,
-                    ),
-                    errorBuilder: (context, error, child) {
-                      return Text(error.toString());
-                    },
-                    onDetect: (barcodes) {
-                      debugPrint(barcodes.barcodes[0].rawValue);
-                      context
-                          .read<EventCubit>()
-                          .joinEvent(eventId: barcodes.raw.toString());
-                    },
-                  ),
-                ),
-              ),
-              Gap(2 * SizeConfig.heightMultiplier),
-              BlocConsumer<EventCubit, EventState>(
-                listener: (context, state) {
-                  if (state.status == EventStatus.success) {
-                    context.pop();
-                  }
-
-                  if (state.status == EventStatus.error) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(state.message),
-                        backgroundColor: Colors.red,
-                      ),
-                    );
-                  }
-                },
-                builder: (context, state) {
-                  return state.status == EventStatus.loading
-                      ? Center(
-                          child: LoadingCircle(
-                            color: green,
-                          ),
-                        )
-                      : const SizedBox.shrink();
-                },
-              )
-            ],
-          )),
-    );
-  }
-}
-
-class EventContainerShimmer extends StatelessWidget {
-  const EventContainerShimmer({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 15),
-      decoration: BoxDecoration(
-          color: const Color.fromARGB(255, 28, 28, 28),
-          borderRadius: BorderRadius.circular(15)),
-      child: Column(
-        children: [
-          Shimmer.fromColors(
-            baseColor: const Color.fromARGB(255, 35, 35, 35),
-            highlightColor: const Color.fromARGB(255, 49, 49, 49),
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 400),
-              height: 2 * SizeConfig.heightMultiplier,
-              width: 30 * SizeConfig.widthMultiplier,
-              decoration: BoxDecoration(
-                  color: Colors.grey[800],
-                  borderRadius: BorderRadius.circular(20)),
-            ),
-          ),
-          Gap(1 * SizeConfig.heightMultiplier),
-          Shimmer.fromColors(
-            baseColor: const Color.fromARGB(255, 35, 35, 35),
-            highlightColor: const Color.fromARGB(255, 49, 49, 49),
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 400),
-              height: 2 * SizeConfig.heightMultiplier,
-              width: 15 * SizeConfig.widthMultiplier,
-              decoration: BoxDecoration(
-                  color: Colors.grey[800],
-                  borderRadius: BorderRadius.circular(20)),
-            ),
-          ),
-          Gap(1 * SizeConfig.heightMultiplier),
-          Shimmer.fromColors(
-            baseColor: const Color.fromARGB(255, 35, 35, 35),
-            highlightColor: const Color.fromARGB(255, 49, 49, 49),
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 400),
-              height: 2 * SizeConfig.heightMultiplier,
-              width: 20 * SizeConfig.widthMultiplier,
-              decoration: BoxDecoration(
-                  color: Colors.grey[800],
-                  borderRadius: BorderRadius.circular(20)),
-            ),
-          ),
-          Gap(2 * SizeConfig.heightMultiplier),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Spacer(),
-              Shimmer.fromColors(
-                baseColor: const Color.fromARGB(255, 35, 35, 35),
-                highlightColor: const Color.fromARGB(255, 49, 49, 49),
-                child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 400),
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(15),
-                      color: const Color.fromARGB(255, 35, 35, 35)),
-                  child: const Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: SizedBox.shrink(),
-                  ),
-                ),
-              ),
-              const Spacer(),
-              Shimmer.fromColors(
-                baseColor: const Color.fromARGB(255, 35, 35, 35),
-                highlightColor: const Color.fromARGB(255, 49, 49, 49),
-                child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 400),
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(15),
-                      color: const Color.fromARGB(255, 35, 35, 35)),
-                  child: const Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: SizedBox.shrink(),
-                  ),
-                ),
-              ),
-              const Spacer(),
-              Shimmer.fromColors(
-                baseColor: const Color.fromARGB(255, 35, 35, 35),
-                highlightColor: const Color.fromARGB(255, 49, 49, 49),
-                child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 400),
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(15),
-                      color: const Color.fromARGB(255, 35, 35, 35)),
-                  child: const Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: SizedBox.shrink(),
-                  ),
-                ),
-              ),
-              const Spacer(),
-              Shimmer.fromColors(
-                baseColor: const Color.fromARGB(255, 35, 35, 35),
-                highlightColor: const Color.fromARGB(255, 49, 49, 49),
-                child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 400),
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(15),
-                      color: const Color.fromARGB(255, 35, 35, 35)),
-                  child: const Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: SizedBox.shrink(),
-                  ),
-                ),
-              ),
-              const Spacer()
-            ],
-          )
-        ],
-      ),
-    );
-  }
-}
-
-class EventContainer extends StatelessWidget {
-  const EventContainer({
-    super.key,
-    required this.event,
-  });
-
-  final Event event;
-
-  @override
-  Widget build(BuildContext context) {
-    String formattedDate =
-        DateFormat.yMMMd().format(DateTime.parse(event.createdAt));
-
-    return GestureDetector(
-      onTap: () => context.push(
-        '/images/${event.id}',
-      ),
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 15),
-        decoration: BoxDecoration(
-            color: const Color.fromARGB(255, 28, 28, 28),
-            borderRadius: BorderRadius.circular(15)),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Text(
-                event.name,
-                textAlign: TextAlign.center,
-                maxLines: 2,
-                style: GoogleFonts.inter(
-                    fontSize: 2.5 * SizeConfig.textMultiplier,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.white,
-                    height: 1.2),
-              ),
-            ),
-            Gap(1 * SizeConfig.heightMultiplier),
-            Text(
-              formattedDate,
-              textAlign: TextAlign.center,
-              style: GoogleFonts.notoSans(
-                  fontSize: 1.8 * SizeConfig.textMultiplier,
-                  fontWeight: FontWeight.w600,
-                  color: const Color.fromARGB(255, 108, 108, 108),
-                  height: 1.2),
-            ),
-            Gap(2 * SizeConfig.heightMultiplier),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Spacer(),
-                IconContainer(
-                  icon: Icons.camera_alt_outlined,
-                  function: () {
-                    context.push(
-                      '/camera/${event.id}',
-                    );
-                  },
-                ),
-                const Spacer(),
-                IconContainer(
-                  icon: Icons.cloud_upload_outlined,
-                  function: () {},
-                ),
-                const Spacer(),
-                BlocProvider(
-                  create: (context) => AppCubit(),
-                  child: Builder(builder: (context) {
-                    return BlocBuilder<AppCubit, AppState>(
-                      builder: (context, state) {
-                        return IconContainer(
-                          icon: Icons.ios_share_rounded,
-                          function: () {
-                            context.read<AppCubit>().shareContent(
-                                  subject:
-                                      "Share this event with friends and family",
-                                  text:
-                                      "${AppConstants.APP_URL}/event/${event.id}",
-                                );
-                          },
-                        );
-                      },
-                    );
-                  }),
-                ),
-                const Spacer(),
-                IconContainer(
-                  icon: Icons.qr_code,
-                  function: () => showModalBottomSheet(
-                      clipBehavior: Clip.antiAlias,
-                      isScrollControlled: true,
-                      backgroundColor: const Color(0xff1E1E1E),
-                      barrierColor: Colors.black.withOpacity(0.6),
-                      elevation: 5,
-                      shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(15),
-                              topRight: Radius.circular(15))),
-                      context: context,
-                      builder: (context) {
-                        return EventQr(
-                          eventId: event.id,
-                        );
-                      }),
-                ),
-                const Spacer(),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class IconContainer extends StatelessWidget {
-  const IconContainer(
-      {super.key,
-      required this.icon,
-      required this.function,
-      this.isLoading = false});
-
-  final IconData icon;
-  final Function() function;
-  final bool? isLoading;
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: function,
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-            color: const Color.fromARGB(255, 35, 35, 35)),
-        child: isLoading ?? false
-            ? LoadingCircle(
-                color: Colors.grey[500],
-                size: 20,
-              )
-            : Icon(icon,
-                size: 16, color: const Color.fromARGB(255, 103, 103, 103)),
-      ),
-    );
-  }
-}
-
-class SvgContainer extends StatelessWidget {
-  const SvgContainer({
-    super.key,
-    required this.height,
-    required this.icon,
-    required this.function,
-  });
-
-  final double height;
-  final String icon;
-  final Function() function;
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: function,
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 22, horizontal: 22),
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(15),
-            color: const Color.fromARGB(255, 35, 35, 35)),
-        child: SvgPicture.asset(
-          icon,
-          height: height * 0.02,
-          width: height * 0.02,
-        ),
-      ),
-    );
-  }
-}
-
-class CustomAvatars extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: 80,
-      child: Stack(
-        children: <Widget>[
-          Align(
-            alignment: Alignment.centerRight,
-            child: CircleAvatar(
-              backgroundColor: Colors.white,
-              child: CircleAvatar(
-                radius: 18,
-                backgroundColor: Colors.red,
-                child: Image.asset(
-                  AppImages.welcome,
-                  fit: BoxFit.cover,
-                ), // Provide your custom image
-              ),
-            ),
-          ),
-          Align(
-            alignment: Alignment.center,
-            child: CircleAvatar(
-              backgroundColor: Colors.white,
-              child: CircleAvatar(
-                radius: 18,
-                backgroundColor: Colors.red,
-                child: Image.asset(
-                  AppImages.welcome,
-                  fit: BoxFit.cover,
-                ), // Provide your custom image
-              ),
-            ),
-          ),
-          Align(
-            alignment: Alignment.centerLeft,
-            child: CircleAvatar(
-              backgroundColor: Colors.white,
-              child: CircleAvatar(
-                radius: 18,
-                backgroundColor: Colors.red,
-                child: Image.asset(
-                  AppImages.welcome,
-                  fit: BoxFit.cover,
-                ), // Provide your custom image
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class EventQr extends StatelessWidget {
-  const EventQr({super.key, required this.eventId});
-  final String eventId;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      color: const Color(0xff212121),
-      child: Padding(
-        padding: EdgeInsets.symmetric(
-            horizontal: 2 * SizeConfig.widthMultiplier,
-            vertical: 3 * SizeConfig.heightMultiplier),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Center(
-              child: Container(
-                height: 5,
-                width: 10 * SizeConfig.widthMultiplier,
-                decoration: BoxDecoration(
-                    color: Colors.grey[600],
-                    borderRadius: BorderRadius.circular(8)),
-              ),
-            ),
-            Gap(2 * SizeConfig.heightMultiplier),
-            Row(
-              children: [
-                GestureDetector(
-                  onTap: () {
-                    context.pop();
-                  },
-                  child: SvgPicture.asset(
-                    AppImages.back,
-                    height: 3 * SizeConfig.heightMultiplier,
-                    width: 3 * SizeConfig.heightMultiplier,
-                    color: Colors.grey[600],
-                  ),
-                ),
-                Gap(3 * SizeConfig.heightMultiplier),
-                Text(
-                  'Scan QR Code',
-                  style: GoogleFonts.inter(
-                    fontSize: 2.5 * SizeConfig.textMultiplier,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.grey[600],
-                  ),
-                ),
-                const Spacer(),
-                GestureDetector(
-                  onTap: () {
-                    context.pop();
-                  },
-                  child: SvgPicture.asset(
-                    AppImages.uplaod,
-                    height: 2.5 * SizeConfig.heightMultiplier,
-                    width: 2.5 * SizeConfig.heightMultiplier,
-                    color: Colors.grey[600],
-                  ),
-                ),
-                Gap(2 * SizeConfig.heightMultiplier),
-              ],
-            ),
-            Gap(5 * SizeConfig.heightMultiplier),
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                  color: Colors.white, borderRadius: BorderRadius.circular(10)),
-              child: QrImageView(
-                data: eventId,
-                version: QrVersions.auto,
-                size: 180.0,
-              ),
-            ),
-            Gap(5 * SizeConfig.heightMultiplier),
-            BlocProvider(
-              create: (context) => AppCubit(),
-              child: Builder(builder: (context) {
-                return GestureDetector(
-                  onTap: () => context.read<AppCubit>().copyToClipboard(
-                        text: "${AppConstants.APP_URL}/event/$eventId",
-                      ),
-                  child: Container(
-                    height: 7 * SizeConfig.heightMultiplier,
-                    margin: const EdgeInsets.symmetric(horizontal: 10),
-                    width: MediaQuery.sizeOf(context).width,
-                    decoration: BoxDecoration(
-                      color: const Color(0xff1C1C1C),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: BlocBuilder<AppCubit, AppState>(
-                      builder: (context, state) {
-                        return Center(
-                          child: Text(
-                            state.status == AppStatus.success
-                                ? 'Copied'
-                                : 'Copy Link',
-                            style: GoogleFonts.inter(
-                              fontSize: 2 * SizeConfig.textMultiplier,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.grey[600],
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                );
-              }),
-            )
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class ScannerErrorWidget extends StatelessWidget {
-  const ScannerErrorWidget({super.key, required this.error});
-
-  final MobileScannerException error;
-
-  @override
-  Widget build(BuildContext context) {
-    String errorMessage;
-
-    switch (error.errorCode) {
-      case MobileScannerErrorCode.controllerUninitialized:
-        errorMessage = 'Controller not ready.';
-      case MobileScannerErrorCode.permissionDenied:
-        errorMessage = 'Permission denied';
-      case MobileScannerErrorCode.unsupported:
-        errorMessage = 'Scanning is unsupported on this device';
-      default:
-        errorMessage = 'Generic Error';
-        break;
-    }
-
-    return ColoredBox(
-      color: Colors.black,
-      child: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Padding(
-              padding: EdgeInsets.only(bottom: 16),
-              child: Icon(Icons.error, color: Colors.white),
-            ),
-            Text(
-              errorMessage,
-              style: const TextStyle(color: Colors.white),
-            ),
-            Text(
-              error.errorDetails?.message ?? '',
-              style: const TextStyle(color: Colors.white),
-            ),
-          ],
-        ),
-      ),
-    );
   }
 }
 

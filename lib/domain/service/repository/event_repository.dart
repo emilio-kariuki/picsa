@@ -163,17 +163,20 @@ class EventRepository extends EventTemplate {
 
   @override
   Future<bool> joinEvent({required String eventId}) async {
-    try {
-      final userId = supabase.auth.currentUser!.id;
-      await supabase.from("GuestEvents").insert({
-        "id": userId + eventId,
-        "eventId": eventId,
-        "userId": userId,
-      });
-      return true;
-    } on PostgrestException catch (error) {
-      throw Exception(error.message);
-    }
+    final userId = supabase.auth.currentUser!.id;
+      final id = "guest_${userId}_$eventId";
+      final event = await supabase.from('GuestEvents').select().eq('id', id);
+      debugPrint(event.toString());
+      if (event.isEmpty) {
+        await supabase.from("GuestEvents").insert({
+          'id': id,
+          'eventId': eventId,
+          'userId': userId,
+        });
+        return true;
+      } else {
+        throw Exception('You have already joined this event');
+      }
   }
 
   @override

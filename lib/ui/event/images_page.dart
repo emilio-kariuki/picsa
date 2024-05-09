@@ -153,12 +153,12 @@ class _ImagesPageState extends State<ImagesPage> {
                                     child: Text(
                                       state.event!.name,
                                       style: GoogleFonts.rubikBubbles(
-                                        fontSize: 3 * SizeConfig.textMultiplier,
-                                        color: const Color.fromARGB(
-                                            255, 159, 159, 159),
-                                        fontWeight: FontWeight.w600,
-                                        height:1.2
-                                      ),
+                                          fontSize:
+                                              3 * SizeConfig.textMultiplier,
+                                          color: const Color.fromARGB(
+                                              255, 159, 159, 159),
+                                          fontWeight: FontWeight.w600,
+                                          height: 1.2),
                                     ),
                                   ),
                                   Gap(1 * SizeConfig.heightMultiplier),
@@ -444,7 +444,7 @@ class _ImagesPageState extends State<ImagesPage> {
                                 }),
                           );
                         default:
-                          return  ImagesShimmer(height: height, width: width);
+                          return ImagesShimmer(height: height, width: width);
                       }
                     },
                   ),
@@ -472,32 +472,25 @@ class ImagesShimmer extends StatelessWidget {
         itemCount: 20,
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
-        gridDelegate:
-            SliverGridDelegateWithFixedCrossAxisCount(
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
-          mainAxisSpacing:
-              2 * SizeConfig.heightMultiplier,
-          crossAxisSpacing:
-              2 * SizeConfig.heightMultiplier,
+          mainAxisSpacing: 2 * SizeConfig.heightMultiplier,
+          crossAxisSpacing: 2 * SizeConfig.heightMultiplier,
           childAspectRatio: 0.75,
         ),
         itemBuilder: (context, index) {
           return Stack(
             children: [
               Shimmer.fromColors(
-                baseColor:
-                    const Color.fromARGB(255, 35, 35, 35),
-                highlightColor:
-                    const Color.fromARGB(255, 38, 38, 38),
+                baseColor: const Color.fromARGB(255, 35, 35, 35),
+                highlightColor: const Color.fromARGB(255, 38, 38, 38),
                 child: AnimatedContainer(
-                  duration:
-                      const Duration(milliseconds: 400),
+                  duration: const Duration(milliseconds: 400),
                   height: height,
                   width: width,
                   decoration: BoxDecoration(
                       color: Colors.grey[800],
-                      borderRadius:
-                          BorderRadius.circular(8)),
+                      borderRadius: BorderRadius.circular(8)),
                 ),
               ),
               Positioned.fill(
@@ -506,22 +499,15 @@ class ImagesShimmer extends StatelessWidget {
                   child: Align(
                     alignment: Alignment.bottomLeft,
                     child: Shimmer.fromColors(
-                      baseColor: const Color.fromARGB(
-                          255, 42, 42, 42),
-                      highlightColor:
-                          const Color.fromARGB(
-                              255, 55, 55, 55),
+                      baseColor: const Color.fromARGB(255, 42, 42, 42),
+                      highlightColor: const Color.fromARGB(255, 55, 55, 55),
                       child: AnimatedContainer(
-                        duration: const Duration(
-                            milliseconds: 400),
-                        height: 2.5 *
-                            SizeConfig.heightMultiplier,
-                        width: 15 *
-                            SizeConfig.widthMultiplier,
+                        duration: const Duration(milliseconds: 400),
+                        height: 2.5 * SizeConfig.heightMultiplier,
+                        width: 15 * SizeConfig.widthMultiplier,
                         decoration: BoxDecoration(
                             color: Colors.grey[800],
-                            borderRadius:
-                                BorderRadius.circular(8)),
+                            borderRadius: BorderRadius.circular(8)),
                       ),
                     ),
                   )),
@@ -531,25 +517,17 @@ class ImagesShimmer extends StatelessWidget {
                   child: Align(
                     alignment: Alignment.topRight,
                     child: Shimmer.fromColors(
-                      baseColor: const Color.fromARGB(
-                          255, 42, 42, 42),
-                      highlightColor:
-                          const Color.fromARGB(
-                              255, 55, 55, 55),
+                      baseColor: const Color.fromARGB(255, 42, 42, 42),
+                      highlightColor: const Color.fromARGB(255, 55, 55, 55),
                       child: AnimatedContainer(
-                        duration: const Duration(
-                            milliseconds: 400),
-                        height: 5 *
-                            SizeConfig.heightMultiplier,
-                        width: 4 *
-                            SizeConfig.widthMultiplier,
+                        duration: const Duration(milliseconds: 400),
+                        height: 5 * SizeConfig.heightMultiplier,
+                        width: 4 * SizeConfig.widthMultiplier,
                         decoration: BoxDecoration(
                             color: Colors.grey[800],
                             border: Border.all(
-                                width: 0.2,
-                                color: Colors.grey[500]!),
-                            borderRadius:
-                                BorderRadius.circular(8)),
+                                width: 0.2, color: Colors.grey[500]!),
+                            borderRadius: BorderRadius.circular(8)),
                       ),
                     ),
                   ))

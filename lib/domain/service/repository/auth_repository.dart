@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -34,10 +35,12 @@ class AuthRepository extends AuthTemplate {
         return false;
       }
       final token = await FirebaseMessaging.instance.getToken();
-      await Purchases.logIn(response.id);
+      if(Platform.isAndroid){
+        await Purchases.logIn(response.id);
       await Purchases.setEmail(response.email!);
       await Purchases.setPushToken(token!);
       await Purchases.syncPurchases();
+      }
       return true;
     } catch (e) {
       debugPrint(e.toString());
@@ -64,11 +67,13 @@ class AuthRepository extends AuthTemplate {
         idToken: idToken,
         accessToken: accessToken,
       );
-      await Purchases.logIn(response.user!.id);
+     if(Platform.isAndroid){
+       await Purchases.logIn(response.user!.id);
       await Purchases.setEmail(response.user!.email!);
       await Purchases.setDisplayName(
           response.user!.userMetadata?['full_name']!);
       await Purchases.syncPurchases();
+     }
       final token = await FirebaseMessaging.instance.getToken();
       await Purchases.setPushToken(token!);
       final user = await UserRepository().getUser();

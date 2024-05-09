@@ -6,6 +6,8 @@ import 'package:picsa/common_widgets/loading_circle.dart';
 import 'package:picsa/domain/blocs/minimal/navigation_cubit.dart';
 import 'package:picsa/utilities/packages.dart';
 
+final focusNode = FocusNode();
+
 class CreatePage extends StatelessWidget {
   CreatePage({super.key});
 
@@ -68,6 +70,7 @@ class CreatePage extends StatelessWidget {
                   Gap(height * 0.02),
                   InputField(
                     controller: _eventController,
+                    focusNode: focusNode,
                     textInputType: TextInputType.text,
                     prefixIcon: Padding(
                       padding: const EdgeInsets.all(15.0),
@@ -152,13 +155,6 @@ class CreateButton extends StatelessWidget {
       create: (context) => EventCubit(),
       child: BlocConsumer<EventCubit, EventState>(
         listener: (context, state) {
-          if (state.status == EventStatus.error) {
-            context.showErrorToast(
-                title: "Error",
-                message: "Error creating an event",
-                context: context);
-          }
-
           if (state.status == EventStatus.created) {
             context.read<NavigationCubit>().changePage(page: 1);
             ScaffoldMessenger.of(context).showSnackBar(
@@ -178,6 +174,12 @@ class CreateButton extends StatelessWidget {
                 duration: const Duration(seconds: 4),
               ),
             );
+          }
+          if (state.status == EventStatus.error) {
+            context.showErrorToast(
+                title: "Error",
+                message: "Error creating an event",
+                context: context);
           }
         },
         builder: (context, state) {

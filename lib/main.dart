@@ -28,10 +28,10 @@ void main() async {
       storageOptions: const StorageClientOptions(
         retryAttempts: 3,
       ));
-  if (Platform.isAndroid) {
+  // if (Platform.isAndroid) {
     await Purchases.configure(_configuration);
     await Purchases.setLogLevel(LogLevel.debug);
-  }
+  // }
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
