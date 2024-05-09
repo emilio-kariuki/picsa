@@ -11,6 +11,8 @@ abstract class CameraTemplate {
   });
   Future<void> toggleFlash(
       {required CameraController controller, required bool isFlashOn});
+  Future<CameraController> toggleZoom(
+      {required CameraController controller, required double zoom});
 }
 
 class CameraRepository extends CameraTemplate {
@@ -78,6 +80,18 @@ class CameraRepository extends CameraTemplate {
     try {
       await controller
           .setFlashMode(isFlashOn ? FlashMode.off : FlashMode.torch);
+    } on CameraException catch (e) {
+      debugPrint(e.toString());
+      throw Exception(e);
+    }
+  }
+
+  @override
+  Future<CameraController> toggleZoom(
+      {required CameraController controller, required double zoom}) async {
+    try {
+      await controller.setZoomLevel(zoom);
+      return controller;
     } on CameraException catch (e) {
       debugPrint(e.toString());
       throw Exception(e);

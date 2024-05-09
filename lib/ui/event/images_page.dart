@@ -1,6 +1,6 @@
 import 'package:picsa/common_widgets/image_container.dart';
 import 'package:picsa/domain/blocs/app/app_cubit.dart';
-import 'package:picsa/domain/blocs/minimal/page/page_cubit.dart';
+import 'package:picsa/domain/blocs/minimal/page_cubit.dart';
 import 'package:picsa/utilities/packages.dart';
 
 class ImagesPage extends StatefulWidget {

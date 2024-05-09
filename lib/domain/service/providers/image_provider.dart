@@ -2,9 +2,9 @@ import 'dart:io';
 
 import 'package:picsa/domain/service/repository/image_repository.dart';
 
-class ImageProvider extends ImageTemplate {
+class ImageProviders extends ImageTemplate {
   final ImageRepository _imageRepository;
-  ImageProvider({required ImageRepository imageRepository})
+  ImageProviders({required ImageRepository imageRepository})
       : _imageRepository = imageRepository;
 
   @override

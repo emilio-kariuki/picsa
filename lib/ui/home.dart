@@ -1,5 +1,5 @@
 import 'package:picsa/domain/blocs/app/user_cubit.dart';
-import 'package:picsa/domain/blocs/minimal/navigation/navigation_cubit.dart';
+import 'package:picsa/domain/blocs/minimal/navigation_cubit.dart';
 import 'package:picsa/ui/event/create_page.dart';
 import 'package:picsa/ui/event/event_page.dart';
 import 'package:picsa/ui/settings/settings_page.dart';
@@ -24,34 +24,64 @@ class _HomeState extends State<Home> {
       }
     });
     supabase
-        .channel('public:User')
-        .onPostgresChanges(
-            event: PostgresChangeEvent.update,
-            schema: 'public',
-            table: 'User',
-            filter: PostgresChangeFilter(
-              type: PostgresChangeFilterType.eq,
-              column: 'id',
-              value: supabase.auth.currentUser!.id,
-            ),
-            callback: (payload) {
-              debugPrint('Change received: ${payload.toString()}');
-              context.read<UserCubit>().getUser();
-            })
-        .subscribe();
+      ..channel('public:User')
+          .onPostgresChanges(
+              event: PostgresChangeEvent.update,
+              schema: 'public',
+              table: 'User',
+              filter: PostgresChangeFilter(
+                type: PostgresChangeFilterType.eq,
+                column: 'id',
+                value: supabase.auth.currentUser!.id,
+              ),
+              callback: (payload) {
+                debugPrint('Change received: ${payload.toString()}');
+                context.read<UserCubit>().getUser();
+              })
+          .subscribe()
+      ..channel('public:Events')
+          .onPostgresChanges(
+              event: PostgresChangeEvent.all,
+              schema: 'public',
+              table: 'Events',
+              // filter: PostgresChangeFilter(
+              //   type: PostgresChangeFilterType.eq,
+              //   column: 'userId',
+              //   value: supabase.auth.currentUser!.id,
+              // ),
+              callback: (payload) {
+                debugPrint('Change received: ${payload.toString()}');
+                context.read<EventCubit>().getEvents();
+              })
+          .subscribe()
+      ..channel('public:GuestEvents')
+          .onPostgresChanges(
+              event: PostgresChangeEvent.all,
+              schema: 'public',
+              table: 'GuestEvents',
+              filter: PostgresChangeFilter(
+                type: PostgresChangeFilterType.eq,
+                column: 'userId',
+                value: supabase.auth.currentUser!.id,
+              ),
+              callback: (payload) {
+                debugPrint('Change received: ${payload.toString()}');
+                context.read<EventCubit>().getEvents();
+              })
+          .subscribe();
   }
 
   Widget getBody() {
     final pages = <Widget>[
       CreatePage(),
       // CameraPage(eventId: "47c2adb1-1390-4899-8a0d-f95cbbaaf7ca",),
-      const EventPage(),
+       EventPage(),
       const SettingsPage()
     ];
     return BlocBuilder<NavigationCubit, NavigationState>(
       builder: (context, state) {
         return IndexedStack(
-          index: state is NavigationChanged ? state.page : 0,
+          index: state.page,
           children: pages,
         );
       },
@@ -63,7 +93,6 @@ class _HomeState extends State<Home> {
     return BlocProvider(
       create: (context) => NavigationCubit(),
       child: Scaffold(
-        // extendBody: true,
         body: getBody(),
         bottomNavigationBar: getFooter(context),
       ),
@@ -89,7 +118,7 @@ class _HomeState extends State<Home> {
             safeAreaValues: const SafeAreaValues(
               bottom: false,
             ),
-            activeIndex: state is NavigationChanged ? state.page : 0,
+            activeIndex: state.page,
             gapWidth: 10,
             splashRadius: 0,
             scaleFactor: 0,

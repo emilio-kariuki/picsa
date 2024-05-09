@@ -25,6 +25,7 @@ class AppImages {
   static const String back = 'assets/svg/back.svg';
   static const String close = 'assets/svg/close.svg';
   static const String user = 'assets/svg/user.svg';
+  static const String add = 'assets/svg/add.svg';
 
   static const String defaultImage =
       "https://pvotaaukwfeabaqtahfu.supabase.co/storage/v1/object/public/picsa/frame_picsa.png?t=2023-12-28T10%3A50%3A09.524Z";

@@ -8,3 +8,10 @@ Todo
     - add an event as favourite
     - add a help desk to the application for customer support
     - delete an event
+
+Promotion code
+    - JGR6VV7J807859SWFVBXJLZ
+    - SWRH1D03EKRBY3JLCN4LVWD
+    - QVUD5FJK86U37FH0H1B0QMD
+    - T0TFEM2AQXJQ7U1JKQ5ANHE
+    - 0K6JT1FGPQ0TWTG3EP4EN2R

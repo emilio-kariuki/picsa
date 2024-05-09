@@ -1,4 +1,3 @@
-import 'package:picsa/ui/event/event_create_page.dart';
 import 'package:picsa/ui/event/image_preview.dart';
 import 'package:picsa/ui/event/images_page.dart';
 import 'package:picsa/utilities/packages.dart';
@@ -36,19 +35,11 @@ final appRouter = GoRouter(
       name: Routes.welcome,
       pageBuilder: (context, state) => CustomTransitionPage<void>(
         key: state.pageKey,
-        child: WelcomePage(),
+        child: const WelcomePage(),
         transitionsBuilder: (context, animation, secondaryAnimation, child) =>
             FadeTransition(opacity: animation, child: child),
       ),
     ),
-    GoRoute(
-        path: '/event-create-page',
-        builder: (context, state) {
-          final data = state.extra;
-          return EventCreatePage(
-            name: (data as Map)['name'],
-          );
-        }),
     GoRoute(
         path: '/images/:id',
         pageBuilder: (context, state) {

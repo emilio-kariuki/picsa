@@ -1,26 +1,24 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:picsa/domain/blocs/minimal/bool/bool_cubit.dart';
+import 'package:picsa/domain/blocs/minimal/bool_cubit.dart';
 
 import '../../../domain/blocs/app/camera_cubit.dart';
 
 class ToggleCamera extends StatelessWidget {
   const ToggleCamera({
     super.key,
-    required this.height,
-    required this.width,
     required this.isCameraChanged,
     required this.controller,
   });
 
-  final double height;
-  final double width;
   final bool isCameraChanged;
   final CameraController controller;
 
   @override
   Widget build(BuildContext context) {
+    final height = MediaQuery.sizeOf(context).height;
+    final width = MediaQuery.sizeOf(context).width;
     return Positioned(
       bottom: height * 0.08,
       right: width * 0.2,
@@ -28,9 +26,7 @@ class ToggleCamera extends StatelessWidget {
         alignment: Alignment.bottomCenter,
         child: GestureDetector(
           onTap: () {
-            context
-                .read<BoolCubit>()
-                .change(value: isCameraChanged);
+            context.read<BoolCubit>().changeValue(value: isCameraChanged);
             context.read<CameraCubit>().toggleCamera(
                   isCameraChanged: isCameraChanged,
                 );

@@ -1,11 +1,10 @@
 // ignore_for_file: must_be_immutable
 
 import 'package:picsa/domain/blocs/app/app_cubit.dart';
+import 'package:picsa/domain/blocs/minimal/page_cubit.dart';
 import 'package:picsa/utilities/packages.dart';
-
 import '../../domain/blocs/app/camera_cubit.dart';
-import '../../domain/blocs/minimal/bool/bool_cubit.dart';
-import 'widgets/back_button.dart';
+import '../../domain/blocs/minimal/bool_cubit.dart';
 
 class CameraPage extends StatelessWidget {
   CameraPage({
@@ -18,6 +17,14 @@ class CameraPage extends StatelessWidget {
   bool isCameraChanged = false;
 
   bool isFlashOn = false;
+
+  bool isHd = false;
+
+  bool isZoom = false;
+
+  double zoom = 0;
+
+  List<double> zooms = [0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5];
 
   bool isFrontCamera = false;
 
@@ -36,18 +43,70 @@ class CameraPage extends StatelessWidget {
           context.read<CameraCubit>().initialize();
         }
 
+        if (state.controller == null) {
+          context.read<CameraCubit>().initialize();
+        }
+
         debugPrint(state.status.toString());
       },
       builder: (context, state) {
-      
-          return AnnotatedRegion<SystemUiOverlayStyle>(
-              value: const SystemUiOverlayStyle(
-                statusBarColor: Colors.transparent,
-                statusBarBrightness: Brightness.light,
-              ),
-              child: Scaffold(
-                body: SizedBox(
-                  height: height,
+        return AnnotatedRegion<SystemUiOverlayStyle>(
+          value: const SystemUiOverlayStyle(
+            statusBarColor: Colors.transparent,
+            statusBarBrightness: Brightness.light,
+          ),
+          child: Scaffold(
+            body: RefreshIndicator(
+              onRefresh: () async {
+                context.read<CameraCubit>().initialize();
+              },
+              child: SizedBox(
+                height: height,
+                child: GestureDetector(
+                  onDoubleTap: () {
+                    context
+                        .read<CameraCubit>()
+                        .toggleZoom(zoom: isZoom ? 3 : 1);
+                    isZoom = !isZoom;
+                  },
+
+                  // onScaleUpdate: (details) {
+                  //   final scale = details.scale;
+                  //   if (scale > 4) {
+                  //     context.read<CameraCubit>().toggleZoom(zoom: 4);
+                  //   }
+                  //   if (scale > 3) {
+                  //     context.read<CameraCubit>().toggleZoom(zoom: 3);
+                  //   }
+                  //   if (scale > 1.5) {
+                  //     context.read<CameraCubit>().toggleZoom(zoom: 2);
+                  //   } else if (scale < 1.5 && scale > 1) {
+                  //     context.read<CameraCubit>().toggleZoom(zoom: 1);
+                  //   } else if (scale < 1 && scale > 0.5) {
+                  //     context.read<CameraCubit>().toggleZoom(zoom: 0.5);
+                  //   } else {
+                  //     context.read<CameraCubit>().toggleZoom(zoom: 0);
+                  //   }
+                  // },
+                  // onScaleEnd: (details) {
+                  //   final scale = details.pointerCount;
+                  //   if (scale > 4) {
+                  //     context.read<CameraCubit>().toggleZoom(zoom: 4);
+                  //   }
+                  //   if (scale > 3) {
+                  //     context.read<CameraCubit>().toggleZoom(zoom: 3);
+                  //   }
+                  //   if (scale > 1.5) {
+                  //     context.read<CameraCubit>().toggleZoom(zoom: 2);
+                  //   } else if (scale < 1.5 && scale > 1) {
+                  //     context.read<CameraCubit>().toggleZoom(zoom: 1);
+                  //   } else if (scale < 1 && scale > 0.5) {
+                  //     context.read<CameraCubit>().toggleZoom(zoom: 0.5);
+                  //   } else {
+                  //     context.read<CameraCubit>().toggleZoom(zoom: 0);
+                  //   }
+                  // },
+                  onScaleStart: (details) {},
                   child: CameraPreview(
                     state.controller!,
                     child: Stack(
@@ -56,14 +115,63 @@ class CameraPage extends StatelessWidget {
                         toggleCamera(height, width),
                         captureImage(height),
                         topMenu(height, width),
-                        PopButton(height: height, width: width),
+                        // toggleZoom(height, width),
+                        // PopButton(height: height, width: width),
+                        Positioned.fill(
+                            top: height * 0.08,
+                            child: Align(
+                              alignment: Alignment.topCenter,
+                              child: Column(
+                                children: [
+                                  BlocBuilder<EventCubit, EventState>(
+                                    bloc: context.read<EventCubit>()
+                                      ..getEventById(id: eventId),
+                                    builder: (context, state) {
+                                      return SizedBox(
+                                          width: 0.5 * width,
+                                          child: Text(
+                                            state.event?.name ?? "",
+                                            textAlign: TextAlign.center,
+                                          ));
+                                    },
+                                  )
+                                ],
+                              ),
+                            )),
+                        Positioned.fill(
+                            top: height * 0.08,
+                            left: height * 0.01,
+                            child: Align(
+                                alignment: Alignment.topLeft,
+                                child: GestureDetector(
+                                  onTap: () => context.pop(),
+                                  child: Container(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 8, vertical: 10),
+                                      decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                          color: Colors.black.withOpacity(0.4),
+                                          border: Border.all(
+                                              width: 0.3,
+                                              color: Colors.grey[500]!)),
+                                      child: SvgPicture.asset(
+                                        AppImages.back,
+                                        color: Colors.grey[300],
+                                        height:
+                                            2.5 * SizeConfig.heightMultiplier,
+                                        width:
+                                            2.5 * SizeConfig.heightMultiplier,
+                                      )),
+                                )))
                       ],
                     ),
                   ),
                 ),
               ),
-            );
-        
+            ),
+          ),
+        );
       },
     );
   }
@@ -101,9 +209,9 @@ class CameraPage extends StatelessWidget {
                 child: Container(
                   height: height * 0.07,
                   width: height * 0.07,
-                  decoration: const BoxDecoration(
+                  decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: Colors.white,
+                    color: Colors.grey[200],
                   ),
                 ),
               ),
@@ -119,7 +227,7 @@ class CameraPage extends StatelessWidget {
       create: (context) => BoolCubit(),
       child: BlocConsumer<BoolCubit, BoolState>(
         listener: (context, state) {
-          if (state is BoolChanged) {
+          if (state.status == BoolStatus.changed) {
             isCameraChanged = !state.value;
           }
         },
@@ -131,25 +239,67 @@ class CameraPage extends StatelessWidget {
               alignment: Alignment.bottomCenter,
               child: GestureDetector(
                 onTap: () {
-                  context.read<BoolCubit>().change(value: isCameraChanged);
+                  context.read<BoolCubit>().changeValue(value: isCameraChanged);
                   context.read<CameraCubit>().toggleCamera(
                         isCameraChanged: isCameraChanged,
                       );
                 },
                 child: Container(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 12, vertical: 15),
+                        horizontal: 10, vertical: 10),
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(8),
                         color: Colors.black.withOpacity(0.4),
                         border:
-                            Border.all(width: 0.5, color: Colors.grey[500]!)),
+                            Border.all(width: 0.3, color: Colors.grey[500]!)),
                     child: SvgPicture.asset(
                       AppImages.toggle,
                       color: Colors.grey[400],
-                      height: 2.5 * SizeConfig.heightMultiplier,
-                      width: 2.5 * SizeConfig.heightMultiplier,
+                      height: 2.2 * SizeConfig.heightMultiplier,
+                      width: 2.2 * SizeConfig.heightMultiplier,
                     )),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  toggleZoom(double height, double width) {
+    return BlocProvider(
+      create: (context) => PageCubit(),
+      child: BlocConsumer<PageCubit, PageState>(
+        listener: (context, state) {
+          if (state.status == PageStatus.changed) {
+            zoom = state.page.toDouble() + 1;
+            context.read<CameraCubit>().toggleZoom(zoom: zoom);
+          }
+        },
+        builder: (context, state) {
+          return Positioned(
+            bottom: height * 0.05,
+            left: width * 0.2,
+            child: Align(
+              alignment: Alignment.bottomCenter,
+              child: GestureDetector(
+                onTap: () {
+                  context.read<PageCubit>().changePage(page: zoom.toInt());
+                },
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8),
+                      color: Colors.black.withOpacity(0.4),
+                      border: Border.all(width: 0.3, color: Colors.grey[500]!)),
+                  child: SvgPicture.asset(
+                    AppImages.add,
+                    color: Colors.grey[400],
+                    height: 2.2 * SizeConfig.heightMultiplier,
+                    width: 2.2 * SizeConfig.heightMultiplier,
+                  ),
+                ),
               ),
             ),
           );
@@ -163,7 +313,7 @@ class CameraPage extends StatelessWidget {
       create: (context) => BoolCubit(),
       child: BlocConsumer<BoolCubit, BoolState>(
         listener: (context, state) {
-          if (state is BoolChanged) {
+          if (state.status == BoolStatus.changed) {
             isFlashOn = !state.value;
           }
         },
@@ -175,19 +325,19 @@ class CameraPage extends StatelessWidget {
               children: [
                 GestureDetector(
                   onTap: () {
-                    context.read<BoolCubit>().change(value: isFlashOn);
+                    context.read<BoolCubit>().changeValue(value: isFlashOn);
                     context.read<CameraCubit>().toggleFlash(
                           isFlashOn: isFlashOn,
                         );
                   },
                   child: Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 12, vertical: 15),
+                          horizontal: 10, vertical: 12),
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(8),
                           color: Colors.black.withOpacity(0.4),
                           border:
-                              Border.all(width: 0.5, color: Colors.grey[500]!)),
+                              Border.all(width: 0.3, color: Colors.grey[500]!)),
                       child: SvgPicture.asset(
                         isFlashOn ? AppImages.flashOn : AppImages.flashOff,
                         color: Colors.grey[300],
@@ -215,18 +365,82 @@ class CameraPage extends StatelessWidget {
                       }),
                   child: Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 12, vertical: 15),
+                          horizontal: 10, vertical: 12),
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(8),
                           color: Colors.black.withOpacity(0.4),
                           border:
-                              Border.all(width: 0.5, color: Colors.grey[500]!)),
+                              Border.all(width: 0.3, color: Colors.grey[500]!)),
                       child: SvgPicture.asset(
                         AppImages.qr,
                         color: Colors.grey[300],
                         height: 2.5 * SizeConfig.heightMultiplier,
                         width: 2.5 * SizeConfig.heightMultiplier,
                       )),
+                ),
+                Gap(1 * SizeConfig.heightMultiplier),
+                BlocProvider(
+                  create: (context) => AppCubit(),
+                  child: Builder(builder: (context) {
+                    return GestureDetector(
+                      onTap: () => context.read<AppCubit>().shareContent(
+                            text: "Share this camera image with other peops",
+                            subject: "${AppConstants.APP_URL}/camera/$eventId",
+                          ),
+                      child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 10, vertical: 12),
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(8),
+                              color: Colors.black.withOpacity(0.4),
+                              border: Border.all(
+                                  width: 0.3, color: Colors.grey[500]!)),
+                          child: SvgPicture.asset(
+                            AppImages.share,
+                            color: Colors.grey[300],
+                            height: 2.5 * SizeConfig.heightMultiplier,
+                            width: 2.5 * SizeConfig.heightMultiplier,
+                          )),
+                    );
+                  }),
+                ),
+                Gap(1 * SizeConfig.heightMultiplier),
+                BlocProvider(
+                  create: (context) => BoolCubit(),
+                  child: Builder(builder: (context) {
+                    return BlocConsumer<BoolCubit, BoolState>(
+                      listener: (context, state) {
+                        if (state.status == BoolStatus.changed) {
+                          isHd = !state.value;
+                        }
+                      },
+                      builder: (context, state) {
+                        return GestureDetector(
+                          onTap: () => context
+                              .read<BoolCubit>()
+                              .changeValue(value: isHd),
+                          child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 10, vertical: 12),
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(8),
+                                  color: isHd
+                                      ? white
+                                      : Colors.black.withOpacity(0.4),
+                                  border: Border.all(
+                                      width: 0.3, color: Colors.grey[500]!)),
+                              child: Text(
+                                "HD",
+                                style: GoogleFonts.quicksand(
+                                  fontWeight: FontWeight.bold,
+                                  color: isHd ? Colors.black : Colors.grey[200],
+                                  fontSize: 1.8 * SizeConfig.textMultiplier,
+                                ),
+                              )),
+                        );
+                      },
+                    );
+                  }),
                 ),
               ],
             ),
@@ -244,7 +458,7 @@ class CameraQr extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Color(0xff212121),
+      color: const Color(0xff212121),
       child: Padding(
         padding: EdgeInsets.symmetric(
             horizontal: 2 * SizeConfig.widthMultiplier,

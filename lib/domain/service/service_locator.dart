@@ -15,8 +15,8 @@ void initLocator() {
     ..registerLazySingleton<UserProvider>(
         () => UserProvider(userRepository: service()))
     ..registerLazySingleton<UserRepository>(() => UserRepository())
-    ..registerLazySingleton<ImageProvider>(
-        () => ImageProvider(imageRepository: service()))
+    ..registerLazySingleton<ImageProviders>(
+        () => ImageProviders(imageRepository: service()))
     ..registerLazySingleton<ImageRepository>(() => ImageRepository())
     ..registerLazySingleton<EventProvider>(
         () => EventProvider(eventRepository: service()))

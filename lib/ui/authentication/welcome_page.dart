@@ -16,6 +16,8 @@ import 'package:picsa/common_widgets/loading_circle.dart';
 import 'package:picsa/utilities/extension.dart';
 import 'package:picsa/utilities/size_config.dart';
 
+import '../../domain/blocs/app/event_cubit.dart';
+
 class WelcomePage extends StatelessWidget {
   const WelcomePage({super.key});
 
@@ -134,6 +136,8 @@ class GoogleButton extends StatelessWidget {
                     ..read<AuthCubit>().createUser()
                     ..read<UserCubit>().getUser()
                     ..read<UserCubit>().loginRevenueCat()
+                    ..read<EventCubit>().getEvents()
+                    ..read<EventCubit>().getGuestEvents()
                     ..read<SubscriptionCubit>().isSubscribed()
                     ..read<SubscriptionCubit>().getOffers()
                     ..read<SubscriptionCubit>().getPackages()

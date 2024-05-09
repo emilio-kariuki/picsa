@@ -1,13 +1,12 @@
-import 'package:flutter/material.dart';
 import 'package:picsa/domain/models/events_model.dart';
 import 'package:picsa/domain/models/images_model.dart';
 import 'package:picsa/utilities/packages.dart';
-import 'package:picsa/utilities/supabase_config.dart';
 import 'package:uuid/uuid.dart' as uuid;
 
 abstract class EventTemplate {
   Future<bool> createEvent({required String name});
   Future<List<Event>> getUserEvents();
+  Future<List<Event>> getGuestEvents();
   Future<Event> getEventById({required String id});
   Future<List<ImageModel>> getEventImages({required String uid});
   Future<List<ImageModel>> getUserImages({required String eventId});
@@ -15,6 +14,7 @@ abstract class EventTemplate {
   Future<List<Event>> getJoinedEvents();
   Future<int> getUsersJoined({required String eventId});
   Future<int> getEventImagesTaken({required String eventId});
+  Future<bool> joinEvent({required String eventId});
 }
 
 class EventRepository extends EventTemplate {
@@ -117,8 +117,8 @@ class EventRepository extends EventTemplate {
   Future<List<ImageModel>> getUserImages({required String eventId}) async {
     try {
       final id = supabase.auth.currentUser!.id;
-      final response = await Dio()
-          .get("${AppConstants.APP_URL}/api/v1/images/user?event=$eventId&user=$id");
+      final response = await Dio().get(
+          "${AppConstants.APP_URL}/api/v1/images/user?event=$eventId&user=$id");
 
       if (response.statusCode == 200) {
         final images = List<ImageModel>.from(
@@ -127,7 +127,6 @@ class EventRepository extends EventTemplate {
       } else {
         throw Exception('Error fetching images');
       }
-
     } catch (e) {
       debugPrint(e.toString());
       throw Exception(e.toString());
@@ -159,6 +158,40 @@ class EventRepository extends EventTemplate {
     } catch (e) {
       debugPrint(e.toString());
       throw Exception(e.toString());
+    }
+  }
+
+  @override
+  Future<bool> joinEvent({required String eventId}) async {
+    try {
+      final userId = supabase.auth.currentUser!.id;
+      await supabase.from("GuestEvents").insert({
+        "id": userId + eventId,
+        "eventId": eventId,
+        "userId": userId,
+      });
+      return true;
+    } on PostgrestException catch (error) {
+      throw Exception(error.message);
+    }
+  }
+
+  @override
+  Future<List<Event>> getGuestEvents() async {
+    try {
+      final userId = supabase.auth.currentUser!.id;
+      final events = await supabase
+          .from('GuestEvents')
+          .select(
+            'Events(*)',
+          )
+          .eq('userId', userId);
+      final List<Event> guestEvents =
+          events.map((e) => Event.fromJson(e['Events'])).toList();
+      return guestEvents;
+    } catch (error) {
+      debugPrint(error.toString());
+      throw Exception(error.toString());
     }
   }
 }

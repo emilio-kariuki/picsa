@@ -42,4 +42,10 @@ class CameraProvider extends CameraTemplate {
   Future<List<CameraDescription>> getCamera() {
     return _cameraRepository.getCamera();
   }
+
+  @override
+  Future<CameraController> toggleZoom(
+      {required CameraController controller, required double zoom}) {
+    return _cameraRepository.toggleZoom(controller: controller, zoom: zoom);
+  }
 }

@@ -1,9 +1,7 @@
 // ignore_for_file: inference_failure_on_instance_creation
 
-import "package:picsa/utilities/color_constants.dart";
 
 import "../utilities/packages.dart";
-import "size_config.dart";
 
 extension StringExtension on String {
   String capitalize() {

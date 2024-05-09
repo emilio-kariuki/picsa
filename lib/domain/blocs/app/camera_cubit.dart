@@ -22,11 +22,10 @@ class CameraCubit extends Cubit<CameraState> {
   Future<void> captureImage() async {
     final path =
         await _cameraProvider.takePicture(controller: state.controller!);
-    emit(state.copyWith(
-      status: CameraStatus.captured,
-        path: path, message: "Image captured"),
-        
-        );
+    emit(
+      state.copyWith(
+          status: CameraStatus.captured, path: path, message: "Image captured"),
+    );
   }
 
   void toggleCamera({
@@ -45,6 +44,10 @@ class CameraCubit extends Cubit<CameraState> {
   void toggleFlash({required bool isFlashOn}) async {
     await _cameraProvider.toggleFlash(
         controller: state.controller!, isFlashOn: isFlashOn);
+  }
+
+  void toggleZoom({required double zoom}) async {
+    await _cameraProvider.toggleZoom(controller: state.controller!, zoom: zoom);
   }
 
   void uploadImage({

@@ -51,4 +51,14 @@ class EventProvider extends EventTemplate {
   Future<int> getUsersJoined({required String eventId}) {
     return _eventRepository.getUsersJoined(eventId: eventId);
   }
+
+  @override
+  Future<bool> joinEvent({required String eventId}) {
+    return _eventRepository.joinEvent(eventId: eventId);
+  }
+  
+  @override
+  Future<List<Event>> getGuestEvents() {
+    return _eventRepository.getGuestEvents();
+  }
 }

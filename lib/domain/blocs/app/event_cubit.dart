@@ -1,6 +1,6 @@
 import 'package:picsa/domain/models/events_model.dart';
 import 'package:picsa/domain/models/images_model.dart';
-import 'package:picsa/domain/service/providers/event_provider.dart';
+import 'package:picsa/domain/service/providers/providers.dart';
 import 'package:picsa/domain/service/service_locator.dart';
 import 'package:picsa/utilities/packages.dart';
 
@@ -13,9 +13,10 @@ class EventCubit extends Cubit<EventState> {
       emit(state.copyWith(status: EventStatus.loading));
       await _eventProvider.createEvent(name: name);
       emit(state.copyWith(
-        status: EventStatus.success,
+        status: EventStatus.created,
         message: "Event Created successfully",
       ));
+      getEvents();
     } catch (error) {
       emit(state.copyWith(
           status: EventStatus.error, message: error.toString().toException()));
@@ -23,6 +24,7 @@ class EventCubit extends Cubit<EventState> {
   }
 
   Future<void> getEvents() async {
+    
     try {
       emit(state.copyWith(status: EventStatus.loading));
       final response = await _eventProvider.getUserEvents();
@@ -30,6 +32,22 @@ class EventCubit extends Cubit<EventState> {
         events: response,
         status: EventStatus.success,
         message: "Fetched user event Created successfully",
+      ));
+    } catch (error) {
+      emit(state.copyWith(
+          status: EventStatus.error, message: error.toString().toException()));
+    }
+  }
+
+  Future<void> getGuestEvents() async {
+    debugPrint("getGuestEvents");
+    try {
+      emit(state.copyWith(status: EventStatus.loading));
+      final response = await _eventProvider.getGuestEvents();
+      emit(state.copyWith(
+        guestEvents: response,
+        status: EventStatus.success,
+        message: "Fetched user guest event Created successfully",
       ));
     } catch (error) {
       emit(state.copyWith(
@@ -53,7 +71,8 @@ class EventCubit extends Cubit<EventState> {
 
   Future<void> getEventImages({required String eventId}) async {
     try {
-      emit(state.copyWith(status: EventStatus.loading,message: "Event images loading..."));
+      emit(state.copyWith(
+          status: EventStatus.loading, message: "Event images loading..."));
       final images = await _eventProvider.getEventImages(uid: eventId);
       emit(state.copyWith(
           status: EventStatus.success,
@@ -117,14 +136,28 @@ class EventCubit extends Cubit<EventState> {
           status: EventStatus.error, message: error.toString().toException()));
     }
   }
+
+  Future<void> joinEvent({required String eventId}) async {
+    try {
+      emit(state.copyWith(status: EventStatus.loading));
+      await _eventProvider.joinEvent(eventId: eventId);
+      emit(state.copyWith(
+          status: EventStatus.success, message: "Joined event successfully"));
+    } catch (error) {
+      debugPrint(error.toString());
+      emit(state.copyWith(
+          status: EventStatus.error, message: error.toString().toException()));
+    }
+  }
 }
 
 //* Event state
 
-enum EventStatus { initial, loading, success, error, message }
+enum EventStatus { initial, loading, success, created, error, message }
 
 class EventState {
   final List<Event> events;
+  final List<Event> guestEvents;
   final Event? event;
   final List<ImageModel> images;
   final int usersJoined;
@@ -134,6 +167,7 @@ class EventState {
 
   const EventState({
     this.events = const <Event>[],
+    this.guestEvents = const <Event>[],
     this.event,
     this.images = const <ImageModel>[],
     this.usersJoined = 0,
@@ -144,6 +178,7 @@ class EventState {
 
   EventState copyWith(
       {List<Event>? events,
+      List<Event>? guestEvents,
       Event? event,
       List<ImageModel>? images,
       int? usersJoined,
@@ -152,6 +187,7 @@ class EventState {
       EventStatus? status}) {
     return EventState(
         events: events ?? this.events,
+        guestEvents: guestEvents ?? this.guestEvents,
         event: event ?? this.event,
         images: images ?? this.images,
         usersJoined: usersJoined ?? this.usersJoined,

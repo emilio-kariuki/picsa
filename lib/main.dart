@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:picsa/domain/blocs/app/subscription_cubit.dart';
 import 'package:picsa/domain/blocs/app/user_cubit.dart';
@@ -5,8 +7,6 @@ import 'package:picsa/domain/service/service_locator.dart';
 import 'package:picsa/firebase_options.dart';
 import 'package:picsa/utilities/packages.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
-import 'package:purchases_ui_flutter/purchases_ui_flutter.dart';
-
 import 'domain/blocs/app/auth_cubit.dart';
 import 'domain/blocs/app/camera_cubit.dart';
 
@@ -28,8 +28,10 @@ void main() async {
       storageOptions: const StorageClientOptions(
         retryAttempts: 3,
       ));
-  await Purchases.configure(_configuration);
-  await Purchases.setLogLevel(LogLevel.debug);
+  if (Platform.isAndroid) {
+    await Purchases.configure(_configuration);
+    await Purchases.setLogLevel(LogLevel.debug);
+  }
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
@@ -62,7 +64,9 @@ class MainApp extends StatelessWidget {
           lazy: false,
         ),
         BlocProvider(
-          create: (context) => EventCubit()..getEvents(),
+          create: (context) => EventCubit()
+            ..getEvents()
+            ..getGuestEvents(),
           lazy: false,
         ),
         BlocProvider(
