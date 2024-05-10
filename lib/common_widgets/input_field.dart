@@ -48,7 +48,7 @@ class InputField extends StatelessWidget {
       keyboardType: textInputType ?? TextInputType.text,
       textInputAction: TextInputAction.next,
       minLines: minLines,
-      maxLines: maxLines,
+      maxLines: maxLines,  
       onTap: onTap,
       onTapOutside: (event) {
         FocusScope.of(context).unfocus();
@@ -58,7 +58,7 @@ class InputField extends StatelessWidget {
         hintText: hintText,
         suffixIcon: suffixIcon,
         prefixIcon: prefixIcon,
-
+        fillColor: fillColor,
         enabledBorder: OutlineInputBorder(
             borderSide: Theme.of(context)
                 .inputDecorationTheme

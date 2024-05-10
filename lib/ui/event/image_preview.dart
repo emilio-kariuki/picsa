@@ -69,12 +69,22 @@ class ImagePreview extends StatelessWidget {
                         ),
                         BlocBuilder<AppCubit, AppState>(
                           builder: (context, state) {
-                            return IconContainer(
-                              icon: Icons.ios_share_rounded,
-                              function: () =>
-                                  context.read<AppCubit>().shareImage(
-                                        url: url,
-                                      ),
+                            return Container(
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 16, horizontal: 16),
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  color: const Color.fromARGB(255, 35, 35, 35)),
+                              child: GestureDetector(
+                                onTap: () => context
+                                    .push('/editor', extra: {"url": url}),
+                                child: SvgPicture.asset(
+                                  AppImages.edit,
+                                  color: const Color.fromARGB(255, 103, 103, 103),
+                                  height: 2 * SizeConfig.heightMultiplier,
+                                  width: 2 * SizeConfig.heightMultiplier,
+                                ),
+                              ),
                             );
                           },
                         ),

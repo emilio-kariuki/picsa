@@ -23,7 +23,7 @@ class ImageProviders extends ImageTemplate {
   }
 
   @override
-  Future<bool> uploadImage({required String path, required String eventId}) {
-    return _imageRepository.uploadImage(path: path, eventId: eventId);
+  Future<bool> uploadImage({required String path, required String eventId, required bool isHd}) {
+    return _imageRepository.uploadImage(path: path, eventId: eventId, isHd: isHd);
   }
 }

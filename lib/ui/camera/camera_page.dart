@@ -45,7 +45,6 @@ class CameraPage extends StatelessWidget {
           context.read<CameraCubit>().initialize();
         }
 
-        debugPrint(state.status.toString());
       },
       builder: (context, state) {
         return AnnotatedRegion<SystemUiOverlayStyle>(
@@ -178,10 +177,10 @@ class CameraPage extends StatelessWidget {
     return BlocConsumer<CameraCubit, CameraState>(
       listener: (context, state) {
         if (state.status == CameraStatus.captured) {
-          debugPrint('captured');
           context.read<CameraCubit>().uploadImage(
                 path: state.path,
                 eventId: eventId,
+                isHd: isHd
               );
           paths.add(state.path);
         }

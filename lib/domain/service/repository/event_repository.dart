@@ -74,16 +74,49 @@ class EventRepository extends EventTemplate {
   @override
   Future<List<ImageModel>> getEventImages({required String uid}) async {
     try {
-      final response = await Dio()
-          .get("${AppConstants.APP_URL}/api/v1/images/event?event=$uid");
+      // final response = await Dio()
+      //     .get("${AppConstants.APP_URL}/api/v1/images/event?event=$uid");
 
-      if (response.statusCode == 200) {
-        final images = List<ImageModel>.from(
-            response.data.map((x) => ImageModel.fromJson(x)));
-        return images;
-      } else {
-        throw Exception('Error fetching images');
-      }
+      // if (response.statusCode == 200) {
+      //   final images = List<ImageModel>.from(
+      //       response.data.map((x) => ImageModel.fromJson(x)));
+      //   return images;
+      // } else {
+      //   throw Exception('Error fetching images');
+      // }
+      final response = await supabase
+          .from('Images')
+          .select('User(*), url')
+          .eq('eventId', uid);
+
+      final images =
+          List<ImageModel>.from(response.map((x) => ImageModel.fromJson(x)));
+      return images;
+    } catch (e) {
+      debugPrint(e.toString());
+      throw Exception(e.toString());
+    }
+  }
+
+  @override
+  Future<List<ImageModel>> getUserImages({required String eventId}) async {
+    try {
+      final id = supabase.auth.currentUser!.id;
+      // final response = await Dio().get(
+      //     "${AppConstants.APP_URL}/api/v1/images/user?event=$eventId&user=$id");
+
+      // if (response.statusCode == 200) {
+      //   final images = List<ImageModel>.from(
+      //       response.data.map((x) => ImageModel.fromJson(x)));
+      //   return images;
+      final response = await supabase
+          .from('Images')
+          .select('User(*), url')
+          .eq('eventId', eventId)
+          .eq('userId', id);
+      final images =
+          List<ImageModel>.from(response.map((x) => ImageModel.fromJson(x)));
+      return images;
     } catch (e) {
       debugPrint(e.toString());
       throw Exception(e.toString());
@@ -107,26 +140,6 @@ class EventRepository extends EventTemplate {
       final response = await supabase.from('Events').select().eq('id', id);
       final event = Event.fromJson(response.first);
       return event;
-    } catch (e) {
-      debugPrint(e.toString());
-      throw Exception(e.toString());
-    }
-  }
-
-  @override
-  Future<List<ImageModel>> getUserImages({required String eventId}) async {
-    try {
-      final id = supabase.auth.currentUser!.id;
-      final response = await Dio().get(
-          "${AppConstants.APP_URL}/api/v1/images/user?event=$eventId&user=$id");
-
-      if (response.statusCode == 200) {
-        final images = List<ImageModel>.from(
-            response.data.map((x) => ImageModel.fromJson(x)));
-        return images;
-      } else {
-        throw Exception('Error fetching images');
-      }
     } catch (e) {
       debugPrint(e.toString());
       throw Exception(e.toString());
@@ -164,19 +177,19 @@ class EventRepository extends EventTemplate {
   @override
   Future<bool> joinEvent({required String eventId}) async {
     final userId = supabase.auth.currentUser!.id;
-      final id = "guest_${userId}_$eventId";
-      final event = await supabase.from('GuestEvents').select().eq('id', id);
-      debugPrint(event.toString());
-      if (event.isEmpty) {
-        await supabase.from("GuestEvents").insert({
-          'id': id,
-          'eventId': eventId,
-          'userId': userId,
-        });
-        return true;
-      } else {
-        throw Exception('You have already joined this event');
-      }
+    final id = "guest_${userId}_$eventId";
+    final event = await supabase.from('GuestEvents').select().eq('id', id);
+    debugPrint(event.toString());
+    if (event.isEmpty) {
+      await supabase.from("GuestEvents").insert({
+        'id': id,
+        'eventId': eventId,
+        'userId': userId,
+      });
+      return true;
+    } else {
+      throw Exception('You have already joined this event');
+    }
   }
 
   @override

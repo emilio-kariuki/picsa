@@ -1,8 +1,7 @@
-import 'dart:io';
-
 import 'package:firebase_core/firebase_core.dart';
 import 'package:picsa/domain/blocs/app/subscription_cubit.dart';
 import 'package:picsa/domain/blocs/app/user_cubit.dart';
+import 'package:picsa/domain/service/repository/notification_repository.dart';
 import 'package:picsa/domain/service/service_locator.dart';
 import 'package:picsa/firebase_options.dart';
 import 'package:picsa/utilities/packages.dart';
@@ -29,8 +28,8 @@ void main() async {
         retryAttempts: 3,
       ));
   // if (Platform.isAndroid) {
-    await Purchases.configure(_configuration);
-    await Purchases.setLogLevel(LogLevel.debug);
+  await Purchases.configure(_configuration);
+  await Purchases.setLogLevel(LogLevel.debug);
   // }
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
@@ -39,7 +38,20 @@ void main() async {
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);
+  await NotificationRepository().initializeFirebaseMessaging();
+  await NotificationRepository().getNotificationToken();
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+  FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
+    await NotificationRepository().showLowNotification(
+      message: message.notification!.body!,
+      title: message.notification!.title!,
+    );
+  });
   runApp(const MainApp());
+}
+
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp();
 }
 
 class MainApp extends StatelessWidget {

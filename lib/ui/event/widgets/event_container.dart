@@ -23,15 +23,15 @@ class EventContainer extends StatelessWidget {
         '/images/${event.id}',
       ),
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 15),
+        padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 15),
         decoration: BoxDecoration(
-            color: const Color.fromARGB(255, 28, 28, 28),
+            color: const Color(0xff000000).withOpacity(0.3),
             borderRadius: BorderRadius.circular(15)),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
+            SizedBox(
+              width: MediaQuery.of(context).size.width * 0.6,
               child: Text(
                 event.name,
                 textAlign: TextAlign.center,
@@ -39,7 +39,7 @@ class EventContainer extends StatelessWidget {
                 style: GoogleFonts.inter(
                     fontSize: 2.5 * SizeConfig.textMultiplier,
                     fontWeight: FontWeight.w600,
-                    color: Colors.white,
+                    color: Colors.grey[400],
                     height: 1.2),
               ),
             ),
@@ -53,7 +53,7 @@ class EventContainer extends StatelessWidget {
                   color: const Color.fromARGB(255, 108, 108, 108),
                   height: 1.2),
             ),
-            Gap(2 * SizeConfig.heightMultiplier),
+            Gap(1.5 * SizeConfig.heightMultiplier),
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,

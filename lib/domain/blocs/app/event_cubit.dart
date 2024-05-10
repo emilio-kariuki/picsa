@@ -40,7 +40,6 @@ class EventCubit extends Cubit<EventState> {
   }
 
   Future<void> getGuestEvents() async {
-    debugPrint("getGuestEvents");
     try {
       emit(state.copyWith(status: EventStatus.loading));
       final response = await _eventProvider.getGuestEvents();

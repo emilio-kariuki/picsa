@@ -1,3 +1,4 @@
+import 'package:picsa/ui/event/image_editor.dart';
 import 'package:picsa/ui/event/image_preview.dart';
 import 'package:picsa/ui/event/images_page.dart';
 import 'package:picsa/utilities/packages.dart';
@@ -60,6 +61,13 @@ final appRouter = GoRouter(
       builder: (context, state) {
         final data = state.extra;
         return ImagePreview(url: (data as Map)['url']);
+      },
+    ),
+    GoRoute(
+      path: '/editor',
+      builder: (context, state) {
+        final data = state.extra;
+        return ImageEditor(url: (data as Map)['url']);
       },
     )
   ],

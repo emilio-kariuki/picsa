@@ -21,9 +21,8 @@ class ShotsContainer extends StatelessWidget {
                   primaryKey: ['id']).eq('eventId', eventId),
               builder: (context, snapshot) {
                 final data = snapshot.data;
-                debugPrint("the data is ${data!.length}");
                 return Text(
-                  '${data.length}',
+                  '${data!.length}',
                   style: GoogleFonts.rubikMaze(
                       fontSize: 32,
                       color: Colors.grey[500],

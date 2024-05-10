@@ -1,10 +1,10 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:picsa/domain/models/user_model.dart';
+import 'package:picsa/domain/service/repository/notification_repository.dart';
 import 'package:picsa/domain/service/repository/repository.dart';
 import 'package:picsa/utilities/supabase_config.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
@@ -34,11 +34,13 @@ class AuthRepository extends AuthTemplate {
       if (response == null) {
         return false;
       }
-      final token = await FirebaseMessaging.instance.getToken();
-      if(Platform.isAndroid){
+      final token = await NotificationRepository().getNotificationToken();
+      
         await Purchases.logIn(response.id);
       await Purchases.setEmail(response.email!);
-      await Purchases.setPushToken(token!);
+      if(Platform.isAndroid){
+        await Purchases.setPushToken(token);
+      
       await Purchases.syncPurchases();
       }
       return true;
@@ -67,15 +69,17 @@ class AuthRepository extends AuthTemplate {
         idToken: idToken,
         accessToken: accessToken,
       );
-     if(Platform.isAndroid){
+    //  if(Platform.isAndroid){
        await Purchases.logIn(response.user!.id);
       await Purchases.setEmail(response.user!.email!);
       await Purchases.setDisplayName(
           response.user!.userMetadata?['full_name']!);
       await Purchases.syncPurchases();
-     }
-      final token = await FirebaseMessaging.instance.getToken();
-      await Purchases.setPushToken(token!);
+      final token = await NotificationRepository().getNotificationToken();
+      await Purchases.setPushToken(token);
+    //  }
+      
+      
       final user = await UserRepository().getUser();
       return user;
     } catch (e) {

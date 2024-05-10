@@ -373,7 +373,7 @@ class _ImagesPageState extends State<ImagesPage> {
                                       2 * SizeConfig.heightMultiplier,
                                   crossAxisSpacing:
                                       2 * SizeConfig.heightMultiplier,
-                                  childAspectRatio: 0.75,
+                                  childAspectRatio: 0.79,
                                 ),
                                 itemBuilder: (context, index) {
                                   return Stack(
@@ -396,7 +396,7 @@ class _ImagesPageState extends State<ImagesPage> {
                                       ),
                                       Positioned.fill(
                                           bottom:
-                                              2 * SizeConfig.heightMultiplier,
+                                              1.5 * SizeConfig.heightMultiplier,
                                           left:
                                               1.5 * SizeConfig.heightMultiplier,
                                           child: Align(

@@ -84,7 +84,7 @@ class _EventPageState extends State<EventPage> {
                               separatorBuilder: (context, index) {
                                 return Gap(1.5 * SizeConfig.heightMultiplier);
                               },
-                              itemCount: 5,
+                              itemCount: 3,
                             );
                           case EventStatus.success:
                             return state.events.isEmpty
@@ -227,7 +227,7 @@ class _EventPageState extends State<EventPage> {
                               separatorBuilder: (context, index) {
                                 return Gap(1.5 * SizeConfig.heightMultiplier);
                               },
-                              itemCount: 5,
+                              itemCount: 3,
                             );
                           case EventStatus.success:
                             return ListView.separated(
@@ -254,7 +254,7 @@ class _EventPageState extends State<EventPage> {
               ),
             ),
             Positioned.fill(
-                top: MediaQuery.of(context).padding.top - 20,
+                // top: MediaQuery.of(con÷text).padding.top - 20,
                 right: 10,
                 child: Align(
                   alignment: Alignment.topRight,
@@ -275,7 +275,7 @@ class _EventPageState extends State<EventPage> {
                         }),
                     child: Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 15, vertical: 8),
+                          horizontal: 18, vertical: 9),
                       decoration: BoxDecoration(
                           color: const Color.fromARGB(255, 28, 28, 28),
                           borderRadius: BorderRadius.circular(

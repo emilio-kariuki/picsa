@@ -50,11 +50,12 @@ class CameraCubit extends Cubit<CameraState> {
     await _cameraProvider.toggleZoom(controller: state.controller!, zoom: zoom);
   }
 
-  void uploadImage({
-    required String path,
-    required String eventId,
-  }) async {
-    await ImageRepository().uploadImage(path: path, eventId: eventId);
+  void uploadImage(
+      {required String path,
+      required String eventId,
+      required bool isHd}) async {
+    await ImageRepository()
+        .uploadImage(path: path, eventId: eventId, isHd: isHd);
   }
 }
 
@@ -64,6 +65,7 @@ enum CameraStatus { initial, loading, captured, scanned, loaded, error }
 
 class CameraState {
   final CameraController? controller;
+
   final String path;
   final String message;
   final CameraStatus status;

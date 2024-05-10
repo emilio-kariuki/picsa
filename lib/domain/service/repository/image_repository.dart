@@ -6,7 +6,8 @@ import 'package:picsa/utilities/supabase_config.dart';
 
 abstract class ImageTemplate {
   Future<File> compressImage({required File image});
-  Future<bool> uploadImage({required String path, required String eventId});
+  Future<bool> uploadImage(
+      {required String path, required String eventId, required bool isHd});
   Future<bool> deleteImage({required String path});
   Future<int> imagesTaken({required String eventId});
 }
@@ -32,16 +33,16 @@ class ImageRepository extends ImageTemplate {
   }
 
   @override
-  Future<bool> uploadImage({
-    required String path,
-    required String eventId,
-  }) async {
+  Future<bool> uploadImage(
+      {required String path,
+      required String eventId,
+      required bool isHd}) async {
     try {
       File image = File(path);
       final id = supabase.auth.currentUser!.id;
       final imageKey =
           'images/$id/${DateTime.now().millisecondsSinceEpoch}.jpg';
-      final compressedImage = await compressImage(image: image);
+      final compressedImage = isHd ? image : await compressImage(image: image);
       await supabase.storage.from('picsa').upload(
             imageKey,
             compressedImage,

@@ -84,7 +84,6 @@ class _ScanQrState extends State<ScanQr> {
                       return ScannerErrorWidget(error: error);
                     },
                     onDetect: (barcodes) {
-                      debugPrint(barcodes.barcodes[0].rawValue);
                       context.read<EventCubit>().joinEvent(
                             eventId: barcodes.barcodes[0].rawValue.toString(),
                           );

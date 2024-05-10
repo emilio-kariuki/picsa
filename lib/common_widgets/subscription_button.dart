@@ -23,7 +23,7 @@ class NewSubscriptionButton extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(
                       vertical: 15, horizontal: 10),
                   decoration: BoxDecoration(
-                    color: const Color(0xff000000),
+                    color: const Color(0xff000000).withOpacity(0.3),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Column(

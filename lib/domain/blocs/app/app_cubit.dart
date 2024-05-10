@@ -64,6 +64,44 @@ class AppCubit extends Cubit<AppState> {
     }
   }
 
+   Future<void> launchEmail({required String email}) async {
+    try {
+      emit(state.copyWith(
+        status: AppStatus.loading,
+        message: "opening email...",
+      ));
+      await _appProvider.launchEmail(email: email);
+      emit(state.copyWith(
+        status: AppStatus.success,
+        message: "Opened the email",
+      ));
+    } catch (error) {
+      emit(state.copyWith(
+        status: AppStatus.error,
+        message: error.toString().toException(),
+      ));
+    }
+  }
+
+  Future<void> launchPhone({required String phone}) async {
+    try {
+      emit(state.copyWith(
+        status: AppStatus.loading,
+        message: "opening phone...",
+      ));
+      await _appProvider.launchPhone(phone: phone);
+      emit(state.copyWith(
+        status: AppStatus.success,
+        message: "Opened the phone",
+      ));
+    } catch (error) {
+      emit(state.copyWith(
+        status: AppStatus.error,
+        message: error.toString().toException(),
+      ));
+    }
+  }
+
    Future<void> shareImage({required String url}) async {
     try {
       emit(state.copyWith(

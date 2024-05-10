@@ -13,7 +13,6 @@ class UserCubit extends Cubit<UserState> {
   Future<void> getUser() async {
     try {
       final user = await _userProvider.getUser();
-      debugPrint("UserCubit: getUser ${user.pro}");
       emit(state.copyWith(
           status: UserStatus.success,
           user: user,
@@ -29,9 +28,7 @@ class UserCubit extends Cubit<UserState> {
 
   Future<void> loginRevenueCat() async {
     try {
-      debugPrint("UserCubit: loginRevenueCat ${supabase.auth.currentUser!.id}");
-      LogInResult result = await Purchases.logIn(supabase.auth.currentUser!.id);
-      debugPrint("UserCubit: loginRevenueCat ${result.customerInfo}");
+      await Purchases.logIn(supabase.auth.currentUser!.id);
       emit(state.copyWith(
           status: UserStatus.success,
           message: "Revenue logged in successfully"));

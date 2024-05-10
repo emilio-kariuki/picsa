@@ -47,7 +47,7 @@ class SettingsPage extends StatelessWidget {
                         const ProfileContainer(),
                         Gap(1 * SizeConfig.heightMultiplier),
                         const NewSubscriptionButton(),
-                        Gap(3 * SizeConfig.heightMultiplier),
+                        Gap(2 * SizeConfig.heightMultiplier),
                         Text(
                           'Legal',
                           style: GoogleFonts.inter(
@@ -82,10 +82,30 @@ class SettingsPage extends StatelessWidget {
                             );
                           }),
                         ),
-                        SettingButton(
-                          icon: AppImages.logout,
-                          title: "Log Out",
-                          function: () {},
+                        BlocProvider(
+                          create: (context) => AppCubit(),
+                          child: Builder(builder: (context) {
+                            return BlocConsumer<AppCubit, AppState>(
+                              listener: (context, state) {
+                                if (state.status == AppStatus.error) {
+                                  context.showErrorToast(
+                                      title: "Error",
+                                      message: state.message,
+                                      context: context);
+                                }
+                              },
+                              builder: (context, state) {
+                                return SettingButton(
+                                  icon: AppImages.terms,
+                                  title: "Terms of Service",
+                                  function: () => context
+                                      .read<AppCubit>()
+                                      .launchBrowser(
+                                          url: AppConstants.APP_PRIVACY),
+                                );
+                              },
+                            );
+                          }),
                         ),
                         const SettingsDivider(),
                         Text(
@@ -97,15 +117,29 @@ class SettingsPage extends StatelessWidget {
                           ),
                         ),
                         Gap(1 * SizeConfig.heightMultiplier),
-                        SettingButton(
-                          icon: AppImages.policy,
-                          title: "Email Support",
-                          function: () async {},
+                        BlocProvider(
+                          create: (context) => AppCubit(),
+                          child: Builder(
+                            builder: (context) {
+                              return SettingButton(
+                                icon: AppImages.mail,
+                                title: "Email Support",
+                                function: () => context.read<AppCubit>().launchEmail(email: AppConstants.APP_EMAIL),
+                              );
+                            }
+                          ),
                         ),
-                        SettingButton(
-                          icon: AppImages.logout,
-                          title: "Phone Support",
-                          function: () {},
+                        BlocProvider(
+                          create: (context) => AppCubit(),
+                          child: Builder(
+                            builder: (context) {
+                              return SettingButton(
+                                icon: AppImages.phone,
+                                title: "Phone Support",
+                                function: () => context.read<AppCubit>().launchPhone(phone: AppConstants.APP_PHONE),
+                              );
+                            }
+                          ),
                         ),
                         const SettingsDivider(),
                         Text(
@@ -117,15 +151,43 @@ class SettingsPage extends StatelessWidget {
                           ),
                         ),
                         Gap(1 * SizeConfig.heightMultiplier),
-                        SettingButton(
-                          icon: AppImages.instagram,
-                          title: "Instagram",
-                          function: () {},
+                        BlocProvider(
+                          create: (context) => AppCubit(),
+                          child: Builder(builder: (context) {
+                            return SettingButton(
+                              icon: AppImages.instagram,
+                              title: "Instagram",
+                              function: () => context
+                                  .read<AppCubit>()
+                                  .launchBrowser(
+                                      url: AppConstants.APP_INSTAGRAM),
+                            );
+                          }),
                         ),
-                        SettingButton(
-                          icon: AppImages.linkedin,
-                          title: "Linkedin ",
-                          function: () {},
+                        BlocProvider(
+                          create: (context) => AppCubit(),
+                          child: Builder(builder: (context) {
+                            return SettingButton(
+                              icon: AppImages.linkedin,
+                              title: "Linkedin ",
+                              function: () => context
+                                  .read<AppCubit>()
+                                  .launchBrowser(
+                                      url: AppConstants.APP_LINKEDIN),
+                            );
+                          }),
+                        ),
+                        BlocProvider(
+                          create: (context) => AppCubit(),
+                          child: Builder(builder: (context) {
+                            return SettingButton(
+                              icon: AppImages.twitter,
+                              title: "Twitter(X) ",
+                              function: () => context
+                                  .read<AppCubit>()
+                                  .launchBrowser(url: AppConstants.APP_TWITTER),
+                            );
+                          }),
                         ),
                         const SettingsDivider(),
                         Text(
@@ -144,12 +206,6 @@ class SettingsPage extends StatelessWidget {
                         ),
                         BlocConsumer<AuthCubit, AuthenticationState>(
                           listener: (context, state) {
-                            if (state.status == AuthStatus.error) {
-                              context.showErrorSnackBar(
-                                message: state.message,
-                              );
-                            }
-
                             if (state.status == AuthStatus.success) {
                               context.goNamed(Routes.welcome);
                             }
@@ -256,7 +312,7 @@ class ProfileContainer extends StatelessWidget {
               width: MediaQuery.sizeOf(context).width,
               padding: const EdgeInsets.all(15),
               decoration: BoxDecoration(
-                  color: const Color(0xff000000),
+                  color: const Color(0xff000000).withOpacity(0.3),
                   borderRadius: BorderRadius.circular(20)),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -281,6 +337,7 @@ class ProfileContainer extends StatelessWidget {
                           style: GoogleFonts.notoSans(
                             fontSize: 2.2 * SizeConfig.textMultiplier,
                             fontWeight: FontWeight.w600,
+                            color: Colors.grey[300],
                           ),
                         ),
                         Gap(0.2 * SizeConfig.heightMultiplier),
@@ -290,6 +347,7 @@ class ProfileContainer extends StatelessWidget {
                           style: GoogleFonts.notoSans(
                             fontSize: 2 * SizeConfig.textMultiplier,
                             fontWeight: FontWeight.w600,
+                            color: Colors.grey[400],
                           ),
                         ),
                         Gap(0.6 * SizeConfig.heightMultiplier),

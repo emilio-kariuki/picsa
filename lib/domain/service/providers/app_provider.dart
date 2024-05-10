@@ -30,4 +30,14 @@ class AppProvider extends AppTemplate {
   Future<bool> downloadImage({required BuildContext context,required String url}) {
     return _appRepository.downloadImage(context: context,url: url);
   }
+  
+  @override
+  Future<void> launchEmail({required String email}) {
+   return _appRepository.launchEmail(email: email);
+  }
+  
+  @override
+  Future<void> launchPhone({required String phone}) {
+    return _appRepository.launchPhone(phone: phone);
+  }
 }

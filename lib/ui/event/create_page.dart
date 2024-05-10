@@ -72,6 +72,7 @@ class CreatePage extends StatelessWidget {
                     controller: _eventController,
                     focusNode: focusNode,
                     textInputType: TextInputType.text,
+                    fillColor: const Color(0xff000000).withOpacity(0.3),
                     prefixIcon: Padding(
                       padding: const EdgeInsets.all(15.0),
                       child: SvgPicture.asset(
@@ -102,7 +103,7 @@ class CreatePage extends StatelessWidget {
                           width: width,
                           decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(15),
-                              color: const Color(0xff1E1E1E)),
+                              color: const Color(0xff000000).withOpacity(0.3)),
                           child: Center(
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,

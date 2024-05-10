@@ -25,3 +25,4 @@ export 'package:shimmer/shimmer.dart';
 export 'package:url_launcher/url_launcher.dart';
 export 'package:flutter_media_downloader/flutter_media_downloader.dart';
 export 'package:dio/dio.dart' hide Headers;
+export 'package:firebase_messaging/firebase_messaging.dart';

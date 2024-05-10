@@ -4,8 +4,11 @@ abstract class AppTemplate {
   Future<bool> copyToClipboard({required String text});
   Future<bool> shareContent({required String text, required String subject});
   Future<void> launchBrowser({required String url});
+  Future<void> launchPhone({required String phone});
+  Future<void> launchEmail({required String email});
   Future<bool> shareImage({required String url});
-  Future<bool> downloadImage({required BuildContext context,required String url});
+  Future<bool> downloadImage(
+      {required BuildContext context, required String url});
 }
 
 class AppRepository extends AppTemplate {
@@ -38,7 +41,7 @@ class AppRepository extends AppTemplate {
       final browserUrl = Uri.parse(url);
 
       await launchUrl(browserUrl,
-          mode: LaunchMode.inAppBrowserView,
+      mode: LaunchMode.externalApplication,
           webOnlyWindowName: "Privacy & Policy");
     } catch (e) {
       debugPrint('Error launching broswer $e');
@@ -56,15 +59,35 @@ class AppRepository extends AppTemplate {
   }
 
   @override
-  Future<bool> downloadImage({required BuildContext context,required String url}) async {
+  Future<bool> downloadImage(
+      {required BuildContext context, required String url}) async {
     try {
       final flutterMediaDownloaderPlugin = MediaDownload();
       flutterMediaDownloaderPlugin.downloadMedia(context, url, "Picsa");
-    
 
       return true;
     } catch (error) {
       throw Exception(error.toString());
+    }
+  }
+
+  @override
+  Future<void> launchEmail({required String email}) async {
+    try {
+      final emailUrl = 'mailto:$email';
+      await launchUrl(Uri.parse(emailUrl));
+    } catch (e) {
+      debugPrint('Error launching broswer $e');
+    }
+  }
+
+  @override
+  Future<void> launchPhone({required String phone}) async{
+    try {
+      final phoneUrl = 'tel:$phone';
+      await launchUrl(Uri.parse(phoneUrl));
+    } catch (e) {
+      debugPrint('Error launching broswer $e');
     }
   }
 }
