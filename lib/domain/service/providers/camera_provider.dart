@@ -48,4 +48,14 @@ class CameraProvider extends CameraTemplate {
       {required CameraController controller, required double zoom}) {
     return _cameraRepository.toggleZoom(controller: controller, zoom: zoom);
   }
+  
+  @override
+  Future<CameraController> dispose({required CameraController controller}) {
+    return _cameraRepository.dispose(controller: controller);
+  }
+  
+  @override
+  Future<CameraController> toggleFocus({required CameraController controller}) {
+    return _cameraRepository.toggleFocus(controller: controller);
+  }
 }

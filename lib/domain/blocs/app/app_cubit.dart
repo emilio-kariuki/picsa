@@ -26,7 +26,8 @@ class AppCubit extends Cubit<AppState> {
     }
   }
 
-  Future<void> shareContent({required String text, required String subject}) async {
+  Future<void> shareContent(
+      {required String text, required String subject}) async {
     try {
       emit(state.copyWith(
         status: AppStatus.loading,
@@ -64,7 +65,7 @@ class AppCubit extends Cubit<AppState> {
     }
   }
 
-   Future<void> launchEmail({required String email}) async {
+  Future<void> launchEmail({required String email}) async {
     try {
       emit(state.copyWith(
         status: AppStatus.loading,
@@ -102,7 +103,7 @@ class AppCubit extends Cubit<AppState> {
     }
   }
 
-   Future<void> shareImage({required String url}) async {
+  Future<void> shareImage({required String url}) async {
     try {
       emit(state.copyWith(
         status: AppStatus.loading,
@@ -121,16 +122,38 @@ class AppCubit extends Cubit<AppState> {
     }
   }
 
-   Future<void> downloadImage({required BuildContext context,required String url}) async {
+  Future<void> downloadImage(
+      {required BuildContext context, required String url}) async {
     try {
       emit(state.copyWith(
         status: AppStatus.loading,
         message: "Downloading image...",
       ));
-      await _appProvider.downloadImage(context: context,url: url);
+      await _appProvider.downloadImage(context: context, url: url);
       emit(state.copyWith(
         status: AppStatus.success,
         message: "Downloaded the image",
+      ));
+    } catch (error) {
+      emit(state.copyWith(
+        status: AppStatus.error,
+        message: error.toString().toException(),
+      ));
+    }
+  }
+
+  Future<void> saveImage({required Uint8List bytes}) async {
+    try {
+      emit(state.copyWith(
+        status: AppStatus.loading,
+        message: "Saving image...",
+      ));
+      await _appProvider.saveImage(
+        bytes: bytes,
+      );
+      emit(state.copyWith(
+        status: AppStatus.success,
+        message: "Saved the image",
       ));
     } catch (error) {
       emit(state.copyWith(

@@ -1,3 +1,4 @@
+
 import 'package:picsa/utilities/packages.dart';
 
 abstract class AppTemplate {
@@ -9,6 +10,7 @@ abstract class AppTemplate {
   Future<bool> shareImage({required String url});
   Future<bool> downloadImage(
       {required BuildContext context, required String url});
+  Future<bool> saveImage({required Uint8List bytes});
 }
 
 class AppRepository extends AppTemplate {
@@ -89,5 +91,17 @@ class AppRepository extends AppTemplate {
     } catch (e) {
       debugPrint('Error launching broswer $e');
     }
+  }
+  
+  @override
+  Future<bool> saveImage({required Uint8List bytes}) async{
+   try{
+      final result = await ImageGallerySaver.saveImage(Uint8List.fromList(bytes));
+      return result != null;
+
+   }catch(e){
+     debugPrint(e.toString());
+     throw Exception('Error saving image');
+   }
   }
 }

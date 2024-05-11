@@ -254,7 +254,7 @@ class _EventPageState extends State<EventPage> {
               ),
             ),
             Positioned.fill(
-                // top: MediaQuery.of(con÷text).padding.top - 20,
+                top: 1 * SizeConfig.heightMultiplier,
                 right: 10,
                 child: Align(
                   alignment: Alignment.topRight,

@@ -40,4 +40,9 @@ class AppProvider extends AppTemplate {
   Future<void> launchPhone({required String phone}) {
     return _appRepository.launchPhone(phone: phone);
   }
+  
+  @override
+  Future<bool> saveImage({required Uint8List bytes}) {
+    return _appRepository.saveImage(bytes: bytes);
+  }
 }

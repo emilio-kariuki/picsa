@@ -4,10 +4,14 @@ import 'package:vibration/vibration.dart';
 abstract class CameraTemplate {
   Future<List<CameraDescription>> getCamera();
   Future<CameraController> initialize();
+  Future<CameraController> dispose({required CameraController controller});
   Future<String> takePicture({required CameraController controller});
   Future<CameraController> toggleCamera({
     required CameraController controller,
     required bool isCameraChanged,
+  });
+  Future<CameraController> toggleFocus({
+    required CameraController controller,
   });
   Future<void> toggleFlash(
       {required CameraController controller, required bool isFlashOn});
@@ -41,9 +45,10 @@ class CameraRepository extends CameraTemplate {
   @override
   Future<String> takePicture({required CameraController controller}) async {
     try {
+      await controller.lockCaptureOrientation(DeviceOrientation.portraitUp);
       final hasVibration = await Vibration.hasVibrator();
       if (hasVibration != null && hasVibration) {
-        Vibration.vibrate(duration: 115);
+        Vibration.vibrate(duration: 100);
       }
       final path = await controller.takePicture();
       debugPrint(path.path);
@@ -93,6 +98,28 @@ class CameraRepository extends CameraTemplate {
       await controller.setZoomLevel(zoom);
       return controller;
     } on CameraException catch (e) {
+      debugPrint(e.toString());
+      throw Exception(e);
+    }
+  }
+  
+  @override
+  Future<CameraController> dispose({required CameraController controller}) async{
+    try {
+      await controller.dispose();
+      return controller;
+    } on CameraException catch (e) {
+      debugPrint(e.toString());
+      throw Exception(e);
+    }
+  }
+  
+  @override
+  Future<CameraController> toggleFocus({required CameraController controller}) async{
+    try{
+      await controller.setFocusPoint(const Offset(0.5, 0.5));
+      return controller;
+    }catch(e){
       debugPrint(e.toString());
       throw Exception(e);
     }

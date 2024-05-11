@@ -102,6 +102,29 @@ class _ImagesPageState extends State<ImagesPage> {
                             ),
                           ),
                           Gap(2 * SizeConfig.widthMultiplier),
+                          GestureDetector(
+                            onTap: () {},
+                            child: Container(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 3 * SizeConfig.widthMultiplier,
+                                  vertical: 10),
+                              decoration: BoxDecoration(
+                                  color: Colors.black.withOpacity(0.6),
+                                  borderRadius: BorderRadius.circular(10),
+                                  border: Border.all(
+                                      width: 0.3,
+                                      color: const Color.fromARGB(
+                                          255, 103, 103, 103))),
+                              child: Center(
+                                  child: SvgPicture.asset(
+                                AppImages.uplaod,
+                                height: 17,
+                                width: 17,
+                                color: const Color.fromARGB(255, 103, 103, 103),
+                              )),
+                            ),
+                          ),
+                          Gap(2 * SizeConfig.widthMultiplier),
                           BlocProvider(
                             create: (context) => AppCubit(),
                             child: Builder(builder: (context) {
@@ -346,7 +369,7 @@ class _ImagesPageState extends State<ImagesPage> {
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsets.all(2 * SizeConfig.heightMultiplier),
+                  padding: EdgeInsets.all(1.5 * SizeConfig.heightMultiplier),
                   child: BlocBuilder<EventCubit, EventState>(
                     buildWhen: (previous, current) =>
                         previous.images != current.images,
@@ -355,94 +378,165 @@ class _ImagesPageState extends State<ImagesPage> {
                         case EventStatus.loading:
                           return ImagesShimmer(height: height, width: width);
                         case EventStatus.success:
-                          return RefreshIndicator(
-                            onRefresh: () {
-                              context
-                                  .read<EventCubit>()
-                                  .getEventImages(eventId: widget.eventId);
-                              return Future.value();
-                            },
-                            child: GridView.builder(
-                                itemCount: state.images.length,
-                                shrinkWrap: true,
-                                physics: const NeverScrollableScrollPhysics(),
-                                gridDelegate:
-                                    SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: 2,
-                                  mainAxisSpacing:
-                                      2 * SizeConfig.heightMultiplier,
-                                  crossAxisSpacing:
-                                      2 * SizeConfig.heightMultiplier,
-                                  childAspectRatio: 0.79,
-                                ),
-                                itemBuilder: (context, index) {
-                                  return Stack(
-                                    children: [
-                                      GestureDetector(
-                                        onTap: () => context.push('/preview',
-                                            extra: {
-                                              "url": state.images[index].url
-                                            }),
-                                        child: ImageContainer(
-                                            imageUrl: state.images[index].url,
-                                            borderRadius:
-                                                BorderRadius.circular(8),
-                                            border: Border.all(
-                                                width: 0.2,
-                                                color: Colors.grey[500]!),
-                                            height: height,
-                                            width: width,
-                                            fit: BoxFit.cover),
-                                      ),
-                                      Positioned.fill(
-                                          bottom:
-                                              1.5 * SizeConfig.heightMultiplier,
-                                          left:
-                                              1.5 * SizeConfig.heightMultiplier,
-                                          child: Align(
-                                            alignment: Alignment.bottomLeft,
-                                            child: Text(
-                                              state.images[index].user.name
-                                                  .toString(),
-                                              style: GoogleFonts.notoSans(
-                                                fontSize: 2 *
-                                                    SizeConfig.textMultiplier,
+                          return state.images.isEmpty
+                              ? GestureDetector(
+                                  onTap: () => context.push(
+                                    '/camera/${widget.eventId}',
+                                  ),
+                                  child: Container(
+                                    height: 25 * SizeConfig.heightMultiplier,
+                                    width: MediaQuery.sizeOf(context).width,
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 35, horizontal: 25),
+                                    decoration: BoxDecoration(
+                                      color:
+                                          const Color.fromARGB(255, 27, 27, 27)
+                                              .withOpacity(0.7),
+                                      borderRadius: BorderRadius.circular(15),
+                                    ),
+                                    child: Center(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              SvgPicture.asset(
+                                                AppImages.add,
+                                                height: 2.5 *
+                                                    SizeConfig.heightMultiplier,
+                                                width: 2.5 *
+                                                    SizeConfig.heightMultiplier,
                                                 color: Colors.grey[400],
-                                                fontWeight: FontWeight.w700,
                                               ),
+                                              Gap(0.2 *
+                                                  SizeConfig.widthMultiplier),
+                                              Text(
+                                                'Add Image',
+                                                style: GoogleFonts.notoSans(
+                                                  fontSize: 2.2 *
+                                                      SizeConfig.textMultiplier,
+                                                  fontWeight: FontWeight.w600,
+                                                  color: Colors.grey[400],
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          Gap(1 * SizeConfig.heightMultiplier),
+                                          Text(
+                                            'The event has no images yet. Click to add images now. ',
+                                            textAlign: TextAlign.center,
+                                            style: GoogleFonts.notoSans(
+                                              fontSize:
+                                                  2 * SizeConfig.textMultiplier,
+                                              fontWeight: FontWeight.w500,
+                                              color: Colors.grey[400],
                                             ),
-                                          )),
-                                      Positioned.fill(
-                                          top: 1 * SizeConfig.heightMultiplier,
-                                          right:
-                                              1 * SizeConfig.heightMultiplier,
-                                          child: Align(
-                                            alignment: Alignment.topRight,
-                                            child: Container(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      vertical: 8,
-                                                      horizontal: 5),
-                                              decoration: BoxDecoration(
-                                                  color: Colors.black
-                                                      .withOpacity(0.6),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                )
+                              : RefreshIndicator(
+                                  onRefresh: () {
+                                    context.read<EventCubit>().getEventImages(
+                                        eventId: widget.eventId);
+                                    return Future.value();
+                                  },
+                                  child: GridView.builder(
+                                      itemCount: state.images.length,
+                                      shrinkWrap: true,
+                                      physics:
+                                          const NeverScrollableScrollPhysics(),
+                                      gridDelegate:
+                                          SliverGridDelegateWithFixedCrossAxisCount(
+                                        crossAxisCount: 2,
+                                        mainAxisSpacing:
+                                            1.5 * SizeConfig.heightMultiplier,
+                                        crossAxisSpacing:
+                                            1.5 * SizeConfig.heightMultiplier,
+                                        childAspectRatio: 0.9,
+                                      ),
+                                      itemBuilder: (context, index) {
+                                        return Stack(
+                                          children: [
+                                            GestureDetector(
+                                              onTap: () => context
+                                                  .push('/preview', extra: {
+                                                "url": state.images[index].url
+                                              }),
+                                              child: ImageContainer(
+                                                  imageUrl:
+                                                      state.images[index].url,
                                                   borderRadius:
-                                                      BorderRadius.circular(5),
+                                                      BorderRadius.circular(8),
                                                   border: Border.all(
-                                                      width: 0.3,
-                                                      color:
-                                                          Colors.grey[500]!)),
-                                              child: const Icon(
-                                                Icons.more_vert,
-                                                size: 25,
-                                                color: Colors.white,
-                                              ),
+                                                      width: 0.2,
+                                                      color: Colors.grey[500]!),
+                                                  height: height,
+                                                  width: width,
+                                                  fit: BoxFit.cover),
                                             ),
-                                          ))
-                                    ],
-                                  );
-                                }),
-                          );
+                                            Positioned.fill(
+                                                bottom: 1.5 *
+                                                    SizeConfig.heightMultiplier,
+                                                left: 1.5 *
+                                                    SizeConfig.heightMultiplier,
+                                                child: Align(
+                                                  alignment:
+                                                      Alignment.bottomLeft,
+                                                  child: Text(
+                                                    state
+                                                        .images[index].user.name
+                                                        .toString(),
+                                                    style: GoogleFonts.notoSans(
+                                                      fontSize: 2 *
+                                                          SizeConfig
+                                                              .textMultiplier,
+                                                      color: Colors.grey[400],
+                                                      fontWeight:
+                                                          FontWeight.w700,
+                                                    ),
+                                                  ),
+                                                )),
+                                            Positioned.fill(
+                                                top: 1 *
+                                                    SizeConfig.heightMultiplier,
+                                                right: 1 *
+                                                    SizeConfig.heightMultiplier,
+                                                child: Align(
+                                                  alignment: Alignment.topRight,
+                                                  child: Container(
+                                                    padding: const EdgeInsets
+                                                        .symmetric(
+                                                        vertical: 8,
+                                                        horizontal: 5),
+                                                    decoration: BoxDecoration(
+                                                        color: Colors.black
+                                                            .withOpacity(0.6),
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(5),
+                                                        border: Border.all(
+                                                            width: 0.3,
+                                                            color: Colors
+                                                                .grey[500]!)),
+                                                    child: const Icon(
+                                                      Icons.more_vert,
+                                                      size: 25,
+                                                      color: Colors.white,
+                                                    ),
+                                                  ),
+                                                ))
+                                          ],
+                                        );
+                                      }),
+                                );
                         default:
                           return ImagesShimmer(height: height, width: width);
                       }
@@ -525,8 +619,6 @@ class ImagesShimmer extends StatelessWidget {
                         width: 4 * SizeConfig.widthMultiplier,
                         decoration: BoxDecoration(
                             color: Colors.grey[800],
-                            border: Border.all(
-                                width: 0.2, color: Colors.grey[500]!),
                             borderRadius: BorderRadius.circular(8)),
                       ),
                     ),

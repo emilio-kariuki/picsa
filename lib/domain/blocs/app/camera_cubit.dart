@@ -41,6 +41,16 @@ class CameraCubit extends Cubit<CameraState> {
         message: "Camera changed"));
   }
 
+  void toggleFocus() async {
+    final controllers = await _cameraProvider.toggleFocus(
+      controller: state.controller!,
+    );
+    emit(state.copyWith(
+        controller: controllers,
+        status: CameraStatus.loaded,
+        message: "Focus changed"));
+  }
+
   void toggleFlash({required bool isFlashOn}) async {
     await _cameraProvider.toggleFlash(
         controller: state.controller!, isFlashOn: isFlashOn);

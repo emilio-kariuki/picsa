@@ -74,20 +74,11 @@ class EventRepository extends EventTemplate {
   @override
   Future<List<ImageModel>> getEventImages({required String uid}) async {
     try {
-      // final response = await Dio()
-      //     .get("${AppConstants.APP_URL}/api/v1/images/event?event=$uid");
-
-      // if (response.statusCode == 200) {
-      //   final images = List<ImageModel>.from(
-      //       response.data.map((x) => ImageModel.fromJson(x)));
-      //   return images;
-      // } else {
-      //   throw Exception('Error fetching images');
-      // }
       final response = await supabase
           .from('Images')
           .select('User(*), url')
-          .eq('eventId', uid);
+          .eq('eventId', uid)
+          .order('createdAt');
 
       final images =
           List<ImageModel>.from(response.map((x) => ImageModel.fromJson(x)));
@@ -102,13 +93,6 @@ class EventRepository extends EventTemplate {
   Future<List<ImageModel>> getUserImages({required String eventId}) async {
     try {
       final id = supabase.auth.currentUser!.id;
-      // final response = await Dio().get(
-      //     "${AppConstants.APP_URL}/api/v1/images/user?event=$eventId&user=$id");
-
-      // if (response.statusCode == 200) {
-      //   final images = List<ImageModel>.from(
-      //       response.data.map((x) => ImageModel.fromJson(x)));
-      //   return images;
       final response = await supabase
           .from('Images')
           .select('User(*), url')
@@ -179,8 +163,12 @@ class EventRepository extends EventTemplate {
     final userId = supabase.auth.currentUser!.id;
     final id = "guest_${userId}_$eventId";
     final event = await supabase.from('GuestEvents').select().eq('id', id);
-    debugPrint(event.toString());
-    if (event.isEmpty) {
+    final isOwner = await supabase
+        .from('Events')
+        .select()
+        .eq('id', eventId)
+        .eq('userId', userId);
+    if (event.isEmpty && isOwner.isEmpty) {
       await supabase.from("GuestEvents").insert({
         'id': id,
         'eventId': eventId,

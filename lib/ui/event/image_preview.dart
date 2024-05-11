@@ -1,5 +1,7 @@
 import 'package:picsa/common_widgets/image_container.dart';
+import 'package:picsa/common_widgets/subscription_sheet.dart';
 import 'package:picsa/domain/blocs/app/app_cubit.dart';
+import 'package:picsa/domain/blocs/app/user_cubit.dart';
 import 'package:picsa/ui/event/widgets/icon_container.dart';
 import 'package:picsa/utilities/packages.dart';
 
@@ -69,22 +71,83 @@ class ImagePreview extends StatelessWidget {
                         ),
                         BlocBuilder<AppCubit, AppState>(
                           builder: (context, state) {
-                            return Container(
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 16, horizontal: 16),
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10),
-                                  color: const Color.fromARGB(255, 35, 35, 35)),
-                              child: GestureDetector(
-                                onTap: () => context
-                                    .push('/editor', extra: {"url": url}),
-                                child: SvgPicture.asset(
-                                  AppImages.edit,
-                                  color: const Color.fromARGB(255, 103, 103, 103),
-                                  height: 2 * SizeConfig.heightMultiplier,
-                                  width: 2 * SizeConfig.heightMultiplier,
-                                ),
-                              ),
+                            return BlocBuilder<UserCubit, UserState>(
+                              builder: (context, state) {
+                                return GestureDetector(
+                                  onTap: state.isPro?() => context.push('/editor',
+                                            extra: {"url": url}):() => showModalBottomSheet(
+                                      clipBehavior: Clip.antiAlias,
+                                      backgroundColor: const Color(0xff1E1E1E),
+                                      isScrollControlled: true,
+                                      barrierColor:
+                                          Colors.black.withOpacity(0.6),
+                                      elevation: 5,
+                                      shape: const RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.only(
+                                              topLeft: Radius.circular(10),
+                                              topRight: Radius.circular(10))),
+                                      context: context,
+                                      builder: (context) {
+                                        return const SubscriptionContainer();
+                                      }) ,
+                                  child: Tooltip(
+                                     decoration: BoxDecoration(
+                                    color: Colors.grey[100]!.withOpacity(0.9),
+                                    borderRadius: BorderRadius.circular(5)),
+                                message: state.isPro
+                                    ? "Edit the image"
+                                    : "Upgrade to pro to edit the image",
+                                textStyle: GoogleFonts.quicksand(
+                                    fontSize: 1.5 * SizeConfig.textMultiplier,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.grey[700]),
+                                    child: Stack(
+                                      fit: StackFit.loose,
+                                      children: [
+                                        Container(
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 16, horizontal: 16),
+                                          decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                              color: const Color.fromARGB(
+                                                  255, 35, 35, 35)),
+                                          child: SvgPicture.asset(
+                                            AppImages.edit,
+                                            color: Color.fromARGB(255, 163, 163, 163),
+                                            height:
+                                                2 * SizeConfig.heightMultiplier,
+                                            width:
+                                                2 * SizeConfig.heightMultiplier,
+                                          ),
+                                        ),
+                                        state.isPro
+                                            ? const SizedBox.shrink()
+                                            : Positioned.fill(
+                                                child: Container(
+                                                decoration: BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.circular(8),
+                                                    color:  Colors.black
+                                                        .withOpacity(0.2),
+                                                    ),
+                                                child: Padding(
+                                                  padding: const EdgeInsets.all(13),
+                                                  child: SvgPicture.asset(
+                                                    AppImages.lock,
+                                                    height: 1 *
+                                                        SizeConfig.heightMultiplier,
+                                                    width: 1 *
+                                                        SizeConfig.heightMultiplier,
+                                                    color: Colors.orange,
+                                                  ),
+                                                ),
+                                              )),
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              },
                             );
                           },
                         ),

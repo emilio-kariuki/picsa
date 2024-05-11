@@ -1,12 +1,15 @@
 // ignore_for_file: must_be_immutable
 
+import 'package:picsa/common_widgets/image_container.dart';
+import 'package:picsa/common_widgets/subscription_sheet.dart';
 import 'package:picsa/domain/blocs/app/app_cubit.dart';
+import 'package:picsa/domain/blocs/app/user_cubit.dart';
 import 'package:picsa/domain/blocs/minimal/page_cubit.dart';
 import 'package:picsa/utilities/packages.dart';
 import '../../domain/blocs/app/camera_cubit.dart';
 import '../../domain/blocs/minimal/bool_cubit.dart';
 
-class CameraPage extends StatelessWidget {
+class CameraPage extends StatefulWidget {
   CameraPage({
     super.key,
     required this.eventId,
@@ -14,6 +17,11 @@ class CameraPage extends StatelessWidget {
 
   final String eventId;
 
+  @override
+  State<CameraPage> createState() => _CameraPageState();
+}
+
+class _CameraPageState extends State<CameraPage> {
   bool isCameraChanged = false;
 
   bool isFlashOn = false;
@@ -29,6 +37,30 @@ class CameraPage extends StatelessWidget {
   List<String> paths = [];
 
   @override
+  void initState() {
+    context.read<EventCubit>().joinEvent(eventId: widget.eventId);
+    supabase
+        .channel('public:Images')
+        .onPostgresChanges(
+            event: PostgresChangeEvent.insert,
+            schema: 'public',
+            table: 'Images',
+            filter: PostgresChangeFilter(
+              type: PostgresChangeFilterType.eq,
+              column: 'eventId',
+              value: widget.eventId,
+            ),
+            callback: (payload) {
+              debugPrint('Change received: ${payload.toString()}');
+              context
+                  .read<EventCubit>()
+                  .getEventImages(eventId: widget.eventId);
+            })
+        .subscribe();
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
@@ -37,14 +69,13 @@ class CameraPage extends StatelessWidget {
       listenWhen: (previous, current) => current.status == CameraStatus.loaded,
       buildWhen: (previous, current) => current.status == CameraStatus.loaded,
       listener: (context, state) {
-        if (state.status == CameraStatus.error) {
+        print("the state is: ${state.status}");
+        print(state.controller);
+        if (state.status == CameraStatus.initial ||
+            state.status == CameraStatus.error ||
+            (state.status == CameraStatus.loaded && state.controller == null)) {
           context.read<CameraCubit>().initialize();
         }
-
-        if (state.controller == null) {
-          context.read<CameraCubit>().initialize();
-        }
-
       },
       builder: (context, state) {
         return AnnotatedRegion<SystemUiOverlayStyle>(
@@ -60,6 +91,10 @@ class CameraPage extends StatelessWidget {
               child: SizedBox(
                 height: height,
                 child: GestureDetector(
+                  onTap: () {
+                    // show circle on clicked place
+                    context.read<CameraCubit>().captureImage();
+                  },
                   onDoubleTap: () {
                     context
                         .read<CameraCubit>()
@@ -122,7 +157,7 @@ class CameraPage extends StatelessWidget {
                                 children: [
                                   BlocBuilder<EventCubit, EventState>(
                                     bloc: context.read<EventCubit>()
-                                      ..getEventById(id: eventId),
+                                      ..getEventById(id: widget.eventId),
                                     builder: (context, state) {
                                       return SizedBox(
                                           width: 0.5 * width,
@@ -178,10 +213,7 @@ class CameraPage extends StatelessWidget {
       listener: (context, state) {
         if (state.status == CameraStatus.captured) {
           context.read<CameraCubit>().uploadImage(
-                path: state.path,
-                eventId: eventId,
-                isHd: isHd
-              );
+              path: state.path, eventId: widget.eventId, isHd: isHd);
           paths.add(state.path);
         }
       },
@@ -189,31 +221,73 @@ class CameraPage extends StatelessWidget {
         return Positioned.fill(
           bottom: height * 0.04,
           child: Align(
-            alignment: Alignment.bottomCenter,
-            child: GestureDetector(
-              onTap: () {
-                context.read<CameraCubit>().captureImage();
-              },
-              child: Container(
-                padding: const EdgeInsets.all(2.5),
-                decoration: const BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.fromBorderSide(BorderSide(
-                        color: Color(
-                          0xff70B93E,
-                        ),
-                        width: 4))),
-                child: Container(
-                  height: height * 0.07,
-                  width: height * 0.07,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.grey[200],
+              alignment: Alignment.bottomCenter,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Padding(
+                    padding:
+                        EdgeInsets.only(left: 2 * SizeConfig.widthMultiplier),
+                    child: BlocBuilder<EventCubit, EventState>(
+                      buildWhen: (previous, current) =>
+                          previous.images != current.images,
+                      builder: (context, state) {
+                        return SizedBox(
+                          height: 6.5 * SizeConfig.heightMultiplier,
+                          child: ListView.separated(
+                              shrinkWrap: true,
+                              scrollDirection: Axis.horizontal,
+                              itemBuilder: (context, index) {
+                                return GestureDetector(
+                                  onTap: () => context.push('/preview',
+                                      extra: {"url": state.images[index].url}),
+                                  child: ImageContainer(
+                                      imageUrl: state.images[index].url,
+                                      borderRadius: BorderRadius.circular(0),
+                                      fit: BoxFit.cover,
+                                      height: 6.5 * SizeConfig.heightMultiplier,
+                                      width: 6.5 * SizeConfig.heightMultiplier),
+                                );
+                              },
+                              separatorBuilder: (context, index) =>
+                                  Gap(0.7 * SizeConfig.widthMultiplier),
+                              itemCount: state.images.length),
+                        );
+                      },
+                    ),
                   ),
-                ),
-              ),
-            ),
-          ),
+                  Gap(2 * SizeConfig.heightMultiplier),
+                  GestureDetector(
+                    onTap: () {
+                      context.read<CameraCubit>().captureImage();
+                    },
+                    child: BlocBuilder<UserCubit, UserState>(
+                      builder: (context, state) {
+                        return Container(
+                          padding: const EdgeInsets.all(2.5),
+                          decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.fromBorderSide(BorderSide(
+                                  color: state.isPro
+                                      ? Colors.deepOrange
+                                      : const Color(
+                                          0xff70B93E,
+                                        ),
+                                  width: 4))),
+                          child: Container(
+                            height: height * 0.07,
+                            width: height * 0.07,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.grey[200],
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              )),
         );
       },
     );
@@ -230,8 +304,8 @@ class CameraPage extends StatelessWidget {
         },
         builder: (context, state) {
           return Positioned(
-            bottom: height * 0.05,
-            right: width * 0.2,
+            bottom: height * 0.065,
+            right: width * 0.25,
             child: Align(
               alignment: Alignment.bottomCenter,
               child: GestureDetector(
@@ -357,7 +431,7 @@ class CameraPage extends StatelessWidget {
                       context: context,
                       builder: (context) {
                         return CameraQr(
-                          eventId: eventId,
+                          eventId: widget.eventId,
                         );
                       }),
                   child: Container(
@@ -382,7 +456,8 @@ class CameraPage extends StatelessWidget {
                     return GestureDetector(
                       onTap: () => context.read<AppCubit>().shareContent(
                             text: "Share this camera image with other peops",
-                            subject: "${AppConstants.APP_URL}/camera/$eventId",
+                            subject:
+                                "${AppConstants.APP_URL}/camera/${widget.eventId}",
                           ),
                       child: Container(
                           padding: const EdgeInsets.symmetric(
@@ -412,28 +487,94 @@ class CameraPage extends StatelessWidget {
                         }
                       },
                       builder: (context, state) {
-                        return GestureDetector(
-                          onTap: () => context
-                              .read<BoolCubit>()
-                              .changeValue(value: isHd),
-                          child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 10, vertical: 12),
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(8),
-                                  color: isHd
-                                      ? white
-                                      : Colors.black.withOpacity(0.4),
-                                  border: Border.all(
-                                      width: 0.3, color: Colors.grey[500]!)),
-                              child: Text(
-                                "HD",
-                                style: GoogleFonts.quicksand(
-                                  fontWeight: FontWeight.bold,
-                                  color: isHd ? Colors.black : Colors.grey[200],
-                                  fontSize: 1.8 * SizeConfig.textMultiplier,
+                        return BlocBuilder<UserCubit, UserState>(
+                          builder: (context, state) {
+                            return GestureDetector(
+                              onTap: state.isPro
+                                  ? () => context
+                                      .read<BoolCubit>()
+                                      .changeValue(value: isHd)
+                                  : () => showModalBottomSheet(
+                                      clipBehavior: Clip.antiAlias,
+                                      backgroundColor: const Color(0xff1E1E1E),
+                                      isScrollControlled: true,
+                                      barrierColor:
+                                          Colors.black.withOpacity(0.6),
+                                      elevation: 5,
+                                      shape: const RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.only(
+                                              topLeft: Radius.circular(10),
+                                              topRight: Radius.circular(10))),
+                                      context: context,
+                                      builder: (context) {
+                                        return const SubscriptionContainer();
+                                      }),
+                              child: Tooltip(
+                                decoration: BoxDecoration(
+                                    color: Colors.grey[100]!.withOpacity(0.9),
+                                    borderRadius: BorderRadius.circular(5)),
+                                message: state.isPro
+                                    ? "Change the image quality"
+                                    : "Upgrade to pro to change image quality",
+                                textStyle: GoogleFonts.quicksand(
+                                    fontSize: 1.5 * SizeConfig.textMultiplier,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.grey[700]),
+                                child: Stack(
+                                  fit: StackFit.loose,
+                                  children: [
+                                    Container(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 10, vertical: 12),
+                                        decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(8),
+                                            color: isHd
+                                                ? white
+                                                : Colors.black.withOpacity(0.4),
+                                            border: Border.all(
+                                                width: 0.3,
+                                                color: Colors.grey[500]!)),
+                                        child: Text(
+                                          "HD",
+                                          style: GoogleFonts.quicksand(
+                                              fontWeight: FontWeight.bold,
+                                              color: isHd
+                                                  ? Colors.black
+                                                  : Colors.grey[100],
+                                              fontSize: 1.8 *
+                                                  SizeConfig.textMultiplier),
+                                        )),
+                                    state.isPro
+                                        ? const SizedBox.shrink()
+                                        : Positioned.fill(
+                                            child: Container(
+                                            decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
+                                                color: const Color.fromARGB(
+                                                        255, 40, 39, 39)
+                                                    .withOpacity(0.9),
+                                                border: Border.all(
+                                                    width: 0.3,
+                                                    color: Colors.grey[500]!)),
+                                            child: Padding(
+                                              padding: const EdgeInsets.all(10),
+                                              child: SvgPicture.asset(
+                                                AppImages.lock,
+                                                height: 1 *
+                                                    SizeConfig.heightMultiplier,
+                                                width: 1 *
+                                                    SizeConfig.heightMultiplier,
+                                                color: Colors.orange,
+                                              ),
+                                            ),
+                                          )),
+                                  ],
                                 ),
-                              )),
+                              ),
+                            );
+                          },
                         );
                       },
                     );
@@ -516,7 +657,7 @@ class CameraQr extends StatelessWidget {
               decoration: BoxDecoration(
                   color: Colors.white, borderRadius: BorderRadius.circular(10)),
               child: QrImageView(
-                data: "${AppConstants.APP_URL}/camera/$eventId",
+                data: eventId,
                 version: QrVersions.auto,
                 size: 180.0,
               ),
