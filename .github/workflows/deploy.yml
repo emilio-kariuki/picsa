@@ -1,5 +1,5 @@
 
-name: Android Release and Play Store deploy and Firebase Distribution
+name: Android Release and Play Store deploy
 
 on:
   pull_request:
