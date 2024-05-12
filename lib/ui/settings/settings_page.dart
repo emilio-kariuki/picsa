@@ -182,7 +182,7 @@ class SettingsPage extends StatelessWidget {
                           child: Builder(builder: (context) {
                             return SettingButton(
                               icon: AppImages.twitter,
-                              title: "Twitter(X) ",
+                              title: "X(Twitter)",
                               function: () => context
                                   .read<AppCubit>()
                                   .launchBrowser(url: AppConstants.APP_TWITTER),

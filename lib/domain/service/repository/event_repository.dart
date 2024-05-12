@@ -76,7 +76,7 @@ class EventRepository extends EventTemplate {
     try {
       final response = await supabase
           .from('Images')
-          .select('User(*), url')
+          .select('User(*), url, hd')
           .eq('eventId', uid)
           .order('createdAt');
 
@@ -95,7 +95,7 @@ class EventRepository extends EventTemplate {
       final id = supabase.auth.currentUser!.id;
       final response = await supabase
           .from('Images')
-          .select('User(*), url')
+          .select('User(*), url,hd')
           .eq('eventId', eventId)
           .eq('userId', id);
       final images =

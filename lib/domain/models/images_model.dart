@@ -4,27 +4,30 @@
 
 import 'dart:convert';
 
-
 List<ImageModel> imageModelFromJson(String str) =>
     List<ImageModel>.from(json.decode(str).map((x) => ImageModel.fromJson(x)));
 
 class ImageModel {
   final String url;
+  final bool hd;
   final User user;
 
-  ImageModel({required this.url, required this.user,});
+  ImageModel({required this.url, required this.user, required this.hd});
 
   ImageModel copyWith({
     String? url,
+    bool? hd,
     User? user,
   }) =>
       ImageModel(
         url: url ?? this.url,
+        hd: hd ?? this.hd,
         user: user ?? this.user,
       );
 
   factory ImageModel.fromJson(Map<String, dynamic> json) => ImageModel(
         url: json["url"],
+        hd: json["hd"],
         user: User.fromJson(json["User"]),
       );
 }

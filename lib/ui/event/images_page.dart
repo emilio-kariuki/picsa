@@ -532,7 +532,36 @@ class _ImagesPageState extends State<ImagesPage> {
                                                       color: Colors.white,
                                                     ),
                                                   ),
-                                                ))
+                                                )),
+                                          state.images[index].hd ?  Positioned.fill(
+                                                bottom: 1 *
+                                                    SizeConfig.heightMultiplier,
+                                                right: 1 *
+                                                    SizeConfig.heightMultiplier,
+                                                child: Align(
+                                                  alignment: Alignment.bottomRight,
+                                                  child: Container(
+                                                      padding:
+                                                          const EdgeInsets.symmetric(
+                                                              vertical: 3,
+                                                              horizontal: 5),
+                                                      decoration: BoxDecoration(
+                                                          color: Colors.black
+                                                              .withOpacity(0.6),
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(5),
+                                                          border: Border.all(
+                                                              width: 0.3,
+                                                              color: Colors
+                                                                  .grey[500]!)),
+                                                      child: Text("HD",
+                                                          style: GoogleFonts.robotoCondensed(
+                                                              fontWeight:
+                                                                  FontWeight.bold,
+                                                              fontSize: 12,
+                                                              color: Colors.white))),
+                                                )) : const SizedBox.shrink()
                                           ],
                                         );
                                       }),

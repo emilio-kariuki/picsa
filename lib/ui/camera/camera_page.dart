@@ -1,4 +1,4 @@
-// ignore_for_file: must_be_immutable
+// ignore_for_file: must_be_immutable, deprecated_member_use
 
 import 'package:picsa/common_widgets/image_container.dart';
 import 'package:picsa/common_widgets/subscription_sheet.dart';
@@ -10,7 +10,7 @@ import '../../domain/blocs/app/camera_cubit.dart';
 import '../../domain/blocs/minimal/bool_cubit.dart';
 
 class CameraPage extends StatefulWidget {
-  CameraPage({
+  const CameraPage({
     super.key,
     required this.eventId,
   });
@@ -38,7 +38,9 @@ class _CameraPageState extends State<CameraPage> {
 
   @override
   void initState() {
-    context.read<EventCubit>().joinEvent(eventId: widget.eventId);
+    context
+      ..read<EventCubit>().joinEvent(eventId: widget.eventId)
+      ..read<EventCubit>().getEventImages(eventId: widget.eventId);
     supabase
         .channel('public:Images')
         .onPostgresChanges(
@@ -69,8 +71,6 @@ class _CameraPageState extends State<CameraPage> {
       listenWhen: (previous, current) => current.status == CameraStatus.loaded,
       buildWhen: (previous, current) => current.status == CameraStatus.loaded,
       listener: (context, state) {
-        print("the state is: ${state.status}");
-        print(state.controller);
         if (state.status == CameraStatus.initial ||
             state.status == CameraStatus.error ||
             (state.status == CameraStatus.loaded && state.controller == null)) {
@@ -145,7 +145,7 @@ class _CameraPageState extends State<CameraPage> {
                       fit: StackFit.loose,
                       children: [
                         toggleCamera(height, width),
-                        captureImage(height),
+                        CaptureImage(widget: widget, isHd: isHd, paths: paths),
                         topMenu(height, width),
                         // toggleZoom(height, width),
                         // PopButton(height: height, width: width),
@@ -203,91 +203,6 @@ class _CameraPageState extends State<CameraPage> {
               ),
             ),
           ),
-        );
-      },
-    );
-  }
-
-  captureImage(double height) {
-    return BlocConsumer<CameraCubit, CameraState>(
-      listener: (context, state) {
-        if (state.status == CameraStatus.captured) {
-          context.read<CameraCubit>().uploadImage(
-              path: state.path, eventId: widget.eventId, isHd: isHd);
-          paths.add(state.path);
-        }
-      },
-      builder: (context, state) {
-        return Positioned.fill(
-          bottom: height * 0.04,
-          child: Align(
-              alignment: Alignment.bottomCenter,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Padding(
-                    padding:
-                        EdgeInsets.only(left: 2 * SizeConfig.widthMultiplier),
-                    child: BlocBuilder<EventCubit, EventState>(
-                      buildWhen: (previous, current) =>
-                          previous.images != current.images,
-                      builder: (context, state) {
-                        return SizedBox(
-                          height: 6.5 * SizeConfig.heightMultiplier,
-                          child: ListView.separated(
-                              shrinkWrap: true,
-                              scrollDirection: Axis.horizontal,
-                              itemBuilder: (context, index) {
-                                return GestureDetector(
-                                  onTap: () => context.push('/preview',
-                                      extra: {"url": state.images[index].url}),
-                                  child: ImageContainer(
-                                      imageUrl: state.images[index].url,
-                                      borderRadius: BorderRadius.circular(0),
-                                      fit: BoxFit.cover,
-                                      height: 6.5 * SizeConfig.heightMultiplier,
-                                      width: 6.5 * SizeConfig.heightMultiplier),
-                                );
-                              },
-                              separatorBuilder: (context, index) =>
-                                  Gap(0.7 * SizeConfig.widthMultiplier),
-                              itemCount: state.images.length),
-                        );
-                      },
-                    ),
-                  ),
-                  Gap(2 * SizeConfig.heightMultiplier),
-                  GestureDetector(
-                    onTap: () {
-                      context.read<CameraCubit>().captureImage();
-                    },
-                    child: BlocBuilder<UserCubit, UserState>(
-                      builder: (context, state) {
-                        return Container(
-                          padding: const EdgeInsets.all(2.5),
-                          decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              border: Border.fromBorderSide(BorderSide(
-                                  color: state.isPro
-                                      ? Colors.deepOrange
-                                      : const Color(
-                                          0xff70B93E,
-                                        ),
-                                  width: 4))),
-                          child: Container(
-                            height: height * 0.07,
-                            width: height * 0.07,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: Colors.grey[200],
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                ],
-              )),
         );
       },
     );
@@ -585,6 +500,147 @@ class _CameraPageState extends State<CameraPage> {
           );
         },
       ),
+    );
+  }
+}
+
+class CaptureImage extends StatelessWidget {
+  const CaptureImage({
+    super.key,
+    required this.widget,
+    required this.isHd,
+    required this.paths,
+  });
+
+  final CameraPage widget;
+  final bool isHd;
+  final List<String> paths;
+
+  @override
+  Widget build(BuildContext context) {
+    final height = MediaQuery.sizeOf(context).height;
+    return BlocConsumer<CameraCubit, CameraState>(
+      listener: (context, state) {
+        if (state.status == CameraStatus.captured) {
+          context.read<CameraCubit>().uploadImage(
+              path: state.path, eventId: widget.eventId, isHd: isHd);
+          paths.add(state.path);
+        }
+      },
+      builder: (context, state) {
+        return Positioned.fill(
+          bottom: height * 0.04,
+          child: Align(
+              alignment: Alignment.bottomCenter,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Padding(
+                    padding:
+                        EdgeInsets.only(left: 2 * SizeConfig.widthMultiplier),
+                    child: BlocBuilder<EventCubit, EventState>(
+                      buildWhen: (previous, current) =>
+                          previous.images != current.images,
+                      builder: (context, state) {
+                        return SizedBox(
+                          height: 6.5 * SizeConfig.heightMultiplier,
+                          child: ListView.separated(
+                              shrinkWrap: true,
+                              scrollDirection: Axis.horizontal,
+                              itemBuilder: (context, index) {
+                                return GestureDetector(
+                                  onTap: () => context.push('/preview',
+                                      extra: {"url": state.images[index].url}),
+                                  child: Stack(
+                                    fit: StackFit.loose,
+                                    children: [
+                                      ImageContainer(
+                                        imageUrl: state.images[index].url,
+                                        borderRadius: BorderRadius.circular(0),
+                                        fit: BoxFit.cover,
+                                        height:
+                                            6.5 * SizeConfig.heightMultiplier,
+                                        width:
+                                            6.5 * SizeConfig.heightMultiplier,
+                                      ),
+                                      state.images[index].hd
+                                          ?  Positioned.fill(
+                                              bottom: 0.4 *
+                                                  SizeConfig.heightMultiplier,
+                                              right: 0.4 *
+                                                  SizeConfig.heightMultiplier,
+                                              child: Align(
+                                                alignment:
+                                                    Alignment.bottomRight,
+                                                child: Container(
+                                                    padding:
+                                                        const EdgeInsets.symmetric(
+                                                            vertical: 3,
+                                                            horizontal: 5),
+                                                    decoration: BoxDecoration(
+                                                        color: Colors.black
+                                                            .withOpacity(0.6),
+                                                        borderRadius:
+                                                            BorderRadius.circular(
+                                                                5),
+                                                        border: Border.all(
+                                                            width: 0.3,
+                                                            color: Colors
+                                                                .grey[500]!)),
+                                                    child: Text("HD",
+                                                        style: GoogleFonts.robotoCondensed(
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            fontSize: 9,
+                                                            color:
+                                                                Colors.white))),
+                                              )) : const SizedBox.shrink()
+                                         
+                                    ],
+                                  ),
+                                );
+                              },
+                              separatorBuilder: (context, index) =>
+                                  Gap(0.7 * SizeConfig.widthMultiplier),
+                              itemCount: state.images.length),
+                        );
+                      },
+                    ),
+                  ),
+                  Gap(2 * SizeConfig.heightMultiplier),
+                  GestureDetector(
+                    onTap: () {
+                      context.read<CameraCubit>().captureImage();
+                    },
+                    child: BlocBuilder<UserCubit, UserState>(
+                      builder: (context, state) {
+                        return Container(
+                          padding: const EdgeInsets.all(2.5),
+                          decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.fromBorderSide(BorderSide(
+                                  color: state.isPro
+                                      ? Colors.deepOrange
+                                      : const Color(
+                                          0xff70B93E,
+                                        ),
+                                  width: 4))),
+                          child: Container(
+                            height: height * 0.07,
+                            width: height * 0.07,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.grey[200],
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              )),
+        );
+      },
     );
   }
 }

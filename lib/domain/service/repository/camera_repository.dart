@@ -68,9 +68,8 @@ class CameraRepository extends CameraTemplate {
       controller.dispose();
       List<CameraDescription> cameras = await availableCameras();
       controller = CameraController(
-        isCameraChanged ? cameras[0] : cameras[1],
-        ResolutionPreset.max,
-      );
+          isCameraChanged ? cameras[0] : cameras[1], ResolutionPreset.max,
+          imageFormatGroup: ImageFormatGroup.jpeg);
       await controller.initialize();
       return controller;
     } on CameraException catch (e) {
@@ -102,9 +101,10 @@ class CameraRepository extends CameraTemplate {
       throw Exception(e);
     }
   }
-  
+
   @override
-  Future<CameraController> dispose({required CameraController controller}) async{
+  Future<CameraController> dispose(
+      {required CameraController controller}) async {
     try {
       await controller.dispose();
       return controller;
@@ -113,13 +113,14 @@ class CameraRepository extends CameraTemplate {
       throw Exception(e);
     }
   }
-  
+
   @override
-  Future<CameraController> toggleFocus({required CameraController controller}) async{
-    try{
+  Future<CameraController> toggleFocus(
+      {required CameraController controller}) async {
+    try {
       await controller.setFocusPoint(const Offset(0.5, 0.5));
       return controller;
-    }catch(e){
+    } catch (e) {
       debugPrint(e.toString());
       throw Exception(e);
     }

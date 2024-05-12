@@ -27,7 +27,7 @@
     </queries>
         
     <application
-        android:label="picsa"
+        android:label="Picsa Pro"
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon">
         <activity

@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:picsa/utilities/packages.dart';
 import 'package:picsa/utilities/supabase_config.dart';
 
 abstract class ImageTemplate {
@@ -47,6 +48,7 @@ class ImageRepository extends ImageTemplate {
             imageKey,
             compressedImage,
             retryAttempts: 3,
+          
           );
       await supabase.from('Images').upsert(
         {
@@ -55,6 +57,7 @@ class ImageRepository extends ImageTemplate {
           'url': supabase.storage.from('picsa').getPublicUrl(imageKey),
           'userId': supabase.auth.currentUser!.id,
           'eventId': eventId,
+          'hd': isHd,
         },
       );
       debugPrint("The image has been inserted");
