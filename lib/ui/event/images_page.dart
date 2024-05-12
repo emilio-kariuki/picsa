@@ -455,11 +455,11 @@ class _ImagesPageState extends State<ImagesPage> {
                                           const NeverScrollableScrollPhysics(),
                                       gridDelegate:
                                           SliverGridDelegateWithFixedCrossAxisCount(
-                                        crossAxisCount: 2,
+                                        crossAxisCount: 3,
                                         mainAxisSpacing:
-                                            1.5 * SizeConfig.heightMultiplier,
+                                            1 * SizeConfig.heightMultiplier,
                                         crossAxisSpacing:
-                                            1.5 * SizeConfig.heightMultiplier,
+                                            1 * SizeConfig.heightMultiplier,
                                         childAspectRatio: 0.9,
                                       ),
                                       itemBuilder: (context, index) {
@@ -474,18 +474,15 @@ class _ImagesPageState extends State<ImagesPage> {
                                                   imageUrl:
                                                       state.images[index].url,
                                                   borderRadius:
-                                                      BorderRadius.circular(8),
-                                                  border: Border.all(
-                                                      width: 0.2,
-                                                      color: Colors.grey[500]!),
+                                                      BorderRadius.zero,
                                                   height: height,
                                                   width: width,
                                                   fit: BoxFit.cover),
                                             ),
                                             Positioned.fill(
-                                                bottom: 1.5 *
+                                                bottom: 1 *
                                                     SizeConfig.heightMultiplier,
-                                                left: 1.5 *
+                                                left: 1 *
                                                     SizeConfig.heightMultiplier,
                                                 child: Align(
                                                   alignment:
@@ -493,75 +490,81 @@ class _ImagesPageState extends State<ImagesPage> {
                                                   child: Text(
                                                     state
                                                         .images[index].user.name
-                                                        .toString(),
+                                                        .toString()
+                                                        .split(" ")[0],
                                                     style: GoogleFonts.notoSans(
-                                                      fontSize: 2 *
+                                                      fontSize: 1.8 *
                                                           SizeConfig
                                                               .textMultiplier,
-                                                      color: Colors.grey[400],
+                                                      color: Colors.grey[100],
                                                       fontWeight:
-                                                          FontWeight.w700,
+                                                          FontWeight.w600,
                                                     ),
                                                   ),
                                                 )),
-                                            Positioned.fill(
-                                                top: 1 *
-                                                    SizeConfig.heightMultiplier,
-                                                right: 1 *
-                                                    SizeConfig.heightMultiplier,
-                                                child: Align(
-                                                  alignment: Alignment.topRight,
-                                                  child: Container(
-                                                    padding: const EdgeInsets
-                                                        .symmetric(
-                                                        vertical: 8,
-                                                        horizontal: 5),
-                                                    decoration: BoxDecoration(
-                                                        color: Colors.black
-                                                            .withOpacity(0.6),
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(5),
-                                                        border: Border.all(
-                                                            width: 0.3,
-                                                            color: Colors
-                                                                .grey[500]!)),
-                                                    child: const Icon(
-                                                      Icons.more_vert,
-                                                      size: 25,
-                                                      color: Colors.white,
-                                                    ),
-                                                  ),
-                                                )),
-                                          state.images[index].hd ?  Positioned.fill(
-                                                bottom: 1 *
-                                                    SizeConfig.heightMultiplier,
-                                                right: 1 *
-                                                    SizeConfig.heightMultiplier,
-                                                child: Align(
-                                                  alignment: Alignment.bottomRight,
-                                                  child: Container(
-                                                      padding:
-                                                          const EdgeInsets.symmetric(
+                                            // Positioned.fill(
+                                            //     top: 1 *
+                                            //         SizeConfig.heightMultiplier,
+                                            //     right: 1 *
+                                            //         SizeConfig.heightMultiplier,
+                                            //     child: Align(
+                                            //       alignment: Alignment.topRight,
+                                            //       child: Container(
+                                            //         padding: const EdgeInsets
+                                            //             .symmetric(
+                                            //             vertical: 7,
+                                            //             horizontal: 4),
+                                            //         decoration: BoxDecoration(
+                                            //             color: Colors.black
+                                            //                 .withOpacity(0.6),
+                                            //             borderRadius:
+                                            //                 BorderRadius
+                                            //                     .circular(5),
+                                            //             border: Border.all(
+                                            //                 width: 0.3,
+                                            //                 color: Colors
+                                            //                     .grey[500]!)),
+                                            //         child: const Icon(
+                                            //           Icons.more_vert,
+                                            //           size: 20,
+                                            //           color: Colors.white,
+                                            //         ),
+                                            //       ),
+                                            //     )),
+                                            state.images[index].hd
+                                                ? Positioned.fill(
+                                                    bottom: 1 *
+                                                        SizeConfig
+                                                            .heightMultiplier,
+                                                    right: 1 *
+                                                        SizeConfig
+                                                            .heightMultiplier,
+                                                    child: Align(
+                                                      alignment:
+                                                          Alignment.bottomRight,
+                                                      child: Container(
+                                                          padding: const EdgeInsets.symmetric(
                                                               vertical: 3,
                                                               horizontal: 5),
-                                                      decoration: BoxDecoration(
-                                                          color: Colors.black
-                                                              .withOpacity(0.6),
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(5),
-                                                          border: Border.all(
-                                                              width: 0.3,
-                                                              color: Colors
-                                                                  .grey[500]!)),
-                                                      child: Text("HD",
-                                                          style: GoogleFonts.robotoCondensed(
-                                                              fontWeight:
-                                                                  FontWeight.bold,
-                                                              fontSize: 12,
-                                                              color: Colors.white))),
-                                                )) : const SizedBox.shrink()
+                                                          decoration: BoxDecoration(
+                                                              color: Colors.black
+                                                                  .withOpacity(
+                                                                      0.6),
+                                                              borderRadius:
+                                                                  BorderRadius.circular(
+                                                                      5),
+                                                              border: Border.all(
+                                                                  width: 0.3,
+                                                                  color:
+                                                                      Colors.grey[
+                                                                          500]!)),
+                                                          child: Text("HD",
+                                                              style: GoogleFonts.robotoCondensed(
+                                                                  fontWeight: FontWeight.bold,
+                                                                  fontSize: 12,
+                                                                  color: Colors.white))),
+                                                    ))
+                                                : const SizedBox.shrink()
                                           ],
                                         );
                                       }),
@@ -596,10 +599,10 @@ class ImagesShimmer extends StatelessWidget {
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          mainAxisSpacing: 2 * SizeConfig.heightMultiplier,
-          crossAxisSpacing: 2 * SizeConfig.heightMultiplier,
-          childAspectRatio: 0.75,
+          crossAxisCount: 3,
+          mainAxisSpacing: 1 * SizeConfig.heightMultiplier,
+          crossAxisSpacing: 1 * SizeConfig.heightMultiplier,
+          childAspectRatio: 0.9,
         ),
         itemBuilder: (context, index) {
           return Stack(
@@ -613,12 +616,12 @@ class ImagesShimmer extends StatelessWidget {
                   width: width,
                   decoration: BoxDecoration(
                       color: Colors.grey[800],
-                      borderRadius: BorderRadius.circular(8)),
+                      borderRadius: BorderRadius.circular(0)),
                 ),
               ),
               Positioned.fill(
-                  bottom: 2 * SizeConfig.heightMultiplier,
-                  left: 1.5 * SizeConfig.heightMultiplier,
+                  bottom: 1 * SizeConfig.heightMultiplier,
+                  left: 1 * SizeConfig.heightMultiplier,
                   child: Align(
                     alignment: Alignment.bottomLeft,
                     child: Shimmer.fromColors(
@@ -626,32 +629,32 @@ class ImagesShimmer extends StatelessWidget {
                       highlightColor: const Color.fromARGB(255, 55, 55, 55),
                       child: AnimatedContainer(
                         duration: const Duration(milliseconds: 400),
-                        height: 2.5 * SizeConfig.heightMultiplier,
-                        width: 15 * SizeConfig.widthMultiplier,
+                        height: 2 * SizeConfig.heightMultiplier,
+                        width: 9 * SizeConfig.widthMultiplier,
                         decoration: BoxDecoration(
                             color: Colors.grey[800],
                             borderRadius: BorderRadius.circular(8)),
                       ),
                     ),
                   )),
-              Positioned.fill(
-                  top: 1 * SizeConfig.heightMultiplier,
-                  right: 1 * SizeConfig.heightMultiplier,
-                  child: Align(
-                    alignment: Alignment.topRight,
-                    child: Shimmer.fromColors(
-                      baseColor: const Color.fromARGB(255, 42, 42, 42),
-                      highlightColor: const Color.fromARGB(255, 55, 55, 55),
-                      child: AnimatedContainer(
-                        duration: const Duration(milliseconds: 400),
-                        height: 5 * SizeConfig.heightMultiplier,
-                        width: 4 * SizeConfig.widthMultiplier,
-                        decoration: BoxDecoration(
-                            color: Colors.grey[800],
-                            borderRadius: BorderRadius.circular(8)),
-                      ),
-                    ),
-                  ))
+              // Positioned.fill(
+              //     top: 1 * SizeConfig.heightMultiplier,
+              //     right: 1 * SizeConfig.heightMultiplier,
+              //     child: Align(
+              //       alignment: Alignment.topRight,
+              //       child: Shimmer.fromColors(
+              //         baseColor: const Color.fromARGB(255, 42, 42, 42),
+              //         highlightColor: const Color.fromARGB(255, 55, 55, 55),
+              //         child: AnimatedContainer(
+              //           duration: const Duration(milliseconds: 400),
+              //           height: 5 * SizeConfig.heightMultiplier,
+              //           width: 4 * SizeConfig.widthMultiplier,
+              //           decoration: BoxDecoration(
+              //               color: Colors.grey[800],
+              //               borderRadius: BorderRadius.circular(8)),
+              //         ),
+              //       ),
+              //     ))
             ],
           );
         });

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:picsa/domain/models/user_model.dart';
+import 'package:picsa/domain/service/repository/notification_repository.dart';
 import 'package:picsa/utilities/supabase_config.dart';
 
 abstract class UserTemplate {
@@ -8,7 +9,6 @@ abstract class UserTemplate {
 }
 
 class UserRepository extends UserTemplate {
-  
   @override
   Future<bool> createUser({required UserModel user}) async {
     try {
@@ -19,6 +19,16 @@ class UserRepository extends UserTemplate {
           'name': user.name,
           'email': user.email,
           'url': user.url,
+          'pro': false,
+          'token': await NotificationRepository().getNotificationToken(),
+          'payment': {
+            "pro": false,
+            "title": "Free Plan",
+            "price": "0",
+            "expiration": "never",
+            "currency": "KES",
+            "transactionId": "0"
+          }
         });
       }
       return true;
