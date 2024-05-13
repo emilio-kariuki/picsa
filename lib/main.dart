@@ -6,6 +6,7 @@ import 'package:picsa/domain/service/service_locator.dart';
 import 'package:picsa/firebase_options.dart';
 import 'package:picsa/utilities/packages.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
+import 'package:upgrader/upgrader.dart';
 import 'domain/blocs/app/auth_cubit.dart';
 import 'domain/blocs/app/camera_cubit.dart';
 
@@ -47,7 +48,7 @@ void main() async {
       title: message.notification!.title!,
     );
   });
-  runApp(const MainApp());
+  runApp( MainApp());
 }
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
@@ -55,7 +56,15 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 }
 
 class MainApp extends StatelessWidget {
-  const MainApp({super.key});
+   MainApp({super.key});
+
+  static const appcastURL =
+    'https://picsa.pro/upgrader/appcast.xml';
+final upgrader = Upgrader(
+  storeController: UpgraderStoreController(
+    onAndroid: () => UpgraderAppcastStore(appcastURL: appcastURL),
+  ),
+);
 
   @override
   Widget build(BuildContext context) {
@@ -94,6 +103,13 @@ class MainApp extends StatelessWidget {
           routerConfig: appRouter,
           title: 'Picsa',
           debugShowCheckedModeBanner: false,
+          builder: (context, child) {
+        return UpgradeAlert(
+          upgrader: upgrader,
+          navigatorKey: appRouter.routerDelegate.navigatorKey,
+          child: child ?? Text('child'),
+        );
+      },
         );
       }),
     );
