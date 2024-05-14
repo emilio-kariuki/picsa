@@ -41,12 +41,10 @@ dependencies:
     path: ./custom_packages/pro_image_editor
   purchases_flutter: ^6.29.0
   purchases_ui_flutter: ^6.29.0
-  qr_bar_code_scanner_dialog: ^0.0.5
   qr_flutter: ^4.1.0
   share_plus: ^9.0.0
   shared_preferences: ^2.2.2
   shimmer: ^3.0.0
-  sqflite: ^2.3.0
   supabase_flutter: ^2.0.2
   toastification: ^1.2.1
   upgrader: ^10.3.0

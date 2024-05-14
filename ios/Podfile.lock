@@ -186,12 +186,13 @@ PODS:
   - mobile_scanner (5.0.2):
     - Flutter
     - GoogleMLKit/BarcodeScanning (~> 6.0.0)
-  - MTBBarcodeScanner (5.0.11)
   - nanopb (2.30910.0):
     - nanopb/decode (= 2.30910.0)
     - nanopb/encode (= 2.30910.0)
   - nanopb/decode (2.30910.0)
   - nanopb/encode (2.30910.0)
+  - package_info_plus (0.4.5):
+    - Flutter
   - path_provider_foundation (0.0.1):
     - Flutter
     - FlutterMacOS
@@ -209,11 +210,6 @@ PODS:
   - PurchasesHybridCommonUI (10.6.1):
     - PurchasesHybridCommon (= 10.6.1)
     - RevenueCatUI (= 4.41.2)
-  - qr_bar_code_scanner_dialog (0.0.1):
-    - Flutter
-  - qr_code_scanner (0.2.0):
-    - Flutter
-    - MTBBarcodeScanner
   - RevenueCat (4.41.2)
   - RevenueCatUI (4.41.2):
     - RevenueCat (= 4.41.2)
@@ -254,12 +250,11 @@ DEPENDENCIES:
   - image_gallery_saver (from `.symlinks/plugins/image_gallery_saver/ios`)
   - image_picker_ios (from `.symlinks/plugins/image_picker_ios/ios`)
   - mobile_scanner (from `.symlinks/plugins/mobile_scanner/ios`)
+  - package_info_plus (from `.symlinks/plugins/package_info_plus/ios`)
   - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
   - permission_handler_apple (from `.symlinks/plugins/permission_handler_apple/ios`)
   - purchases_flutter (from `.symlinks/plugins/purchases_flutter/ios`)
   - purchases_ui_flutter (from `.symlinks/plugins/purchases_ui_flutter/ios`)
-  - qr_bar_code_scanner_dialog (from `.symlinks/plugins/qr_bar_code_scanner_dialog/ios`)
-  - qr_code_scanner (from `.symlinks/plugins/qr_code_scanner/ios`)
   - share_plus (from `.symlinks/plugins/share_plus/ios`)
   - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/darwin`)
   - sqflite (from `.symlinks/plugins/sqflite/ios`)
@@ -291,7 +286,6 @@ SPEC REPOS:
     - MLKitBarcodeScanning
     - MLKitCommon
     - MLKitVision
-    - MTBBarcodeScanner
     - nanopb
     - PromisesObjC
     - PurchasesHybridCommon
@@ -335,6 +329,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/image_picker_ios/ios"
   mobile_scanner:
     :path: ".symlinks/plugins/mobile_scanner/ios"
+  package_info_plus:
+    :path: ".symlinks/plugins/package_info_plus/ios"
   path_provider_foundation:
     :path: ".symlinks/plugins/path_provider_foundation/darwin"
   permission_handler_apple:
@@ -343,10 +339,6 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/purchases_flutter/ios"
   purchases_ui_flutter:
     :path: ".symlinks/plugins/purchases_ui_flutter/ios"
-  qr_bar_code_scanner_dialog:
-    :path: ".symlinks/plugins/qr_bar_code_scanner_dialog/ios"
-  qr_code_scanner:
-    :path: ".symlinks/plugins/qr_code_scanner/ios"
   share_plus:
     :path: ".symlinks/plugins/share_plus/ios"
   shared_preferences_foundation:
@@ -398,8 +390,8 @@ SPEC CHECKSUMS:
   MLKitCommon: afec63980417d29ffbb4790529a1b0a2291699e1
   MLKitVision: e858c5f125ecc288e4a31127928301eaba9ae0c1
   mobile_scanner: cfc76f77dca7e074fc9ca5993e3e7c35901c8b34
-  MTBBarcodeScanner: f453b33c4b7dfe545d8c6484ed744d55671788cb
   nanopb: 438bc412db1928dac798aa6fd75726007be04262
+  package_info_plus: 58f0028419748fad15bf008b270aaa8e54380b1c
   path_provider_foundation: 29f094ae23ebbca9d3d0cec13889cd9060c0e943
   permission_handler_apple: e76247795d700c14ea09e3a2d8855d41ee80a2e6
   PromisesObjC: f5707f49cb48b9636751c5b2e7d227e43fba9f47
@@ -407,8 +399,6 @@ SPEC CHECKSUMS:
   purchases_ui_flutter: eaca0d63879f5da4e6b8c1129bd586ad1df7a402
   PurchasesHybridCommon: 465af21945a10dda051b725933a1fd7b7c2d2a07
   PurchasesHybridCommonUI: ae05ba258688e623e16f36eeaf7a37b804c92776
-  qr_bar_code_scanner_dialog: d59c27f37c96ef8649711e6eee8033a69191f907
-  qr_code_scanner: bb67d64904c3b9658ada8c402e8b4d406d5d796e
   RevenueCat: 0250867579677899de94f96ad9be342be865560f
   RevenueCatUI: e3bac7e40db387f53e7b3579175cca749656bee7
   SDWebImage: dfe95b2466a9823cf9f0c6d01217c06550d7b29a

@@ -1191,22 +1191,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.0.1"
-  qr_bar_code_scanner_dialog:
-    dependency: "direct main"
-    description:
-      name: qr_bar_code_scanner_dialog
-      sha256: dcb937816d4e562141530265bd1ca39fe00f57000fd79e26c163c957d443e9e4
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.0.5"
-  qr_code_scanner:
-    dependency: transitive
-    description:
-      name: qr_code_scanner
-      sha256: f23b68d893505a424f0bd2e324ebea71ed88465d572d26bb8d2e78a4749591fd
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.0.1"
   qr_flutter:
     dependency: "direct main"
     description:
@@ -1357,7 +1341,7 @@ packages:
     source: hosted
     version: "7.0.0"
   sqflite:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: sqflite
       sha256: "591f1602816e9c31377d5f008c2d9ef7b8aca8941c3f89cc5fd9d84da0c38a9a"
