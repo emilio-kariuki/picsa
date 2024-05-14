@@ -39,7 +39,6 @@ class BackGroundImage extends StatelessWidget {
             ),
             child: child,
           ),
-          
           Positioned(
             bottom: 0,
             left: 0,
@@ -120,6 +119,8 @@ class GoogleButton extends StatelessWidget {
                   context
                     ..read<AuthCubit>().createUser()
                     ..read<UserCubit>().getUser()
+                    ..read<UserCubit>().getNotifications()
+                    ..read<UserCubit>().showNotificationBadge()
                     ..read<EventCubit>().getEvents()
                     ..read<EventCubit>().getGuestEvents()
                     ..read<SubscriptionCubit>().getPackages()
