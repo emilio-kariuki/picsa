@@ -1,3 +1,4 @@
+import 'package:permission_handler/permission_handler.dart';
 import 'package:picsa/utilities/packages.dart';
 import 'package:vibration/vibration.dart';
 
@@ -29,12 +30,11 @@ class CameraRepository extends CameraTemplate {
   @override
   Future<CameraController> initialize() async {
     try {
-      List<CameraDescription> cameras = await availableCameras();
-      CameraController controller = CameraController(
-          cameras[0], ResolutionPreset.max,
+      await Permission.camera.request();
+      final cameras = await availableCameras();
+      final controller = CameraController(cameras[0], ResolutionPreset.max,
           imageFormatGroup: ImageFormatGroup.jpeg);
       await controller.initialize();
-      await controller.setFlashMode(FlashMode.off);
       return controller;
     } on CameraException catch (e) {
       debugPrint(e.toString());

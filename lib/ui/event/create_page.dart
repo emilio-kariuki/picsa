@@ -1,5 +1,6 @@
 // ignore_for_file: must_be_immutable
 
+import 'package:picsa/domain/blocs/app/user_cubit.dart';
 import 'package:picsa/domain/blocs/minimal/bool_cubit.dart';
 import 'package:picsa/common_widgets/input_field.dart';
 import 'package:picsa/common_widgets/loading_circle.dart';
@@ -24,116 +25,164 @@ class CreatePage extends StatelessWidget {
     var keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
     return Scaffold(
       resizeToAvoidBottomInset: true,
-      body: Container(
-        height: screenHeight - keyboardHeight,
-        width: width,
-        padding: const EdgeInsets.all(15),
-        decoration: const BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage(AppImages.welcome),
-            fit: BoxFit.cover,
-            // opacity: 0.4,
-          ),
-        ),
-        child: BlocProvider(
-          create: (context) => BoolCubit(),
-          child: BlocConsumer<BoolCubit, BoolState>(
-            listener: (context, state) {
-              if (state.status == BoolStatus.changed) {
-                isEmpty = state.value;
-              }
-            },
-            builder: (context, state) {
-              return Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
+      body: Stack(
+        children: [
+          Container(
+            height: screenHeight - keyboardHeight,
+            width: width,
+            padding: const EdgeInsets.all(15),
+            decoration: const BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage(AppImages.welcome),
+                fit: BoxFit.cover,
+                // opacity: 0.4,
+              ),
+            ),
+            child: BlocProvider(
+              create: (context) => BoolCubit(),
+              child: BlocConsumer<BoolCubit, BoolState>(
+                listener: (context, state) {
+                  if (state.status == BoolStatus.changed) {
+                    isEmpty = state.value;
+                  }
+                },
+                builder: (context, state) {
+                  return Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      SvgPicture.asset(
-                        AppConstants.APP_LOGO,
-                        height: height * 0.07,
-                        width: height * 0.07,
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          SvgPicture.asset(
+                            AppConstants.APP_LOGO,
+                            height: height * 0.07,
+                            width: height * 0.07,
+                          ),
+                          Gap(width * 0.05),
+                          Text(
+                            AppConstants.APP_NAME,
+                            style: GoogleFonts.rubikBubbles(
+                              color: Colors.white,
+                              fontSize: 50,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
                       ),
-                      Gap(width * 0.05),
-                      Text(
-                        AppConstants.APP_NAME,
-                        style: GoogleFonts.rubikBubbles(
-                          color: Colors.white,
-                          fontSize: 50,
-                          fontWeight: FontWeight.w600,
+                      Gap(height * 0.02),
+                      InputField(
+                        controller: _eventController,
+                        focusNode: focusNode,
+                        textInputType: TextInputType.text,
+                        fillColor: const Color(0xff000000).withOpacity(0.3),
+                        prefixIcon: Padding(
+                          padding: const EdgeInsets.all(15.0),
+                          child: SvgPicture.asset(
+                            AppImages.edit,
+                            color: Colors.grey[300],
+                            height: 1 * SizeConfig.heightMultiplier,
+                            width: 1 * SizeConfig.heightMultiplier,
+                          ),
                         ),
+                        borderRadius: 15,
+                        onChanged: (value) {
+                          if (value!.isEmpty) {
+                            context.read<BoolCubit>().changeValue(value: true);
+                          } else {
+                            context.read<BoolCubit>().changeValue(value: false);
+                          }
+                          return null;
+                        },
+                        validator: (value) {
+                          return null;
+                        },
+                        hintText: "What's the occassion?",
                       ),
+                      Gap(height * 0.015),
+                      isEmpty
+                          ? Container(
+                              height: height * 0.075,
+                              width: width,
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(15),
+                                  color:
+                                      const Color(0xff000000).withOpacity(0.3)),
+                              child: Center(
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      "Add a Name to Get Started",
+                                      textAlign: TextAlign.center,
+                                      style: GoogleFonts.inter(
+                                        color: Colors.grey[500],
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                    const Gap(10),
+                                    Icon(
+                                      Icons.arrow_forward,
+                                      color: Colors.grey[500],
+                                      size: 20,
+                                    )
+                                  ],
+                                ),
+                              ))
+                          : CreateButton(
+                              eventController: _eventController,
+                            ),
                     ],
-                  ),
-                  Gap(height * 0.02),
-                  InputField(
-                    controller: _eventController,
-                    focusNode: focusNode,
-                    textInputType: TextInputType.text,
-                    fillColor: const Color(0xff000000).withOpacity(0.3),
-                    prefixIcon: Padding(
-                      padding: const EdgeInsets.all(15.0),
-                      child: SvgPicture.asset(
-                        AppImages.edit,
-                        color: Colors.grey[300],
-                        height: 1 * SizeConfig.heightMultiplier,
-                        width: 1 * SizeConfig.heightMultiplier,
+                  );
+                },
+              ),
+            ),
+          ),
+          Positioned.fill(
+              top: MediaQuery.of(context).padding.top,
+              right: 10,
+              child: Align(
+                alignment: Alignment.topRight,
+                child: Stack(
+                  children: [
+                    GestureDetector(
+                      onTap: () => context.pushNamed(Routes.notifications),
+                      child: Container(
+                        padding: const EdgeInsets.all(11),
+                        decoration: BoxDecoration(
+                          color: Colors.black.withOpacity(0.4),
+                          shape: BoxShape.circle,
+                        ),
+                        child: SvgPicture.asset(
+                          AppImages.notification,
+                          height: 2.5 * SizeConfig.heightMultiplier,
+                          width: 2.5 * SizeConfig.heightMultiplier,
+                          color: Colors.white,
+                        ),
                       ),
                     ),
-                    borderRadius: 15,
-                    onChanged: (value) {
-                      if (value!.isEmpty) {
-                        context.read<BoolCubit>().changeValue(value: true);
-                      } else {
-                        context.read<BoolCubit>().changeValue(value: false);
-                      }
-                      return null;
-                    },
-                    validator: (value) {
-                      return null;
-                    },
-                    hintText: "What's the occassion?",
-                  ),
-                  Gap(height * 0.015),
-                  isEmpty
-                      ? Container(
-                          height: height * 0.075,
-                          width: width,
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(15),
-                              color: const Color(0xff000000).withOpacity(0.3)),
-                          child: Center(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  "Add a Name to Get Started",
-                                  textAlign: TextAlign.center,
-                                  style: GoogleFonts.inter(
-                                    color: Colors.grey[500],
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                                const Gap(10),
-                                Icon(
-                                  Icons.arrow_forward,
-                                  color: Colors.grey[500],
-                                  size: 20,
-                                )
-                              ],
+                    BlocBuilder<UserCubit, UserState>(
+                      buildWhen: (previous, current) => previous.notifications != current.notifications,
+                      builder: (context, state) {
+                        return state.showBadge ? Positioned(
+                          right: 0,
+                          top: 0,
+                          child: Container(
+                            height: 10,
+                            width: 10,
+                            decoration: const BoxDecoration(
+                              color: Colors.red,
+                              shape: BoxShape.circle,
                             ),
-                          ))
-                      : CreateButton(
-                          eventController: _eventController,
-                        ),
-                ],
-              );
-            },
-          ),
-        ),
+                          ),
+                        ) : const SizedBox.shrink();
+                      },
+                    ),
+                  ],
+                ),
+              )),
+        ],
       ),
     );
   }

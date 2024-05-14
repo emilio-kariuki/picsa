@@ -100,8 +100,7 @@ class _EventPageState extends State<EventPage> {
                                           context
                                               .read<NavigationCubit>()
                                               .changePage(page: 0);
-                                              focusNode.requestFocus();
-                                         
+                                          focusNode.requestFocus();
                                         },
                                         child: Container(
                                           height:

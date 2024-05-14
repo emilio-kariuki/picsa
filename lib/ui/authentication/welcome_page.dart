@@ -1,22 +1,9 @@
-import 'dart:ui';
-
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:gap/gap.dart';
-import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:picsa/domain/blocs/app/auth_cubit.dart';
 import 'package:picsa/domain/blocs/app/subscription_cubit.dart';
 import 'package:picsa/domain/blocs/app/user_cubit.dart';
 import 'package:picsa/ui/authentication/widgets/terms_of_service.dart';
-import 'package:picsa/utilities/app_constants.dart';
-import 'package:picsa/utilities/app_images.dart';
 import 'package:picsa/common_widgets/loading_circle.dart';
-import 'package:picsa/utilities/extension.dart';
-import 'package:picsa/utilities/size_config.dart';
-
-import '../../domain/blocs/app/event_cubit.dart';
+import 'package:picsa/utilities/packages.dart';
 
 class WelcomePage extends StatelessWidget {
   const WelcomePage({super.key});
@@ -52,6 +39,7 @@ class BackGroundImage extends StatelessWidget {
             ),
             child: child,
           ),
+          
           Positioned(
             bottom: 0,
             left: 0,
@@ -96,7 +84,7 @@ class BackGroundImage extends StatelessWidget {
                       ),
                     ),
                     Gap(3 * SizeConfig.heightMultiplier),
-                    GoogleButton(height: height, width: width),
+                    const GoogleButton(),
                     const Padding(
                       padding: EdgeInsets.symmetric(vertical: 20),
                       child: TermsOfService(),
@@ -115,15 +103,12 @@ class BackGroundImage extends StatelessWidget {
 class GoogleButton extends StatelessWidget {
   const GoogleButton({
     super.key,
-    required this.height,
-    required this.width,
   });
-
-  final double height;
-  final double width;
 
   @override
   Widget build(BuildContext context) {
+    final height = MediaQuery.of(context).size.height;
+    final width = MediaQuery.of(context).size.width;
     return Center(
       child: BlocProvider(
         create: (context) => AuthCubit(),
@@ -135,13 +120,10 @@ class GoogleButton extends StatelessWidget {
                   context
                     ..read<AuthCubit>().createUser()
                     ..read<UserCubit>().getUser()
-                    ..read<UserCubit>().loginRevenueCat()
                     ..read<EventCubit>().getEvents()
                     ..read<EventCubit>().getGuestEvents()
-                    ..read<SubscriptionCubit>().isSubscribed()
-                    ..read<SubscriptionCubit>().getOffers()
                     ..read<SubscriptionCubit>().getPackages()
-                    ..go('/home');
+                    ..goNamed(Routes.home);
                 case AuthStatus.error:
                   context.showErrorToast(
                       title: "Error", message: state.message, context: context);

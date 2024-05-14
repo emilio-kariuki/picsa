@@ -39,22 +39,6 @@ class SubscriptionCubit extends Cubit<SubscriptionState> {
     }
   }
 
-  Future<void> isSubscribed() async {
-    try {
-      emit(state.copyWith(status: SubscriptionStatus.loading));
-      final isSubscribed = await _subscriptionproviders.isUserSubscribed();
-      debugPrint("isSubscribed: $isSubscribed");
-      emit(state.copyWith(
-        isSubscribed: isSubscribed,
-        status: SubscriptionStatus.success,
-        message: "Fetched subscription status successfully",
-      ));
-    } catch (error) {
-      emit(state.copyWith(
-          status: SubscriptionStatus.error,
-          message: error.toString().toException()));
-    }
-  }
 
   Future<void> purchasePackage({required Package package}) async {
     try {

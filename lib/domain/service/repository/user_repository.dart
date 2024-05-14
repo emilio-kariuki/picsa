@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:picsa/domain/models/user_model.dart';
+import 'package:picsa/domain/models/models.dart';
 import 'package:picsa/domain/service/repository/notification_repository.dart';
 import 'package:picsa/utilities/supabase_config.dart';
+import 'package:purchases_flutter/purchases_flutter.dart';
 
 abstract class UserTemplate {
   Future<bool> createUser({required UserModel user});
   Future<UserModel> getUser();
+  Future<List<NotificationModel>> getNotifications();
+  Future<bool> readNotification({required NotificationModel notification});
+  Future<bool> markAsRead();
+  Future<bool> showNotificationBadge();
 }
 
 class UserRepository extends UserTemplate {
@@ -13,6 +18,7 @@ class UserRepository extends UserTemplate {
   Future<bool> createUser({required UserModel user}) async {
     try {
       final response = await supabase.from('User').select().eq('id', user.id);
+      final token = await NotificationRepository().getNotificationToken();
       if (response.isEmpty) {
         await supabase.from('User').insert({
           'id': user.id,
@@ -20,16 +26,13 @@ class UserRepository extends UserTemplate {
           'email': user.email,
           'url': user.url,
           'pro': false,
-          'token': await NotificationRepository().getNotificationToken(),
-          'payment': {
-            "pro": false,
-            "title": "Free Plan",
-            "price": "0",
-            "expiration": "never",
-            "currency": "KES",
-            "transactionId": "0"
-          }
+          'token': token,
         });
+        await Purchases.logIn(user.id);
+        await Purchases.setEmail(user.email);
+        await Purchases.setDisplayName(user.name);
+        await Purchases.setPushToken(token);
+        await Purchases.collectDeviceIdentifiers();
       }
       return true;
     } catch (e) {
@@ -51,4 +54,70 @@ class UserRepository extends UserTemplate {
       throw Exception('Error getting user');
     }
   }
+
+  @override
+  Future<List<NotificationModel>> getNotifications() async {
+    try {
+      final id = supabase.auth.currentUser!.id;
+      final response =
+          await supabase.from('notifications').select().eq('userId', id);
+      final notification =
+          response.map((e) => NotificationModel.fromJson(e)).toList();
+      return notification;
+    } catch (e) {
+      debugPrint(e.toString());
+      throw Exception('Error getting notifications');
+    }
+  }
+
+  @override
+  Future<bool> readNotification(
+      {required NotificationModel notification}) async {
+    try {
+      await supabase.from('notifications').update({
+        'id': notification.id,
+        'read': true,
+      });
+      return true;
+    } catch (e) {
+      debugPrint(e.toString());
+      throw Exception('Error reading notification');
+    }
+  }
+
+  @override
+  Future<bool> markAsRead() async {
+    try {
+      final id = await supabase.auth.currentUser!.id;
+      await supabase.from('notifications').update(
+        {
+          'read': true,
+        },
+      ).eq('userId', id);
+
+      return true;
+    } catch (e) {
+      debugPrint(e.toString());
+      throw Exception('Error reading notification');
+    }
+  }
+  
+  @override
+  Future<bool> showNotificationBadge() async{
+    try {
+      final id = supabase.auth.currentUser!.id;
+      final response =
+          await supabase.from('notifications').select().eq('userId', id);
+      final notification =
+          response.map((e) => NotificationModel.fromJson(e)).toList();
+      final unread = notification.where((element) => element.read == false).toList();
+      return unread.isNotEmpty;
+    } catch (e) {
+      debugPrint(e.toString());
+      throw Exception('Error getting notifications');
+    }
+  }
+
+ 
+
 }

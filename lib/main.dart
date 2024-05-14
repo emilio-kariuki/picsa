@@ -16,6 +16,7 @@ final _configuration = PurchasesConfiguration(
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
   initLocator();
   await Supabase.initialize(
       url: 'https://pvotaaukwfeabaqtahfu.supabase.co',
@@ -27,11 +28,12 @@ void main() async {
       debug: false,
       storageOptions: const StorageClientOptions(
         retryAttempts: 3,
+      ),
+      postgrestOptions: const PostgrestClientOptions(
+        schema: 'public',
       ));
-  // if (Platform.isAndroid) {
   await Purchases.configure(_configuration);
-  await Purchases.setLogLevel(LogLevel.debug);
-  // }
+  await Purchases.setLogLevel(LogLevel.info);
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
@@ -40,44 +42,39 @@ void main() async {
     DeviceOrientation.portraitDown,
   ]);
   await NotificationRepository().initializeFirebaseMessaging();
-  await NotificationRepository().getNotificationToken();
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-  FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
-    await NotificationRepository().showLowNotification(
-      message: message.notification!.body!,
-      title: message.notification!.title!,
-    );
-  });
-  runApp( MainApp());
+  runApp(MainApp());
 }
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
 }
 
 class MainApp extends StatelessWidget {
-   MainApp({super.key});
+  MainApp({super.key});
 
-  static const appcastURL =
-    'https://picsa.pro/upgrader/appcast.xml';
-final upgrader = Upgrader(
-  storeController: UpgraderStoreController(
-    onAndroid: () => UpgraderAppcastStore(appcastURL: appcastURL),
-  ),
-);
+  static const appcastURL = 'https://picsa.pro/upgrader/appcast.xml';
+  final upgrader = Upgrader(
+    storeController: UpgraderStoreController(
+      onAndroid: () => UpgraderAppcastStore(appcastURL: appcastURL),
+    ),
+  );
 
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          create: (context) => UserCubit()..getUser(),
+          create: (context) => AuthCubit()..isSignedIn(),
           lazy: false,
         ),
         BlocProvider(
-          create: (context) => SubscriptionCubit()
-            ..isSubscribed()
-            ..getPackages(),
+          create: (context) => UserCubit()
+            ..getUser()
+            ..getNotifications()
+            ..showNotificationBadge(),
           lazy: false,
         ),
         BlocProvider(
@@ -85,13 +82,13 @@ final upgrader = Upgrader(
           lazy: false,
         ),
         BlocProvider(
-          create: (context) => EventCubit()
-            ..getEvents()
-            ..getGuestEvents(),
+          create: (context) => SubscriptionCubit()..getPackages(),
           lazy: false,
         ),
         BlocProvider(
-          create: (context) => AuthCubit()..isSignedIn(),
+          create: (context) => EventCubit()
+            ..getEvents()
+            ..getGuestEvents(),
           lazy: false,
         ),
       ],
@@ -104,12 +101,12 @@ final upgrader = Upgrader(
           title: 'Picsa',
           debugShowCheckedModeBanner: false,
           builder: (context, child) {
-        return UpgradeAlert(
-          upgrader: upgrader,
-          navigatorKey: appRouter.routerDelegate.navigatorKey,
-          child: child ?? Text('child'),
-        );
-      },
+            return UpgradeAlert(
+              upgrader: upgrader,
+              navigatorKey: appRouter.routerDelegate.navigatorKey,
+              child: child ?? const Text('child'),
+            );
+          },
         );
       }),
     );

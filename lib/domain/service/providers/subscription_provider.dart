@@ -1,6 +1,4 @@
 import 'package:picsa/domain/service/repository/subscription_repository.dart';
-import 'package:purchases_flutter/models/offering_wrapper.dart';
-import 'package:purchases_flutter/models/package_wrapper.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 
 class SubscriptionProvider extends SubsciptionTemplate {
@@ -13,10 +11,6 @@ class SubscriptionProvider extends SubsciptionTemplate {
     return _subscriptionRepository.getOffers();
   }
 
-  @override
-  Future<bool> isUserSubscribed() {
-    return _subscriptionRepository.isUserSubscribed();
-  }
 
   @override
   Future<bool> purchasePackage(Package package) {

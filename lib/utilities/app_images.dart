@@ -2,7 +2,6 @@ class AppImages {
   static const String welcome = 'assets/welcome.jpg';
   static const String create = 'assets/creates.jpg';
   static const String google = 'assets/google.svg';
-  static const String notification = 'assets/notification.png';
   static const String logo = 'assets/logo.svg';
   static const String camera = 'assets/svg/camera.svg';
   static const String imagesPage = 'assets/camera.jpg';
@@ -30,9 +29,8 @@ class AppImages {
   static const String terms = 'assets/svg/terms.svg';
   static const String lock = 'assets/svg/lock.svg';
   static const String check = 'assets/svg/check.svg';
-    static const String refresh = 'assets/svg/refresh.svg';
+  static const String refresh = 'assets/svg/refresh.svg';
+  static const String notification = 'assets/svg/notification.svg';
 
-
-  static const String defaultImage =
-      "https://pvotaaukwfeabaqtahfu.supabase.co/storage/v1/object/public/picsa/frame_picsa.png?t=2023-12-28T10%3A50%3A09.524Z";
+  static const String defaultImage = "https://picsa.pro/logo.png";
 }

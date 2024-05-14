@@ -1,9 +1,7 @@
 import 'dart:io';
 
-import 'package:flutter/material.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:picsa/utilities/packages.dart';
-import 'package:picsa/utilities/supabase_config.dart';
 
 abstract class ImageTemplate {
   Future<File> compressImage({required File image});

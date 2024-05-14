@@ -10,11 +10,11 @@ abstract class EventTemplate {
   Future<Event> getEventById({required String id});
   Future<List<ImageModel>> getEventImages({required String uid});
   Future<List<ImageModel>> getUserImages({required String eventId});
+  Future<int> getEventImagesTaken({required String eventId});
   Future<bool> deleteEvent({required String uid});
+  Future<bool> joinEvent({required String eventId});
   Future<List<Event>> getJoinedEvents();
   Future<int> getUsersJoined({required String eventId});
-  Future<int> getEventImagesTaken({required String eventId});
-  Future<bool> joinEvent({required String eventId});
 }
 
 class EventRepository extends EventTemplate {

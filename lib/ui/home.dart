@@ -18,10 +18,7 @@ class _HomeState extends State<Home> {
   void initState() {
     super.initState();
     Purchases.addCustomerInfoUpdateListener((customerInfo) {
-      debugPrint("The Customer Info: $customerInfo");
-      if (customerInfo.activeSubscriptions.isNotEmpty) {
-        // context.read<UserCubit>().getUser();
-      }
+      if (customerInfo.activeSubscriptions.isNotEmpty) {}
     });
     supabase
       ..channel('public:User')
@@ -44,11 +41,6 @@ class _HomeState extends State<Home> {
               event: PostgresChangeEvent.all,
               schema: 'public',
               table: 'Events',
-              // filter: PostgresChangeFilter(
-              //   type: PostgresChangeFilterType.eq,
-              //   column: 'userId',
-              //   value: supabase.auth.currentUser!.id,
-              // ),
               callback: (payload) {
                 debugPrint('Change received: ${payload.toString()}');
                 context.read<EventCubit>().getEvents();
@@ -68,6 +60,23 @@ class _HomeState extends State<Home> {
                 debugPrint('Change received: ${payload.toString()}');
                 context.read<EventCubit>().getGuestEvents();
               })
+          .subscribe()
+      ..channel('public:notifications')
+          .onPostgresChanges(
+              event: PostgresChangeEvent.all,
+              schema: 'public',
+              table: 'notifications',
+              filter: PostgresChangeFilter(
+                type: PostgresChangeFilterType.eq,
+                column: 'userId',
+                value: supabase.auth.currentUser!.id,
+              ),
+              callback: (payload) {
+                debugPrint('Change received: ${payload.toString()}');
+                context.read<UserCubit>()
+                  ..getNotifications()
+                  ..showNotificationBadge();
+              })
           .subscribe();
   }
 
@@ -75,7 +84,7 @@ class _HomeState extends State<Home> {
     final pages = <Widget>[
       CreatePage(),
       // CameraPage(eventId: "47c2adb1-1390-4899-8a0d-f95cbbaaf7ca",),
-       EventPage(),
+      const EventPage(),
       const SettingsPage()
     ];
     return BlocBuilder<NavigationCubit, NavigationState>(
@@ -145,14 +154,14 @@ class _HomeState extends State<Home> {
                     child: Icon(
                       itemz['icon'] as IconData,
                       size: 22,
-                      color: Colors.grey[300],
+                      color: Colors.grey[400],
                     ),
                   ),
                   const Gap(3),
                   Text(
                     itemz['name'] as String,
                     style: GoogleFonts.inter(
-                      color: Colors.grey[300],
+                      color: Colors.grey[400],
                       fontWeight: FontWeight.w600,
                       fontSize: 14,
                     ),

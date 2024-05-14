@@ -33,14 +33,11 @@ class AuthRepository extends AuthTemplate {
       if (response == null) {
         return false;
       }
+      await Purchases.logIn(response.id);
       final token = await NotificationRepository().getNotificationToken();
-      
-        await Purchases.logIn(response.id);
-      await Purchases.setEmail(response.email!);
-      if(Platform.isAndroid){
+      if (Platform.isAndroid) {
         await Purchases.setPushToken(token);
-      
-      await Purchases.syncPurchases();
+        await Purchases.syncPurchases();
       }
       return true;
     } catch (e) {
@@ -62,29 +59,23 @@ class AuthRepository extends AuthTemplate {
       if (idToken == null) {
         throw 'No ID Token found.';
       }
-
       AuthResponse response = await supabase.auth.signInWithIdToken(
         provider: OAuthProvider.google,
         idToken: idToken,
         accessToken: accessToken,
       );
-    //  if(Platform.isAndroid){
-       await Purchases.logIn(response.user!.id);
-      await Purchases.setEmail(response.user!.email!);
-      await Purchases.setDisplayName(
-          response.user!.userMetadata?['full_name']!);
-      await Purchases.syncPurchases();
+      await Purchases.logIn(response.user!.id);
       final token = await NotificationRepository().getNotificationToken();
-      await Purchases.setPushToken(token);
-    //  }
+      if (Platform.isAndroid) {
+        await Purchases.setPushToken(token);
+      }
       final user = UserModel(
-        id: response.user!.id,
-        name: response.user!.userMetadata?['full_name'],
-        email: response.user!.email ?? '',
-        url: response.user!.userMetadata?['avatar_url'],
-        pro: false,
-        token: token
-      );
+          id: response.user!.id,
+          name: response.user!.userMetadata?['full_name'],
+          email: response.user!.email!,
+          url: response.user!.userMetadata?['avatar_url'],
+          pro: false,
+          token: token);
       return user;
     } catch (e) {
       debugPrint(e.toString());
@@ -97,6 +88,7 @@ class AuthRepository extends AuthTemplate {
     try {
       await supabase.auth.signOut();
       await googleSignIn.signOut();
+      await Purchases.invalidateCustomerInfoCache();
       await Purchases.logOut();
       return true;
     } catch (e) {

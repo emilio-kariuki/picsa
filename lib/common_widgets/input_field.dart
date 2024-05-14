@@ -83,7 +83,7 @@ class InputField extends StatelessWidget {
         // border: Theme.of(context).inputDecorationTheme.border,
         // disabledBorder: Theme.of(context).inputDecorationTheme.disabledBorder,
         contentPadding:
-            const EdgeInsets.symmetric(horizontal: 15, vertical: 25),
+            const EdgeInsets.symmetric(horizontal: 15, vertical: 22),
       ),
     );
   }

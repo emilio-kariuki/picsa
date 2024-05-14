@@ -1,11 +1,13 @@
-import 'package:picsa/ui/event/image_editor.dart';
-import 'package:picsa/ui/event/image_preview.dart';
-import 'package:picsa/ui/event/images_page.dart';
+import 'package:picsa/ui/event/notifications_page.dart';
+import 'package:picsa/ui/image/image_editor.dart';
+import 'package:picsa/ui/image/image_preview.dart';
+import 'package:picsa/ui/image/images_page.dart';
 import 'package:picsa/utilities/packages.dart';
 
 import '../ui/camera/camera_page.dart';
 
 final appRouter = GoRouter(
+  navigatorKey: rootNavigator,
   initialLocation: '/welcome',
   routes: [
     GoRoute(
@@ -69,11 +71,23 @@ final appRouter = GoRouter(
         final data = state.extra;
         return ImageEditor(url: (data as Map)['url']);
       },
-    )
+    ),
+    GoRoute(
+        path: '/notifications',
+        name: Routes.notifications,
+        pageBuilder: (context, state) {
+          return CustomTransitionPage<void>(
+            key: state.pageKey,
+            child: const NotificationPage(),
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) =>
+                    FadeTransition(opacity: animation, child: child),
+          );
+        }),
   ],
   redirect: (BuildContext context, GoRouterState state) async {
     // get route state
-
+    
     final bool loggedIn = supabase.auth.currentUser != null;
     final bool loggingIn = state.matchedLocation == Routes.welcome;
     if (!loggedIn) return Routes.welcome;
@@ -89,6 +103,9 @@ class Routes {
   static const String welcome = '/welcome';
   static const String home = '/home';
   static const String camera = '/camera';
+  static const String images = '/images';
+  static const String preview = '/preview';
+  static const String notifications = '/notifications';
 }
 
 class GoRouterRefreshStream extends ChangeNotifier {
@@ -100,3 +117,5 @@ class GoRouterRefreshStream extends ChangeNotifier {
     );
   }
 }
+
+final GlobalKey<NavigatorState> rootNavigator = GlobalKey(debugLabel: 'root');

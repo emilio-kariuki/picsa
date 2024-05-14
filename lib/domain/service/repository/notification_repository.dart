@@ -53,7 +53,7 @@ class NotificationRepository {
     }
   }
 
-  Future<void> showLowNotification({
+  Future<void> showNotification({
     required String message,
     required String title,
   }) async {
@@ -64,7 +64,7 @@ class NotificationRepository {
       const NotificationDetails(
         android: AndroidNotificationDetails(
           "2",
-          'Low normal Notifications',
+          'normal Notifications',
           channelDescription: "This is the notifications normal channel",
           importance: Importance.high,
           priority: Priority.high,
@@ -86,7 +86,15 @@ class NotificationRepository {
       FirebaseMessaging.onMessage.listen((RemoteMessage message) {
         debugPrint("Message received: ${message.notification!.body}");
 
-        showLowNotification(
+        showNotification(
+          message: message.data['message'] ?? message.contentAvailable.toString(),
+          title: message.data['title'] ?? message.notification!.title!,
+        );
+      });
+      FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+        debugPrint("Message received: ${message.notification!.body}");
+
+        showNotification(
           message: message.data['message'] ?? message.contentAvailable.toString(),
           title: message.data['title'] ?? message.notification!.title!,
         );
