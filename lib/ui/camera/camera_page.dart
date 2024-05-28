@@ -224,11 +224,14 @@ class _CameraPageState extends State<CameraPage> {
             child: Align(
               alignment: Alignment.bottomCenter,
               child: GestureDetector(
-                onTap: () {
+                onTap: () async {
                   context.read<BoolCubit>().changeValue(value: isCameraChanged);
                   context.read<CameraCubit>().toggleCamera(
                         isCameraChanged: isCameraChanged,
                       );
+                  await Posthog().capture(
+                    eventName: 'Camera Switched',
+                  );
                 },
                 child: Container(
                     padding: const EdgeInsets.symmetric(
@@ -269,8 +272,11 @@ class _CameraPageState extends State<CameraPage> {
             child: Align(
               alignment: Alignment.bottomCenter,
               child: GestureDetector(
-                onTap: () {
+                onTap: () async{
                   context.read<PageCubit>().changePage(page: zoom.toInt());
+                  await Posthog().capture(
+                    eventName: 'Camera Switched',
+                  );
                 },
                 child: Container(
                   padding:
@@ -310,11 +316,14 @@ class _CameraPageState extends State<CameraPage> {
             child: Column(
               children: [
                 GestureDetector(
-                  onTap: () {
+                  onTap: () async{
                     context.read<BoolCubit>().changeValue(value: isFlashOn);
                     context.read<CameraCubit>().toggleFlash(
                           isFlashOn: isFlashOn,
                         );
+                        await Posthog().capture(
+                    eventName: 'Camera Switched',
+                  );
                   },
                   child: Container(
                       padding: const EdgeInsets.symmetric(
@@ -564,7 +573,7 @@ class CaptureImage extends StatelessWidget {
                                             6.5 * SizeConfig.heightMultiplier,
                                       ),
                                       state.images[index].hd
-                                          ?  Positioned.fill(
+                                          ? Positioned.fill(
                                               bottom: 0.4 *
                                                   SizeConfig.heightMultiplier,
                                               right: 0.4 *
@@ -594,8 +603,8 @@ class CaptureImage extends StatelessWidget {
                                                             fontSize: 9,
                                                             color:
                                                                 Colors.white))),
-                                              )) : const SizedBox.shrink()
-                                         
+                                              ))
+                                          : const SizedBox.shrink()
                                     ],
                                   ),
                                 );

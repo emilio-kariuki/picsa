@@ -27,3 +27,4 @@ export 'package:flutter_media_downloader/flutter_media_downloader.dart';
 export 'package:dio/dio.dart' hide Headers;
 export 'package:firebase_messaging/firebase_messaging.dart';
 export 'package:image_gallery_saver/image_gallery_saver.dart';
+export 'package:posthog_flutter/posthog_flutter.dart';

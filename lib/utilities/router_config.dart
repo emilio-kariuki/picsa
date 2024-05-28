@@ -3,12 +3,16 @@ import 'package:picsa/ui/image/image_editor.dart';
 import 'package:picsa/ui/image/image_preview.dart';
 import 'package:picsa/ui/image/images_page.dart';
 import 'package:picsa/utilities/packages.dart';
+import 'package:posthog_flutter/posthog_flutter.dart';
 
 import '../ui/camera/camera_page.dart';
 
 final appRouter = GoRouter(
   navigatorKey: rootNavigator,
   initialLocation: '/welcome',
+  observers: [
+    PosthogObserver(),
+  ],
   routes: [
     GoRoute(
         path: '/camera/:id',
@@ -87,7 +91,7 @@ final appRouter = GoRouter(
   ],
   redirect: (BuildContext context, GoRouterState state) async {
     // get route state
-    
+
     final bool loggedIn = supabase.auth.currentUser != null;
     final bool loggingIn = state.matchedLocation == Routes.welcome;
     if (!loggedIn) return Routes.welcome;
