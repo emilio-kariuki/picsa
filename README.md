@@ -173,9 +173,9 @@ You can check more about `Sentry` from its [docs](https://docs.sentry.io/platfor
 
 - The `welcome page` is the first page that the user will see when they open the application. The user can either sign in or sign up in the application. The user can also sign in using google sign in in the application. The page adopts a minimalistic design and the user can also sign in using their google account.
 
-<div style="display: flex;">
-    <img src="assets/screenshots/creates.png" alt="welcome" width= 300 height= 400>
-    <img src="assets/screenshots/creates.png" alt="google prompt" width= 300 height= 400>
+<div style="display: flex; gap: 50px;">
+    <img src="assets/screenshots/welcome.png" alt="welcome" width= 200 height= 400>
+    <img src="assets/screenshots/welcome2.png" alt="google prompt" width= 200 height= 400>
 </div>
 
 ### 5. Create Event Page
@@ -183,9 +183,9 @@ You can check more about `Sentry` from its [docs](https://docs.sentry.io/platfor
 - The `create event page` provides the users with a field and a button to create event in a much simpler way <br>
 - The page also provides a notification icon for the users to access notification right from the first page
 
-<div style="display: flex;">
-    <img src="assets/screenshots/creates.png" alt="event page" width= 300 height= 400>
-    <img src="assets/screenshots/creates.png" alt="Event" width= 300 height= 400>
+<div style="display: flex; gap: 50px;">
+    <img src="assets/screenshots/create_event1.png" alt="event page" width= 200 height= 400>
+    <img src="assets/screenshots/create_event.png" alt="Event" width= 200 height= 400>
 </div>
 
 
@@ -198,9 +198,9 @@ You can check more about `Sentry` from its [docs](https://docs.sentry.io/platfor
 - The user can also view the details of the event by clicking on the event card
 - The user can also initiate the camera by just clicking on the camera icon on the event card
 
-<div style="display: flex;">
-    <img src="Assets/event_page.png" alt="Event" width= 300 height= 400>
-    <img src="Assets/event_dialog.png" alt="Event" width= 300 height= 400>
+<div style="display: flex;gap: 50px; ">
+    <img src="assets/screenshots/events.png" alt="Event" width= 200 height= 400>
+    <img src="assets/screenshots/join.png" alt="Event" width= 200 height= 400>
 </div>
 
 <br>
@@ -213,9 +213,9 @@ You can check more about `Sentry` from its [docs](https://docs.sentry.io/platfor
 - The user can also share the image by clicking on the share icon on the image card
 - The user can also export the image by clicking on the export icon on the image card
 
-<div style="display: flex;">
-    <img src="Assets/resource_page.png" alt="Event" width= 300 height= 400>
-    <img src="Assets/resource_dialog.png" alt="Event" width= 300 height= 400>
+<div style="display: flex;gap: 50px;">
+    <img src="assets/screenshots/images.png" alt="Event" width= 200 height= 400>
+    <img src="assets/screenshots/preview.png" alt="Event" width= 200 height= 400>
 </div>
 
 ### 8. Image Editor
@@ -228,9 +228,9 @@ You can check more about `Sentry` from its [docs](https://docs.sentry.io/platfor
 - The user can also add filters to the image by clicking on the filter icon on the image editor
 - The user can also add stickers to the image by clicking on the sticker icon on the image editor
 
-<div style="display: flex;">
-    <img src="Assets/group_page.png" alt="Event" width= 300 height= 400>
-    <img src="Assets/group_dialog.png" alt="Event" width= 300 height= 400>
+<div style="display: flex;gap: 50px;">
+    <img src="assets/screenshots/editor.png" alt="Event" width= 200 height= 400>
+    <img src="assets/screenshots/editor2.png" alt="Event" width= 200 height= 400>
 </div>
 
 ### 9. Profile Page
@@ -242,9 +242,9 @@ You can check more about `Sentry` from its [docs](https://docs.sentry.io/platfor
 - The user can also access the social media links of the application by clicking on the social media icon on the profile page
 
 
-<div style="display: flex;">
-    <img src="Assets/group_page.png" alt="Event" width= 300 height= 400>
-    <img src="Assets/group_dialog.png" alt="Event" width= 300 height= 400>
+<div style="display: flex;gap: 50px;">
+    <img src="assets/screenshots/profile.png" alt="Event" width= 200 height= 400>
+    <!-- <img src="assets/screenshots/group_dialog.png" alt="Event" width= 200 height= 400> -->
 </div>
 
 ### Feel Free to contribute

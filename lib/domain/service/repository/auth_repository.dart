@@ -18,7 +18,7 @@ abstract class AuthTemplate {
 const webClientId =
     '203502494436-b2e9a7prusv18vog9tmge6chpeg00sto.apps.googleusercontent.com';
 const iosClientId =
-    '203502494436-3c0s0cl8ie5u49ehrsbf9trk1grm3fhh.apps.googleusercontent.com';
+    '203502494436-6c0jf65s1tv4otn53v2ff0i76b78cn2r.apps.googleusercontent.com';
 
 final GoogleSignIn googleSignIn = GoogleSignIn(
   clientId: iosClientId,
