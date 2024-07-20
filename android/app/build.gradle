@@ -53,6 +53,7 @@ android {
         targetSdkVersion flutter.targetSdkVersion
         versionCode 27
         versionName "0.0.27"
+        manifestPlaceholders = [auth0Domain: "projo-f83ae.appspot.com", auth0Scheme: "https"]
     }
 
     signingConfigs {

@@ -1,118 +1,131 @@
+import 'dart:isolate';
+
+import 'package:awesome_notifications/awesome_notifications.dart';
+import 'package:picsa/utilities/packages.dart';
 
 
-import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+abstract class NotificationTemplate {
+  Future<void> initializeNotifications();
+  Future<void> sendNotification(
+      {required String title,
+      required String body,
+      required RemoteMessage message});
+  Future<String> getNotificationToken();
+}
 
-class NotificationRepository {
-  late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
-  late AndroidNotificationChannel channel;
+class NotificationRepository extends NotificationTemplate {
+  final AwesomeNotifications awesomeNotifications = AwesomeNotifications();
+  late NotificationChannel channel;
+  static ReceivePort? receiveAction;
+
   NotificationRepository() {
-    flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-
-    channel = const AndroidNotificationChannel(
-      'low_importance_channel',
-      'Low Importance Notifications',
-      description: 'This channel is used for important notifications.',
-      importance: Importance.high,
-    );
-    var initializationSettingsAndroid =
-        const AndroidInitializationSettings('picsa');
-    var initializationSettings = InitializationSettings(
-      android: initializationSettingsAndroid,
-      iOS: const DarwinInitializationSettings(
-        requestAlertPermission: true,
-        requestBadgePermission: true,
-        requestSoundPermission: false,
-      ),
-    );
-    flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-    flutterLocalNotificationsPlugin.initialize(
-      initializationSettings,
-    );
-    flutterLocalNotificationsPlugin
-        .resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>()
-        ?.createNotificationChannel(channel);
-
     FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
       alert: true,
       badge: true,
       sound: false,
     );
   }
-
+  @override
   Future<String> getNotificationToken() async {
     try {
-      final token = await FirebaseMessaging.instance.getToken();
-      debugPrint('The firebase messaging token is: $token');
-      return token!;
+    
+        await FirebaseMessaging.instance.requestPermission(
+          alert: true,
+          badge: true,
+          provisional: false,
+          sound: true,
+        );
+        final token = await FirebaseMessaging.instance.getAPNSToken();
+        debugPrint("Ios APNS token: $token");
+      
+        final fcmToken = await FirebaseMessaging.instance.getToken();
+        debugPrint('The firebase messaging token is: $fcmToken');
+        return fcmToken!;
+      
     } catch (e) {
       debugPrint(e.toString());
       throw Exception('Error getting firebase messaging token');
     }
   }
 
-  Future<void> showNotification({
-    required String message,
-    required String title,
-  }) async {
-    return flutterLocalNotificationsPlugin.show(
-      0,
-      title,
-      message,
-      const NotificationDetails(
-        android: AndroidNotificationDetails(
-          "2",
-          'normal Notifications',
-          channelDescription: "This is the notifications normal channel",
-          importance: Importance.high,
-          priority: Priority.high,
-          showWhen: false,
-        ),
-      ),
-    );
-  }
-
-
-  Future initializeFirebaseMessaging() async {
+  @override
+  Future<void> initializeNotifications() async {
     try {
+          await awesomeNotifications.initialize(
+        'resource://drawable/climate',
+        [
+          NotificationChannel(
+            channelKey: 'fcm',
+            channelName: 'firebase_channel',
+            defaultColor: Colors.teal,
+            importance: NotificationImportance.High,
+            channelShowBadge: true,
+            channelDescription:
+                'This channel is used for important notifications.',
+            channelGroupKey: 'firebase',
+          ),
+        ],
+        debug: true);
+
       await FirebaseMessaging.instance
           .setForegroundNotificationPresentationOptions(
         alert: false,
         badge: true,
         sound: false,
       );
+     
+      // FirebaseMessaging.instance.getInitialMessage().then(handleMessage);
       FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-        debugPrint("Message received: ${message.notification!.body}");
-
-        showNotification(
-          message: message.data['message'] ?? message.contentAvailable.toString(),
+        debugPrint(
+            "Foreground Message received: ${message.notification!.title}");
+        sendNotification(
+          body: message.data['message'] ?? message.notification!.body,
           title: message.data['title'] ?? message.notification!.title!,
+          message: message,
         );
       });
       FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-        debugPrint("Message received: ${message.notification!.body}");
-
-        showNotification(
-          message: message.data['message'] ?? message.contentAvailable.toString(),
+        debugPrint(
+            "Background Message received: ${message.notification!.body}");
+        sendNotification(
+          body: message.data['message'] ?? message.contentAvailable.toString(),
           title: message.data['title'] ?? message.notification!.title!,
+          message: message,
         );
       });
+      debugPrint("Firebase messaging initialized");
     } catch (e) {
       debugPrint(e.toString());
       throw Exception("Error initializing firebase messaging");
     }
   }
 
+  @override
+  Future<void> sendNotification(
+      {required String title,
+      required String body,
+      required RemoteMessage message}) {
+    return awesomeNotifications.createNotification(
+      content: NotificationContent(
+        id: 10,
+        channelKey: 'fcm',
+        title: title,
+        body: body,
+        notificationLayout: NotificationLayout.BigPicture,
+      ),
+    );
+  }
 
-  // Future<String> _downloadAndSaveFile(String url, String fileName) async {
-  //   final Directory directory = await getApplicationDocumentsDirectory();
-  //   final String filePath = '${directory.path}/$fileName';
-  //   final response = await Dio()
-  //       .get(url, options: Options(responseType: ResponseType.bytes));
-  //   final File file = File(filePath);
-  //   await file.writeAsBytes(response.data);
-  //   return filePath;
-  // }
+  Future<void> showNotification(
+      {required String title, required String body}) async {
+    await awesomeNotifications.createNotification(
+      content: NotificationContent(
+        id: 10,
+        channelKey: 'fcm',
+        title: title,
+        body: body,
+        notificationLayout: NotificationLayout.BigPicture,
+      ),
+    );
+  }
 }

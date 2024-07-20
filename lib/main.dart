@@ -10,7 +10,6 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:upgrader/upgrader.dart';
 import 'domain/blocs/app/auth_cubit.dart';
 import 'domain/blocs/app/camera_cubit.dart';
-import 'package:sentry/sentry.dart';
 
 
 final _configuration = PurchasesConfiguration(
@@ -44,28 +43,18 @@ void main() async {
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);
-  await NotificationRepository().initializeFirebaseMessaging();
-  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+  await NotificationRepository().initializeNotifications();
+  // FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   await SentryFlutter.init((options) {
     options.dsn =
         'https://c9cda213331825e069a1535b08dd02ca@o4507333268275200.ingest.de.sentry.io/4507333270175824';
-    // Set tracesSampleRate to 1.0 to capture 100% of transactions for performance monitoring.
-    // We recommend adjusting this value in production.
     options.tracesSampleRate = 1.0;
-    // The sampling rate for profiling is relative to tracesSampleRate
-    // Setting to 1.0 will profile 100% of sampled transactions:
     options.profilesSampleRate = 1.0;
-  }, appRunner: () => runApp(MainApp()));
-}
-
-Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  }, appRunner: () => runApp(const MainApp()));
 }
 
 class MainApp extends StatefulWidget {
-  MainApp({super.key});
+  const MainApp({super.key});
 
   static const appcastURL = 'https://picsa.pro/upgrader/appcast.xml';
 
@@ -79,19 +68,6 @@ class _MainAppState extends State<MainApp> {
       onAndroid: () => UpgraderAppcastStore(appcastURL: MainApp.appcastURL),
     ),
   );
-
- @override
-  void didChangeDependencies() async{
-try {
-  // a method that might throw an exception
-  throw Exception('Test Exception');
-} catch (exception, stackTrace) {
-  await Sentry.captureException(
-    exception,
-    stackTrace: stackTrace,
-  );
-}    super.didChangeDependencies();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -128,7 +104,9 @@ try {
         return MaterialApp.router(
           darkTheme: darkTheme,
           themeMode: ThemeMode.dark,
-          routerConfig: appRouter,
+          routerDelegate: appRouter.routerDelegate,
+          routeInformationParser: appRouter.routeInformationParser,
+          routeInformationProvider: appRouter.routeInformationProvider,
           title: 'Picsa',
           debugShowCheckedModeBanner: false,
           builder: (context, child) {

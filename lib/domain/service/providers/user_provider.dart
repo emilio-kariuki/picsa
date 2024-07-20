@@ -26,12 +26,12 @@ class UserProvider extends UserTemplate {
   Future<bool> readNotification({required NotificationModel notification}) {
     return _userRepository.readNotification(notification: notification);
   }
-  
+
   @override
   Future<bool> markAsRead() {
     return _userRepository.markAsRead();
   }
-  
+
   @override
   Future<bool> showNotificationBadge() {
     return _userRepository.showNotificationBadge();

@@ -99,7 +99,7 @@ class CreatePage extends StatelessWidget {
                         },
                         hintText: "What's the occassion?",
                       ),
-                      Gap(height * 0.015),
+                      Gap(height * 0.01),
                       isEmpty
                           ? Container(
                               height: height * 0.075,

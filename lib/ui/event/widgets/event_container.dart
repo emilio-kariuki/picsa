@@ -20,13 +20,13 @@ class EventContainer extends StatelessWidget {
 
     return GestureDetector(
       onTap: () => context.push(
-        '/images/${event.id}',
+        '/events/images/${event.id}',
       ),
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 15),
         decoration: BoxDecoration(
             color: const Color(0xff000000).withOpacity(0.3),
-            borderRadius: BorderRadius.circular(15)),
+            borderRadius: BorderRadius.circular(10)),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [

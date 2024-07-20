@@ -1,4 +1,3 @@
-
 import 'package:picsa/utilities/packages.dart';
 
 abstract class AppTemplate {
@@ -43,7 +42,7 @@ class AppRepository extends AppTemplate {
       final browserUrl = Uri.parse(url);
 
       await launchUrl(browserUrl,
-      mode: LaunchMode.externalApplication,
+          mode: LaunchMode.externalApplication,
           webOnlyWindowName: "Privacy & Policy");
     } catch (e) {
       debugPrint('Error launching broswer $e');
@@ -84,7 +83,7 @@ class AppRepository extends AppTemplate {
   }
 
   @override
-  Future<void> launchPhone({required String phone}) async{
+  Future<void> launchPhone({required String phone}) async {
     try {
       final phoneUrl = 'tel:$phone';
       await launchUrl(Uri.parse(phoneUrl));
@@ -92,16 +91,14 @@ class AppRepository extends AppTemplate {
       debugPrint('Error launching broswer $e');
     }
   }
-  
-  @override
-  Future<bool> saveImage({required Uint8List bytes}) async{
-   try{
-      final result = await ImageGallerySaver.saveImage(Uint8List.fromList(bytes));
-      return result != null;
 
-   }catch(e){
-     debugPrint(e.toString());
-     throw Exception('Error saving image');
-   }
+  @override
+  Future<bool> saveImage({required Uint8List bytes}) async {
+    try {
+      return true;
+    } catch (e) {
+      debugPrint(e.toString());
+      throw Exception('Error saving image');
+    }
   }
 }

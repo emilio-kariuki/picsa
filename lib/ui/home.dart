@@ -7,13 +7,15 @@ import 'package:picsa/utilities/packages.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 
 class Home extends StatefulWidget {
-  const Home({super.key});
+  final Widget child;
+  const Home({super.key, required this.child});
 
   @override
   State<Home> createState() => _HomeState();
 }
 
 class _HomeState extends State<Home> {
+
   @override
   void initState() {
     super.initState();
@@ -80,29 +82,12 @@ class _HomeState extends State<Home> {
           .subscribe();
   }
 
-  Widget getBody() {
-    final pages = <Widget>[
-      CreatePage(),
-      // CameraPage(eventId: "47c2adb1-1390-4899-8a0d-f95cbbaaf7ca",),
-      const EventPage(),
-      const SettingsPage()
-    ];
-    return BlocBuilder<NavigationCubit, NavigationState>(
-      builder: (context, state) {
-        return IndexedStack(
-          index: state.page,
-          children: pages,
-        );
-      },
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => NavigationCubit(),
       child: Scaffold(
-        body: getBody(),
+        body: widget.child,
         bottomNavigationBar: getFooter(context),
       ),
     );
@@ -115,7 +100,15 @@ class _HomeState extends State<Home> {
       {'icon': Icons.camera_alt_outlined, 'name': "Events"},
       {'icon': Icons.settings, 'name': "Settings"},
     ];
-    return BlocBuilder<NavigationCubit, NavigationState>(
+    final List<String> routes = [
+      '/home',
+      '/events',
+      '/settings',
+    ];
+    return BlocConsumer<NavigationCubit, NavigationState>(
+      listener: (context, state) {
+        appRouter.go(routes[state.page]);
+      },
       builder: (context, state) {
         return SizedBox(
           height: height * 0.09,

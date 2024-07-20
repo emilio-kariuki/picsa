@@ -369,7 +369,7 @@ class _ImagesPageState extends State<ImagesPage> {
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsets.all(1.5 * SizeConfig.heightMultiplier),
+                  padding: EdgeInsets.all(0.2 * SizeConfig.heightMultiplier),
                   child: BlocBuilder<EventCubit, EventState>(
                     buildWhen: (previous, current) =>
                         previous.images != current.images,
@@ -457,10 +457,10 @@ class _ImagesPageState extends State<ImagesPage> {
                                           SliverGridDelegateWithFixedCrossAxisCount(
                                         crossAxisCount: 3,
                                         mainAxisSpacing:
-                                            1 * SizeConfig.heightMultiplier,
+                                           0.1* SizeConfig.heightMultiplier,
                                         crossAxisSpacing:
-                                            1 * SizeConfig.heightMultiplier,
-                                        childAspectRatio: 0.9,
+                                           0.1* SizeConfig.heightMultiplier,
+                                        childAspectRatio: 1.1,
                                       ),
                                       itemBuilder: (context, index) {
                                         return Stack(
@@ -480,7 +480,7 @@ class _ImagesPageState extends State<ImagesPage> {
                                                   fit: BoxFit.cover),
                                             ),
                                             Positioned.fill(
-                                                bottom: 1 *
+                                                bottom: 0.5 *
                                                     SizeConfig.heightMultiplier,
                                                 left: 1 *
                                                     SizeConfig.heightMultiplier,
@@ -493,12 +493,12 @@ class _ImagesPageState extends State<ImagesPage> {
                                                         .toString()
                                                         .split(" ")[0],
                                                     style: GoogleFonts.notoSans(
-                                                      fontSize: 1.8 *
+                                                      fontSize: 1.5 *
                                                           SizeConfig
                                                               .textMultiplier,
                                                       color: Colors.grey[100],
                                                       fontWeight:
-                                                          FontWeight.w600,
+                                                          FontWeight.w700,
                                                     ),
                                                   ),
                                                 )),
@@ -600,9 +600,9 @@ class ImagesShimmer extends StatelessWidget {
         physics: const NeverScrollableScrollPhysics(),
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 3,
-          mainAxisSpacing: 1 * SizeConfig.heightMultiplier,
-          crossAxisSpacing: 1 * SizeConfig.heightMultiplier,
-          childAspectRatio: 0.9,
+          mainAxisSpacing: 0.1 * SizeConfig.heightMultiplier,
+          crossAxisSpacing: 0.1 * SizeConfig.heightMultiplier,
+          childAspectRatio: 1.1,
         ),
         itemBuilder: (context, index) {
           return Stack(
