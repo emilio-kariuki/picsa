@@ -117,6 +117,6 @@ jobs:
         with:
           serviceAccountJson: service_account.json
           packageName: com.ecoville.picsa
-          releaseFiles: build/app/outputs/bundle/release/app-release.aab
+          releaseFiles: /home/runner/work/picsa/picsa/build/app/outputs/bundle/release/app-release.aab
           track: internal
           whatsNewDirectory: distribution/
