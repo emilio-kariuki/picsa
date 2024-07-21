@@ -34,6 +34,10 @@ jobs:
         with:
           channel: 'stable'
           flutter-version: 3.22.0
+      - name: 🐦 Setup Shorebird
+        uses: shorebirdtech/setup-shorebird@v1
+      - name: 🚀 Use Shorebird
+        run: shorebird --version
 
       - uses: actions/checkout@v4
       - name: Use Node.js ${{ matrix.node-version }}
@@ -63,8 +67,10 @@ jobs:
       - name: Install Flutter dependencies
         run: flutter pub get
 
-      - name: Build Android App Bundle
-        run: flutter build appbundle
+      - name: 🚀 Shorebird Release
+        uses: shorebirdtech/shorebird-release@v0
+        with:
+          platform: android
   
       - name: Create service_account.json
         run: echo '${{ secrets.SERVICE_ACCOUNT_JSON }}' > service_account.json
