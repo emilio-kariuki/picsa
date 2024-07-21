@@ -8,6 +8,8 @@ on:
   push:
     branches:
       - master
+env:
+  SHOREBIRD_TOKEN: ${{ secrets.SHOREBIRD_TOKEN }}
 
 jobs:
   build:
@@ -30,9 +32,9 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ~/.sdkman/candidates/java
-          key: ${{ runner.os }}-java-zulu-17
+          key: ${{ runner.os }}-java-zulu-17-${{ hashFiles('**/build.gradle') }}
           restore-keys: |
-            ${{ runner.os }}-java-
+            ${{ runner.os }}-java-zulu-17-
       
       - uses: actions/setup-java@v3
         with:
@@ -44,9 +46,9 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ~/.pub-cache
-          key: ${{ runner.os }}-flutter-stable-3.22.0
+          key: ${{ runner.os }}-flutter-stable-3.22.0-${{ hashFiles('**/pubspec.yaml') }}
           restore-keys: |
-            ${{ runner.os }}-flutter-
+            ${{ runner.os }}-flutter-stable-3.22.0-
       
       - uses: subosito/flutter-action@v2
         with:
@@ -91,8 +93,10 @@ jobs:
 
       - name: 🚀 Shorebird Release
         uses: shorebirdtech/shorebird-release@v0
+        id: shorebird-release
         with:
           platform: android
+          working-directory: build/app
   
       - name: Create service_account.json
         run: echo '${{ secrets.SERVICE_ACCOUNT_JSON }}' > service_account.json
