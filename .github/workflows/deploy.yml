@@ -67,6 +67,12 @@ jobs:
       - name: Install Flutter dependencies
         run: flutter pub get
 
+      - name: Build Android Release
+        run: flutter build appbundle --release
+
+      - name: Login Shorebird
+        run: shorebird login
+
       - name: 🚀 Shorebird Release
         uses: shorebirdtech/shorebird-release@v0
         with:
