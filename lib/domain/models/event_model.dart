@@ -78,8 +78,8 @@ class EventModel {
         "userId": userId,
         "createdAt": createdAt.toIso8601String(),
         "updatedAt": updatedAt.toIso8601String(),
-        "guests": guests == null ? [] : List<dynamic>.from(guests!.map((x) => x.toJson())),
-        "images": images == null ? [] : List<dynamic>.from(images!.map((x) => x.toJson())),
+        "guests": List<dynamic>.from(guests.map((x) => x.toJson())),
+        "images": List<dynamic>.from(images.map((x) => x.toJson())),
         "hd": hd,
         "eventId": eventId,
     };

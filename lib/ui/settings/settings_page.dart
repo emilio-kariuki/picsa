@@ -1,6 +1,4 @@
 import 'package:picsa/common_widgets/image_container.dart';
-import 'package:picsa/common_widgets/subscription_button.dart';
-import 'package:picsa/common_widgets/subscription_sheet.dart';
 import 'package:picsa/domain/blocs/app/app_cubit.dart';
 import 'package:picsa/domain/blocs/app/auth_cubit.dart';
 import 'package:picsa/domain/blocs/app/user_cubit.dart';
