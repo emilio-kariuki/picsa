@@ -125,7 +125,7 @@ jobs:
           appId: ${{ secrets.FIREBASE_APP_ID }}
           groups: internal
           releaseNotesFile: distribution/whatsnew/whatsnew.txt
-          file: build/app/outputs/bundle/release/app-release.aab
+          file: build/app/outputs/bundle/release/release.apk
           serviceCredentialsFile: https://utfs.io/f/OEW0NXofdQiaJpD2lUcGhRIegrtG08X6VUOaoNFu7fBJxvLp
 
   deploy:
