@@ -1,3 +1,4 @@
+import 'package:picsa/domain/models/event_model.dart';
 import 'package:picsa/domain/models/events_model.dart';
 import 'package:picsa/domain/models/images_model.dart';
 import 'package:picsa/domain/service/repository/event_repository.dart';
@@ -27,19 +28,15 @@ class EventProvider extends EventTemplate {
     return _eventRepository.deleteEvent(uid: uid);
   }
 
-  @override
-  Future<List<Event>> getJoinedEvents() {
-    return _eventRepository.getJoinedEvents();
-  }
 
   @override
-  Future<Event> getEventById({required String id}) {
+  Future<EventModel> getEventById({required String id}) {
     return _eventRepository.getEventById(id: id);
   }
 
   @override
-  Future<List<ImageModel>> getUserImages({required String eventId}) {
-    return _eventRepository.getUserImages(eventId: eventId);
+  Future<List<ImageModel>> getUserImages() {
+    return _eventRepository.getUserImages();
   }
 
   @override

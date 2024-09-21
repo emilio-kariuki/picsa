@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:picsa/domain/blocs/minimal/navigation_cubit.dart';
+import 'package:picsa/domain/blocs/minimal/page_cubit.dart';
 import 'package:picsa/ui/event/create_page.dart';
 import 'package:picsa/ui/event/widgets/event_container_shimmer.dart';
 import 'package:picsa/ui/event/widgets/qr_scanner.dart';
@@ -16,11 +17,12 @@ class EventPage extends StatefulWidget {
   State<EventPage> createState() => _EventPageState();
 }
 
-class _EventPageState extends State<EventPage> {
+class _EventPageState extends State<EventPage> with WidgetsBindingObserver {
   final controller = MobileScannerController(
     detectionSpeed: DetectionSpeed.noDuplicates,
   );
   int page = 0;
+  final _pageController = PageController(initialPage: 0);
   @override
   void initState() {
     super.initState();
@@ -35,190 +37,227 @@ class _EventPageState extends State<EventPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        body: SafeArea(
-      child: SingleChildScrollView(
-        child: Stack(
-          children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Events',
-                  style: GoogleFonts.inter(
-                    fontSize: 2.9 * SizeConfig.textMultiplier,
-                    fontWeight: FontWeight.w600,
+    return BlocProvider(
+      create: (context) => PageCubit(),
+      child: Scaffold(
+          body: SafeArea(
+        child: SingleChildScrollView(
+          child: Stack(
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _pageTitle(),
+                  Gap(2 * SizeConfig.heightMultiplier),
+                  _tabBar(context),
+                  Divider(
+                    height: 1,
+                    thickness: 0.1,
                     color: Colors.grey[400],
                   ),
-                ),
-                Gap(5 * SizeConfig.heightMultiplier),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Column(
-                      children: [
-                        Text(
-                          'Hosting',
-                          style: GoogleFonts.inter(
-                            fontSize: 2 * SizeConfig.textMultiplier,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.grey[400],
-                          ),
+                  Gap(2 * SizeConfig.heightMultiplier),
+                  BlocConsumer<PageCubit, PageState>(
+                    listener: (context, state) {
+                      if (state.status == PageStatus.changed) {
+                        _pageController.animateToPage(state.page,
+                            duration: const Duration(milliseconds: 300),
+                            curve: Curves.easeIn);
+                        page = state.page;
+                      }
+                    },
+                    builder: (context, state) {
+                      return SizedBox(
+                        height: MediaQuery.sizeOf(context).height,
+                        child: PageView.builder(
+                          controller: _pageController,
+                          pageSnapping: true,
+                          onPageChanged: (index) {
+                            context.read<PageCubit>().changePage(page: index);
+                          },
+                          itemCount: 2,
+                          itemBuilder: (context, index) {
+                            return index == 0
+                                ? _hostedEvents()
+                                : _guestEvents();
+                          },
                         ),
-                        Gap(1 * SizeConfig.heightMultiplier),
-                        Container(
-                          height: 0.5 * SizeConfig.heightMultiplier,
-                          width: MediaQuery.sizeOf(context).width * 0.3,
-                          decoration: BoxDecoration(
-                            color: Colors.grey[400],
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                        )
-                      ],
-                    ),
-                    Column(
-                      children: [
-                        Text(
-                          'Guest',
-                          style: GoogleFonts.inter(
-                            fontSize: 2 * SizeConfig.textMultiplier,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.grey[400],
-                          ),
-                        ),
-                        Gap(1 * SizeConfig.heightMultiplier),
-                        Container(
-                          height: 0.5 * SizeConfig.heightMultiplier,
-                          width: MediaQuery.sizeOf(context).width * 0.3,
-                          decoration: BoxDecoration(
-                            color: Colors.grey[400],
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                        )
-                      ],
-                    ),
-                  ],
-                ),
-                Divider(
-                  height: 1,
-                  thickness: 0.1,
-                  color: Colors.grey[400],
-                ),
-                Gap(2 * SizeConfig.heightMultiplier),
-                BlocBuilder<EventCubit, EventState>(
-                  buildWhen: (current, previous) =>
-                      current.events != previous.events,
-                  builder: (context, state) {
-                    switch (state.status) {
-                      case EventStatus.loading:
-                        return ListView.separated(
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemBuilder: (context, index) {
-                            return const EventContainerShimmer();
-                          },
-                          separatorBuilder: (context, index) {
-                            return Gap(1 * SizeConfig.heightMultiplier);
-                          },
-                          itemCount: 3,
-                        );
-                      case EventStatus.success:
-                        return state.events.isEmpty
-                            ? SizedBox(
-                                height: state.guestEvents.isEmpty
-                                    ? MediaQuery.sizeOf(context).height *
-                                        0.3
-                                    : MediaQuery.sizeOf(context).height *
-                                        0.3,
-                                child: _emptyEvent(context),
-                              )
-                            : ListView.separated(
-                                shrinkWrap: true,
-                                physics:
-                                    const NeverScrollableScrollPhysics(),
-                                itemBuilder: (context, index) {
-                                  final data = state.events[index];
-                                  return EventContainer(event: data);
-                                },
-                                separatorBuilder: (context, index) {
-                                  return Gap(
-                                      1 * SizeConfig.heightMultiplier);
-                                },
-                                itemCount: state.events.length,
-                              );
-                      default:
-                        return const Center(
-                          child: Text('No Events'),
-                        );
-                    }
-                  },
-                ),
-                Gap(2 * SizeConfig.heightMultiplier),
-                BlocBuilder<EventCubit, EventState>(
-                  builder: (context, state) {
-                    return state.guestEvents.isEmpty
-                        ? const SizedBox.shrink()
-                        : Text(
-                            'Guest Events',
-                            style: GoogleFonts.inter(
-                              fontSize: 2 * SizeConfig.textMultiplier,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.grey[400],
-                            ),
-                          );
-                  },
-                ),
-                Gap(2 * SizeConfig.heightMultiplier),
-                BlocBuilder<EventCubit, EventState>(
-                  buildWhen: (current, previous) =>
-                      current.guestEvents != previous.guestEvents,
-                  builder: (context, state) {
-                    switch (state.status) {
-                      case EventStatus.loading:
-                        return ListView.separated(
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemBuilder: (context, index) {
-                            return const EventContainerShimmer();
-                          },
-                          separatorBuilder: (context, index) {
-                            return Gap(1 * SizeConfig.heightMultiplier);
-                          },
-                          itemCount: 3,
-                        );
-                      case EventStatus.success:
-                        return ListView.separated(
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemBuilder: (context, index) {
-                            final data = state.guestEvents[index];
-                            return EventContainer(event: data);
-                          },
-                          separatorBuilder: (context, index) {
-                            return Gap(1 * SizeConfig.heightMultiplier);
-                          },
-                          itemCount: state.guestEvents.length,
-                        );
-                      default:
-                        return const Center(
-                          child: Text('No Guest Events'),
-                        );
-                    }
-                  },
-                ),
-              ],
+                      );
+                    },
+                  ),
+                ],
+              ),
+              
+            ],
+          ),
+        ),
+      )),
+    );
+  }
+
+  Widget _pageTitle() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            'Events',
+            style: GoogleFonts.inter(
+              fontSize: 3 * SizeConfig.textMultiplier,
+              fontWeight: FontWeight.w600,
+              color: Colors.white,
             ),
-            Positioned.fill(
-                top: 1 * SizeConfig.heightMultiplier,
-                right: 10,
-                child: Align(
-                  alignment: Alignment.topRight,
-                  child: _joinContainer(),
-                ))
+          ),
+          _joinContainer(),
+        ],
+      ),
+    );
+  }
+
+  Widget _tabBar(BuildContext context) {
+    return BlocBuilder<PageCubit, PageState>(
+      builder: (context, state) {
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              _tabContainer(title: 'Hosted', index: 0, context: context),
+              _tabContainer(title: 'Guest', index: 1, context: context),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _hostedEvents() {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 5),
+      child: BlocBuilder<EventCubit, EventState>(
+        buildWhen: (current, previous) => current.events != previous.events,
+        builder: (context, state) {
+          switch (state.status) {
+            case EventStatus.loading:
+              return ListView.separated(
+                shrinkWrap: true,
+                itemBuilder: (context, index) {
+                  return const EventContainerShimmer();
+                },
+                separatorBuilder: (context, index) {
+                  return Gap(1 * SizeConfig.heightMultiplier);
+                },
+                itemCount: 3,
+              );
+            case EventStatus.success:
+              return state.events.isEmpty
+                  ? SizedBox(
+                      height: state.guestEvents.isEmpty
+                          ? MediaQuery.sizeOf(context).height * 0.3
+                          : MediaQuery.sizeOf(context).height * 0.3,
+                      child: _emptyEvent(context),
+                    )
+                  : ListView.separated(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemBuilder: (context, index) {
+                        final data = state.events[index];
+                        return EventContainer(event: data);
+                      },
+                      separatorBuilder: (context, index) {
+                        return Gap(1 * SizeConfig.heightMultiplier);
+                      },
+                      itemCount: state.events.length,
+                    );
+            default:
+              return const Center(
+                child: Text('No Events'),
+              );
+          }
+        },
+      ),
+    );
+  }
+
+  Widget _tabContainer(
+      {required String title,
+      required int index,
+      required BuildContext context}) {
+    return GestureDetector(
+      onTap: () {
+        _pageController.animateToPage(index,
+            duration: const Duration(milliseconds: 300), curve: Curves.easeIn);
+        context.read<PageCubit>().changePage(page: index);
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Column(
+          children: [
+            Text(
+              title,
+              style: GoogleFonts.inter(
+                fontSize: 2 * SizeConfig.textMultiplier,
+                fontWeight: FontWeight.w600,
+                color: index == page ? green : Colors.grey[400],
+              ),
+            ),
+            Gap(1 * SizeConfig.heightMultiplier),
+            Container(
+              height: 0.5 * SizeConfig.heightMultiplier,
+              width: MediaQuery.sizeOf(context).width * 0.3,
+              decoration: BoxDecoration(
+                color: index == page ? green : Colors.grey[400],
+                borderRadius: BorderRadius.circular(10),
+              ),
+            )
           ],
         ),
       ),
-    ));
+    );
+  }
+
+  Widget _guestEvents() {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 5),
+      child: BlocBuilder<EventCubit, EventState>(
+        buildWhen: (current, previous) =>
+            current.guestEvents != previous.guestEvents,
+        builder: (context, state) {
+          switch (state.status) {
+            case EventStatus.loading:
+              return ListView.separated(
+                shrinkWrap: true,
+                itemBuilder: (context, index) {
+                  return const EventContainerShimmer();
+                },
+                separatorBuilder: (context, index) {
+                  return Gap(1 * SizeConfig.heightMultiplier);
+                },
+                itemCount: 3,
+              );
+            case EventStatus.success:
+              return ListView.separated(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemBuilder: (context, index) {
+                  final data = state.guestEvents[index];
+                  return EventContainer(event: data);
+                },
+                separatorBuilder: (context, index) {
+                  return Gap(1 * SizeConfig.heightMultiplier);
+                },
+                itemCount: state.guestEvents.length,
+              );
+            default:
+              return const Center(
+                child: Text('No Guest Events'),
+              );
+          }
+        },
+      ),
+    );
   }
 
   Widget _emptyEvent(BuildContext context) {

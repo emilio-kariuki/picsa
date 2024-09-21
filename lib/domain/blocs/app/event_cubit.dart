@@ -1,3 +1,4 @@
+import 'package:picsa/domain/models/event_model.dart';
 import 'package:picsa/domain/models/events_model.dart';
 import 'package:picsa/domain/models/images_model.dart';
 import 'package:picsa/domain/service/providers/providers.dart';
@@ -83,10 +84,10 @@ class EventCubit extends Cubit<EventState> {
     }
   }
 
-  Future<void> getUserImages({required String eventId}) async {
+  Future<void> getUserImages() async {
     try {
       emit(state.copyWith(status: EventStatus.loading));
-      final images = await _eventProvider.getUserImages(eventId: eventId);
+      final images = await _eventProvider.getUserImages();
       emit(state.copyWith(
           status: EventStatus.success,
           images: images,
@@ -157,7 +158,7 @@ enum EventStatus { initial, loading, success, created, error, message }
 class EventState {
   final List<Event> events;
   final List<Event> guestEvents;
-  final Event? event;
+  final EventModel? event;
   final List<ImageModel> images;
   final int usersJoined;
   final int imagesTaken;
@@ -178,7 +179,7 @@ class EventState {
   EventState copyWith(
       {List<Event>? events,
       List<Event>? guestEvents,
-      Event? event,
+      EventModel? event,
       List<ImageModel>? images,
       int? usersJoined,
       int? imagesTaken,

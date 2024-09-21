@@ -10,12 +10,12 @@ class TermsOfService extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding:  EdgeInsets.symmetric(horizontal: 5 * SizeConfig.widthMultiplier),
+      padding: EdgeInsets.symmetric(horizontal: 5 * SizeConfig.widthMultiplier),
       child: RichText(
         textAlign: TextAlign.center,
         text: TextSpan(children: [
           TextSpan(
-            text: "By using ${AppConstants.APP_NAME}, You agree to our ",
+            text: "By using ${APP_NAME}, You agree to our ",
             style: Theme.of(context)
                 .textTheme
                 .displaySmall!
@@ -24,7 +24,12 @@ class TermsOfService extends StatelessWidget {
           TextSpan(
             text: "Terms of Service, Privacy Policy ",
             style: Theme.of(context).textTheme.displaySmall!.copyWith(
-                fontWeight: FontWeight.w600, fontSize: 12.5, color: const Color(0xff70B93E,),),
+                  fontWeight: FontWeight.w600,
+                  fontSize: 12.5,
+                  color: const Color(
+                    0xff70B93E,
+                  ),
+                ),
           ),
           TextSpan(
             text: "and ",
@@ -36,7 +41,12 @@ class TermsOfService extends StatelessWidget {
           TextSpan(
             text: "Agreement",
             style: Theme.of(context).textTheme.displaySmall!.copyWith(
-                fontWeight: FontWeight.w600, fontSize: 12.5, color: const Color(0xff70B93E,),),
+                  fontWeight: FontWeight.w600,
+                  fontSize: 12.5,
+                  color: const Color(
+                    0xff70B93E,
+                  ),
+                ),
           ),
         ]),
       ),

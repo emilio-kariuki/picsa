@@ -1,5 +1,8 @@
 plugins {
     id "com.android.application"
+    // START: FlutterFire Configuration
+    id 'com.google.gms.google-services'
+    // END: FlutterFire Configuration
     id "kotlin-android"
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id "dev.flutter.flutter-gradle-plugin"
@@ -51,9 +54,9 @@ android {
         applicationId "com.ecoville.picsa"
         minSdkVersion 24
         targetSdkVersion 34
-        versionCode 30
+        versionCode 31
         versionName "0.0.29"
-        manifestPlaceholders = [auth0Domain: "projo-f83ae.appspot.com", auth0Scheme: "https"]
+        manifestPlaceholders += [auth0Domain: "projo-f83ae.appspot.com", auth0Scheme: "https",appAuthRedirectScheme: "com.ecoville.picsa"]
     }
 
     signingConfigs {

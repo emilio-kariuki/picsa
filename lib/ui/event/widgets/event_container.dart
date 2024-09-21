@@ -1,4 +1,3 @@
-
 import 'package:picsa/domain/blocs/app/app_cubit.dart';
 import 'package:picsa/domain/models/models.dart';
 import 'package:picsa/ui/event/widgets/event_qr_code.dart';
@@ -84,8 +83,7 @@ class EventContainer extends StatelessWidget {
                             context.read<AppCubit>().shareContent(
                                   subject:
                                       "Share this event with friends and family",
-                                  text:
-                                      "${AppConstants.APP_URL}/event/${event.id}",
+                                  text: "${APP_URL}/event/${event.id}",
                                 );
                           },
                         );

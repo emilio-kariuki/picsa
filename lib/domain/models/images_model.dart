@@ -28,7 +28,7 @@ class ImageModel {
   factory ImageModel.fromJson(Map<String, dynamic> json) => ImageModel(
         url: json["url"],
         hd: json["hd"],
-        user: User.fromJson(json["User"]),
+        user: User.fromJson(json["user"]),
       );
 }
 

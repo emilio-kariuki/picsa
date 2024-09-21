@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:picsa/domain/models/user_model.dart';
 import 'package:picsa/domain/service/repository/notification_repository.dart';
+import 'package:picsa/main.dart';
 import 'package:picsa/utilities/supabase_config.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -19,9 +20,11 @@ const webClientId =
     '203502494436-b2e9a7prusv18vog9tmge6chpeg00sto.apps.googleusercontent.com';
 const iosClientId =
     '203502494436-6c0jf65s1tv4otn53v2ff0i76b78cn2r.apps.googleusercontent.com';
+const androidClientId =
+    '203502494436-sbajpksdurf9rt6dheikcotnp3of0src.apps.googleusercontent.com';
 
 final GoogleSignIn googleSignIn = GoogleSignIn(
-  clientId: iosClientId,
+  clientId: Platform.isIOS ? iosClientId : androidClientId,
   serverClientId: webClientId,
 );
 
@@ -48,8 +51,10 @@ class AuthRepository extends AuthTemplate {
 
   @override
   Future<UserModel> signInWithGoogle() async {
+    logger.d('Signing in with Google');
     try {
       final googleUser = await googleSignIn.signIn();
+      logger.d('Google User: $googleUser');
       final googleAuth = await googleUser!.authentication;
       final accessToken = googleAuth.accessToken;
       final idToken = googleAuth.idToken;
@@ -75,6 +80,7 @@ class AuthRepository extends AuthTemplate {
           email: response.user!.email!,
           url: response.user!.userMetadata?['avatar_url'],
           pro: false,
+          active: true,
           token: token);
       return user;
     } catch (e) {

@@ -1,32 +1,35 @@
+import 'package:picsa/domain/models/event_model.dart';
 import 'package:picsa/domain/models/events_model.dart';
 import 'package:picsa/domain/models/images_model.dart';
+import 'package:picsa/main.dart';
+import 'package:picsa/utilities/dio_interceptor.dart';
 import 'package:picsa/utilities/packages.dart';
-import 'package:uuid/uuid.dart' as uuid;
 
 abstract class EventTemplate {
   Future<bool> createEvent({required String name});
   Future<List<Event>> getUserEvents();
   Future<List<Event>> getGuestEvents();
-  Future<Event> getEventById({required String id});
+  Future<EventModel> getEventById({required String id});
   Future<List<ImageModel>> getEventImages({required String uid});
-  Future<List<ImageModel>> getUserImages({required String eventId});
+  Future<List<ImageModel>> getUserImages();
   Future<int> getEventImagesTaken({required String eventId});
   Future<bool> deleteEvent({required String uid});
   Future<bool> joinEvent({required String eventId});
-  Future<List<Event>> getJoinedEvents();
   Future<int> getUsersJoined({required String eventId});
 }
 
 class EventRepository extends EventTemplate {
+    late final Dio _dio;
+  EventRepository() {
+    _dio = Dio();
+    _dio.interceptors.add(DioInterceptor());
+  }
   @override
   Future<bool> createEvent({required String name}) async {
     try {
-      final userId = supabase.auth.currentUser!.id;
-      final eventId = const uuid.Uuid().v4();
-      await supabase.from('Events').insert({
-        'id': eventId,
+      await _dio.post('$API_URL/events/create', data: {
         'name': name,
-        'userId': userId,
+        'url': 'https://picsa.pro/profile.jpg',
       });
       return true;
     } catch (e) {
@@ -38,32 +41,13 @@ class EventRepository extends EventTemplate {
   @override
   Future<List<Event>> getUserEvents() async {
     try {
-      final userId = supabase.auth.currentUser!.id;
-      final response = await supabase
-          .from('Events')
-          .select('*')
-          .eq('userId', userId)
-          .order('createdAt');
-
-      List<Event> events = response.map((e) => Event.fromJson(e)).toList();
-      return events;
-    } catch (e) {
-      debugPrint(e.toString());
-      throw Exception(e.toString());
-    }
-  }
-
-  @override
-  Future<List<Event>> getJoinedEvents() async {
-    try {
-      final userId = supabase.auth.currentUser!.id;
-      final response = await supabase
-          .from('Events')
-          .select('*')
-          .eq('userId', userId)
-          .order('createdAt');
-
-      List<Event> events = response.map((e) => Event.fromJson(e)).toList();
+      final response = await _dio.get('$API_URL/events/user');
+      if(response.statusCode != 200){
+        throw Exception('Error getting user events');
+      }
+      final List<Event> events =
+          (response.data as List).map((e) => Event.fromJson(e)).toList();
+      logger.d(events);
       return events;
     } catch (e) {
       debugPrint(e.toString());
@@ -74,14 +58,12 @@ class EventRepository extends EventTemplate {
   @override
   Future<List<ImageModel>> getEventImages({required String uid}) async {
     try {
-      final response = await supabase
-          .from('Images')
-          .select('User(*), url, hd')
-          .eq('eventId', uid)
-          .order('createdAt');
-
-      final images =
-          List<ImageModel>.from(response.map((x) => ImageModel.fromJson(x)));
+      final response = await _dio.get('$API_URL/images/event/$uid');
+      if(response.statusCode != 200){
+        throw Exception('Error getting user events');
+      }
+      final List<ImageModel> images =
+          (response.data as List).map((e) => ImageModel.fromJson(e)).toList();
       return images;
     } catch (e) {
       debugPrint(e.toString());
@@ -90,16 +72,14 @@ class EventRepository extends EventTemplate {
   }
 
   @override
-  Future<List<ImageModel>> getUserImages({required String eventId}) async {
+  Future<List<ImageModel>> getUserImages() async {
     try {
-      final id = supabase.auth.currentUser!.id;
-      final response = await supabase
-          .from('Images')
-          .select('User(*), url,hd')
-          .eq('eventId', eventId)
-          .eq('userId', id);
-      final images =
-          List<ImageModel>.from(response.map((x) => ImageModel.fromJson(x)));
+       final response = await _dio.get('$API_URL/images/user');
+      if(response.statusCode != 200){
+        throw Exception('Error getting user events');
+      }
+      final List<ImageModel> images =
+          (response.data as List).map((e) => ImageModel.fromJson(e)).toList();
       return images;
     } catch (e) {
       debugPrint(e.toString());
@@ -110,7 +90,10 @@ class EventRepository extends EventTemplate {
   @override
   Future<bool> deleteEvent({required String uid}) async {
     try {
-      await supabase.from('Events').delete().eq('id', uid);
+      final response = await _dio.delete('$API_URL/events/$uid');
+      if(response.statusCode != 200){
+        throw Exception('Error getting user events');
+      }
       return true;
     } catch (e) {
       debugPrint(e.toString());
@@ -119,10 +102,13 @@ class EventRepository extends EventTemplate {
   }
 
   @override
-  Future<Event> getEventById({required String id}) async {
+  Future<EventModel> getEventById({required String id}) async {
     try {
-      final response = await supabase.from('Events').select().eq('id', id);
-      final event = Event.fromJson(response.first);
+      final response = await _dio.get('$API_URL/events/$id');
+      if(response.statusCode != 200){
+        throw Exception('Error getting user events');
+      }
+      final EventModel event = EventModel.fromJson(response.data);
       return event;
     } catch (e) {
       debugPrint(e.toString());
@@ -183,16 +169,13 @@ class EventRepository extends EventTemplate {
   @override
   Future<List<Event>> getGuestEvents() async {
     try {
-      final userId = supabase.auth.currentUser!.id;
-      final events = await supabase
-          .from('GuestEvents')
-          .select(
-            'Events(*)',
-          )
-          .eq('userId', userId);
-      final List<Event> guestEvents =
-          events.map((e) => Event.fromJson(e['Events'])).toList();
-      return guestEvents;
+      final response = await _dio.get('$API_URL/events/user/guest');
+      if(response.statusCode != 200){
+        throw Exception('Error getting user events');
+      }
+      final List<Event> events =
+          (response.data as List).map((e) => Event.fromJson(e['event'])).toList();
+      return events;
     } catch (error) {
       debugPrint(error.toString());
       throw Exception(error.toString());

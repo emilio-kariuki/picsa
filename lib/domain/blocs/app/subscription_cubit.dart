@@ -39,7 +39,6 @@ class SubscriptionCubit extends Cubit<SubscriptionState> {
     }
   }
 
-
   Future<void> purchasePackage({required Package package}) async {
     try {
       emit(state.copyWith(status: SubscriptionStatus.loading));
@@ -61,8 +60,7 @@ class SubscriptionCubit extends Cubit<SubscriptionState> {
       final user = await _subscriptionproviders.restorePurchase();
       emit(state.copyWith(
         status: SubscriptionStatus.subscribed,
-        isSubscribed:
-            user.entitlements.all[AppConstants.ENTITLEMENT_ID]?.isActive,
+        isSubscribed: user.entitlements.all[ENTITLEMENT_ID]?.isActive,
         message: "Restored purchase successfully",
       ));
     } catch (error) {

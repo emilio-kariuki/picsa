@@ -1,4 +1,3 @@
-
 import 'package:picsa/domain/blocs/app/app_cubit.dart';
 import 'package:picsa/utilities/packages.dart';
 
@@ -81,7 +80,7 @@ class EventQr extends StatelessWidget {
               child: Builder(builder: (context) {
                 return GestureDetector(
                   onTap: () => context.read<AppCubit>().copyToClipboard(
-                        text: "${AppConstants.APP_URL}/event/$eventId",
+                        text: "${APP_URL}/event/$eventId",
                       ),
                   child: Container(
                     height: 7 * SizeConfig.heightMultiplier,

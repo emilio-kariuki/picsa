@@ -1,7 +1,10 @@
-import 'package:flutter/material.dart';
+import 'dart:convert';
+
 import 'package:picsa/domain/models/models.dart';
 import 'package:picsa/domain/service/repository/notification_repository.dart';
-import 'package:picsa/utilities/supabase_config.dart';
+import 'package:picsa/main.dart';
+import 'package:picsa/utilities/dio_interceptor.dart';
+import 'package:picsa/utilities/packages.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 
 abstract class UserTemplate {
@@ -14,26 +17,35 @@ abstract class UserTemplate {
 }
 
 class UserRepository extends UserTemplate {
+  late final Dio _dio;
+  UserRepository() {
+    _dio = Dio();
+    _dio.interceptors.add(DioInterceptor());
+  }
+
   @override
   Future<bool> createUser({required UserModel user}) async {
     try {
-      final response = await supabase.from('User').select().eq('id', user.id);
       final token = await NotificationRepository().getNotificationToken();
-      if (response.isEmpty) {
-        await supabase.from('User').insert({
-          'id': user.id,
-          'name': user.name,
-          'email': user.email,
-          'url': user.url,
-          'pro': false,
-          'token': token,
-        });
-        await Purchases.logIn(user.id);
-        await Purchases.setEmail(user.email);
-        await Purchases.setDisplayName(user.name);
-        await Purchases.setPushToken(token);
-        await Purchases.collectDeviceIdentifiers();
+      final data = {
+        'id': user.id,
+        'name': user.name,
+        'email': user.email,
+        'url': user.url,
+        'token': token,
+        'pro': false,
+      };
+      final response =
+          await _dio.post('$API_URL/users/${user.id}', data: jsonEncode(data));
+      if (response.statusCode != 201) {
+        throw Exception('Error creating user');
       }
+      await Purchases.logIn(user.id);
+      await Purchases.setEmail(user.email);
+      await Purchases.setDisplayName(user.name);
+      await Purchases.setPushToken(token);
+      await Purchases.collectDeviceIdentifiers();
+
       return true;
     } catch (e) {
       debugPrint(e.toString());
@@ -45,9 +57,13 @@ class UserRepository extends UserTemplate {
   Future<UserModel> getUser() async {
     try {
       final id = supabase.auth.currentUser!.id;
-      debugPrint("id: $id");
-      final response = await supabase.from('User').select().eq('id', id);
-      final user = UserModel.fromJson(response.first);
+      final response =
+          await _dio.get('$API_URL/users/$id');
+      if(response.statusCode != 200) {
+        throw Exception('Error getting user');
+      }
+      final user = UserModel.fromJson(response.data);
+      logger.d("user response: ${user.name}");
       return user;
     } catch (e) {
       debugPrint(e.toString());
@@ -88,7 +104,7 @@ class UserRepository extends UserTemplate {
   @override
   Future<bool> markAsRead() async {
     try {
-      final id = await supabase.auth.currentUser!.id;
+      final id = supabase.auth.currentUser!.id;
       await supabase.from('notifications').update(
         {
           'read': true,
@@ -101,23 +117,21 @@ class UserRepository extends UserTemplate {
       throw Exception('Error reading notification');
     }
   }
-  
+
   @override
-  Future<bool> showNotificationBadge() async{
+  Future<bool> showNotificationBadge() async {
     try {
       final id = supabase.auth.currentUser!.id;
       final response =
           await supabase.from('notifications').select().eq('userId', id);
       final notification =
           response.map((e) => NotificationModel.fromJson(e)).toList();
-      final unread = notification.where((element) => element.read == false).toList();
+      final unread =
+          notification.where((element) => element.read == false).toList();
       return unread.isNotEmpty;
     } catch (e) {
       debugPrint(e.toString());
       throw Exception('Error getting notifications');
     }
   }
-
- 
-
 }

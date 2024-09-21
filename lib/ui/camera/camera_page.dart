@@ -272,7 +272,7 @@ class _CameraPageState extends State<CameraPage> {
             child: Align(
               alignment: Alignment.bottomCenter,
               child: GestureDetector(
-                onTap: () async{
+                onTap: () async {
                   context.read<PageCubit>().changePage(page: zoom.toInt());
                   await Posthog().capture(
                     eventName: 'Camera Switched',
@@ -316,14 +316,14 @@ class _CameraPageState extends State<CameraPage> {
             child: Column(
               children: [
                 GestureDetector(
-                  onTap: () async{
+                  onTap: () async {
                     context.read<BoolCubit>().changeValue(value: isFlashOn);
                     context.read<CameraCubit>().toggleFlash(
                           isFlashOn: isFlashOn,
                         );
-                        await Posthog().capture(
-                    eventName: 'Camera Switched',
-                  );
+                    await Posthog().capture(
+                      eventName: 'Camera Switched',
+                    );
                   },
                   child: Container(
                       padding: const EdgeInsets.symmetric(
@@ -380,8 +380,7 @@ class _CameraPageState extends State<CameraPage> {
                     return GestureDetector(
                       onTap: () => context.read<AppCubit>().shareContent(
                             text: "Share this camera image with other peops",
-                            subject:
-                                "${AppConstants.APP_URL}/camera/${widget.eventId}",
+                            subject: "${APP_URL}/camera/${widget.eventId}",
                           ),
                       child: Container(
                           padding: const EdgeInsets.symmetric(
@@ -733,7 +732,7 @@ class CameraQr extends StatelessWidget {
               child: Builder(builder: (context) {
                 return GestureDetector(
                   onTap: () => context.read<AppCubit>().copyToClipboard(
-                        text: "${AppConstants.APP_URL}/camera/$eventId",
+                        text: "${APP_URL}/camera/$eventId",
                       ),
                   child: Container(
                     height: 7 * SizeConfig.heightMultiplier,

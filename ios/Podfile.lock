@@ -160,8 +160,6 @@ PODS:
     - GTMSessionFetcher/Core
   - image_editor_common (1.0.0):
     - Flutter
-  - image_gallery_saver (2.0.2):
-    - Flutter
   - image_picker_ios (0.0.1):
     - Flutter
   - IosAwnCore (0.9.3)
@@ -219,20 +217,20 @@ PODS:
     - FlutterMacOS
     - PostHog (~> 3.0)
   - PromisesObjC (2.4.0)
-  - purchases_flutter (6.29.2):
+  - purchases_flutter (7.0.1):
     - Flutter
-    - PurchasesHybridCommon (= 10.6.2)
-  - purchases_ui_flutter (6.29.2):
+    - PurchasesHybridCommon (= 13.0.0)
+  - purchases_ui_flutter (7.0.1):
     - Flutter
-    - PurchasesHybridCommonUI (= 10.6.2)
-  - PurchasesHybridCommon (10.6.2):
-    - RevenueCat (= 4.41.2)
-  - PurchasesHybridCommonUI (10.6.2):
-    - PurchasesHybridCommon (= 10.6.2)
-    - RevenueCatUI (= 4.41.2)
-  - RevenueCat (4.41.2)
-  - RevenueCatUI (4.41.2):
-    - RevenueCat (= 4.41.2)
+    - PurchasesHybridCommonUI (= 13.0.0)
+  - PurchasesHybridCommon (13.0.0):
+    - RevenueCat (= 5.2.2)
+  - PurchasesHybridCommonUI (13.0.0):
+    - PurchasesHybridCommon (= 13.0.0)
+    - RevenueCatUI (= 5.2.2)
+  - RevenueCat (5.2.2)
+  - RevenueCatUI (5.2.2):
+    - RevenueCat (= 5.2.2)
   - SDWebImage (5.19.2):
     - SDWebImage/Core (= 5.19.2)
   - SDWebImage/Core (5.19.2)
@@ -274,7 +272,6 @@ DEPENDENCIES:
   - flutter_media_downloader (from `.symlinks/plugins/flutter_media_downloader/ios`)
   - google_sign_in_ios (from `.symlinks/plugins/google_sign_in_ios/darwin`)
   - image_editor_common (from `.symlinks/plugins/image_editor_common/ios`)
-  - image_gallery_saver (from `.symlinks/plugins/image_gallery_saver/ios`)
   - image_picker_ios (from `.symlinks/plugins/image_picker_ios/ios`)
   - mobile_scanner (from `.symlinks/plugins/mobile_scanner/ios`)
   - package_info_plus (from `.symlinks/plugins/package_info_plus/ios`)
@@ -359,8 +356,6 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/google_sign_in_ios/darwin"
   image_editor_common:
     :path: ".symlinks/plugins/image_editor_common/ios"
-  image_gallery_saver:
-    :path: ".symlinks/plugins/image_gallery_saver/ios"
   image_picker_ios:
     :path: ".symlinks/plugins/image_picker_ios/ios"
   mobile_scanner:
@@ -422,7 +417,6 @@ SPEC CHECKSUMS:
   GTMAppAuth: f69bd07d68cd3b766125f7e072c45d7340dea0de
   GTMSessionFetcher: 8000756fc1c19d2e5697b90311f7832d2e33f6cd
   image_editor_common: d6f6644ae4a6de80481e89fe6d0a8c49e30b4b43
-  image_gallery_saver: cb43cc43141711190510e92c460eb1655cd343cb
   image_picker_ios: c560581cceedb403a6ff17f2f816d7fea1421fc1
   IosAwnCore: b8601fbb37f7b3560f31b84ebf55a72f65812e05
   JWTDecode: 3eaab1e06b6f4dcbdd6716aff09ba4c2104ca8b7
@@ -440,12 +434,12 @@ SPEC CHECKSUMS:
   PostHog: 5d7b01f915dab4ea110d6d0298d4cf8632edd554
   posthog_flutter: e80defebf021b13375b351c838c9b87d769d7546
   PromisesObjC: f5707f49cb48b9636751c5b2e7d227e43fba9f47
-  purchases_flutter: f39265ff8a8411d73d6dbe16bb3eb95097d0d5cf
-  purchases_ui_flutter: 2108a2015273851b3dbefe69a239fb59608f3512
-  PurchasesHybridCommon: 120cdca2b40fb5947a51b75e121da4f2cde0a137
-  PurchasesHybridCommonUI: 2b1cb1f82f39264ed09c55bf3bc1b019f9eb25d0
-  RevenueCat: 0250867579677899de94f96ad9be342be865560f
-  RevenueCatUI: e3bac7e40db387f53e7b3579175cca749656bee7
+  purchases_flutter: 034a0a2a96557da0e23f3026ac91accde3609f39
+  purchases_ui_flutter: 19dd91ff009cee57533f161742d2fa0b8c03ec2e
+  PurchasesHybridCommon: ebf821766759155e09b710baa73264a37a4e62f0
+  PurchasesHybridCommonUI: 127904ef659eee1cf4cd05874bdef16eb7cc103f
+  RevenueCat: ba985d80069c1c4b9c9e0763f1852f2a0bdcc2d6
+  RevenueCatUI: a5eec63e40eed0a5096af44c1259337b01959a13
   SDWebImage: dfe95b2466a9823cf9f0c6d01217c06550d7b29a
   SDWebImageWebPCoder: e38c0a70396191361d60c092933e22c20d5b1380
   Sentry: 51b056d96914a741f63eca774d118678b1eb05a1

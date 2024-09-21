@@ -3,11 +3,11 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>203502494436-3c0s0cl8ie5u49ehrsbf9trk1grm3fhh.apps.googleusercontent.com</string>
+	<string>203502494436-6c0jf65s1tv4otn53v2ff0i76b78cn2r.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.203502494436-3c0s0cl8ie5u49ehrsbf9trk1grm3fhh</string>
+	<string>com.googleusercontent.apps.203502494436-6c0jf65s1tv4otn53v2ff0i76b78cn2r</string>
 	<key>ANDROID_CLIENT_ID</key>
-	<string>203502494436-1ud3nj5ieph04a18p4ivm9b7ipv83lhj.apps.googleusercontent.com</string>
+	<string>203502494436-sbajpksdurf9rt6dheikcotnp3of0src.apps.googleusercontent.com</string>
 	<key>API_KEY</key>
 	<string>AIzaSyC-hhrP3lA2EDyJ1_z3R8YfXDhyZYHW_Iw</string>
 	<key>GCM_SENDER_ID</key>
@@ -15,7 +15,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.example.picsa</string>
+	<string>com.ecoville.picsa</string>
 	<key>PROJECT_ID</key>
 	<string>projo-f83ae</string>
 	<key>STORAGE_BUCKET</key>
@@ -31,6 +31,8 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:203502494436:ios:9149163b21b71f281242f1</string>
+	<string>1:203502494436:ios:5b96692ea2b7cdc01242f1</string>
+	<key>DATABASE_URL</key>
+	<string>https://projo-f83ae-default-rtdb.firebaseio.com</string>
 </dict>
 </plist>

@@ -1,8 +1,4 @@
-import 'package:picsa/domain/blocs/app/user_cubit.dart';
 import 'package:picsa/domain/blocs/minimal/navigation_cubit.dart';
-import 'package:picsa/ui/event/create_page.dart';
-import 'package:picsa/ui/event/event_page.dart';
-import 'package:picsa/ui/settings/settings_page.dart';
 import 'package:picsa/utilities/packages.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 
@@ -15,6 +11,17 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  static const List<Map<String, dynamic>> _footerItems = [
+    {'icon': Icons.calendar_month_outlined, 'name': "Create"},
+    {'icon': Icons.camera_alt_outlined, 'name': "Events"},
+    {'icon': Icons.settings, 'name': "Settings"},
+  ];
+
+  static const List<String> _routes = [
+    '/home',
+    '/events',
+    '/settings',
+  ];
 
   @override
   void initState() {
@@ -22,64 +29,6 @@ class _HomeState extends State<Home> {
     Purchases.addCustomerInfoUpdateListener((customerInfo) {
       if (customerInfo.activeSubscriptions.isNotEmpty) {}
     });
-    supabase
-      ..channel('public:User')
-          .onPostgresChanges(
-              event: PostgresChangeEvent.update,
-              schema: 'public',
-              table: 'User',
-              filter: PostgresChangeFilter(
-                type: PostgresChangeFilterType.eq,
-                column: 'id',
-                value: supabase.auth.currentUser!.id,
-              ),
-              callback: (payload) {
-                debugPrint('Change received: ${payload.toString()}');
-                context.read<UserCubit>().getUser();
-              })
-          .subscribe()
-      ..channel('public:Events')
-          .onPostgresChanges(
-              event: PostgresChangeEvent.all,
-              schema: 'public',
-              table: 'Events',
-              callback: (payload) {
-                debugPrint('Change received: ${payload.toString()}');
-                context.read<EventCubit>().getEvents();
-              })
-          .subscribe()
-      ..channel('public:GuestEvents')
-          .onPostgresChanges(
-              event: PostgresChangeEvent.all,
-              schema: 'public',
-              table: 'GuestEvents',
-              filter: PostgresChangeFilter(
-                type: PostgresChangeFilterType.eq,
-                column: 'userId',
-                value: supabase.auth.currentUser!.id,
-              ),
-              callback: (payload) {
-                debugPrint('Change received: ${payload.toString()}');
-                context.read<EventCubit>().getGuestEvents();
-              })
-          .subscribe()
-      ..channel('public:notifications')
-          .onPostgresChanges(
-              event: PostgresChangeEvent.all,
-              schema: 'public',
-              table: 'notifications',
-              filter: PostgresChangeFilter(
-                type: PostgresChangeFilterType.eq,
-                column: 'userId',
-                value: supabase.auth.currentUser!.id,
-              ),
-              callback: (payload) {
-                debugPrint('Change received: ${payload.toString()}');
-                context.read<UserCubit>()
-                  ..getNotifications()
-                  ..showNotificationBadge();
-              })
-          .subscribe();
   }
 
   @override
@@ -88,83 +37,70 @@ class _HomeState extends State<Home> {
       create: (context) => NavigationCubit(),
       child: Scaffold(
         body: widget.child,
-        bottomNavigationBar: getFooter(context),
+        bottomNavigationBar: _getFooter(context),
       ),
     );
   }
 
-  Widget getFooter(BuildContext context) {
-    final height = MediaQuery.of(context).size.height;
-    final items = <Map<String, dynamic>>[
-      {'icon': Icons.calendar_month_outlined, 'name': "Create"},
-      {'icon': Icons.camera_alt_outlined, 'name': "Events"},
-      {'icon': Icons.settings, 'name': "Settings"},
-    ];
-    final List<String> routes = [
-      '/home',
-      '/events',
-      '/settings',
-    ];
+  Widget _getFooter(BuildContext context) {
     return BlocConsumer<NavigationCubit, NavigationState>(
       listener: (context, state) {
-        appRouter.go(routes[state.page]);
+        appRouter.go(_routes[state.page]);
       },
       builder: (context, state) {
-        return SizedBox(
-          height: height * 0.09,
-          child: AnimatedBottomNavigationBar.builder(
-            elevation: 0,
-            backgroundColor: Colors.transparent,
-            notchSmoothness: NotchSmoothness.softEdge,
-            itemCount: items.length,
-            safeAreaValues: const SafeAreaValues(
-              bottom: false,
-            ),
-            activeIndex: state.page,
-            gapWidth: 10,
-            splashRadius: 0,
-            scaleFactor: 0,
-            onTap: (index) {
-              BlocProvider.of<NavigationCubit>(context).changePage(page: index);
-              SystemChannels.textInput.invokeMethod('TextInput.hide');
-            },
-            tabBuilder: (int index, bool isActive) {
-              final itemz = items[index];
-
-              return Column(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    padding:
-                        const EdgeInsets.symmetric(vertical: 6, horizontal: 16),
-                    decoration: BoxDecoration(
-                        color: isActive
-                            ? const Color.fromARGB(255, 19, 194, 25)
-                                .withOpacity(0.2)
-                            : Colors.transparent,
-                        borderRadius: BorderRadius.circular(20)),
-                    child: Icon(
-                      itemz['icon'] as IconData,
-                      size: 22,
-                      color: Colors.grey[400],
-                    ),
-                  ),
-                  const Gap(3),
-                  Text(
-                    itemz['name'] as String,
-                    style: GoogleFonts.inter(
-                      color: Colors.grey[400],
-                      fontWeight: FontWeight.w600,
-                      fontSize: 14,
-                    ),
-                  )
-                ],
-              );
-            },
+        return AnimatedBottomNavigationBar.builder(
+          elevation: 0,
+          backgroundColor: Colors.transparent,
+          notchSmoothness: NotchSmoothness.softEdge,
+          itemCount: _footerItems.length,
+          safeAreaValues: const SafeAreaValues(
+            bottom: false,
           ),
+          activeIndex: state.page,
+          gapWidth: 10,
+          splashRadius: 0,
+          scaleFactor: 0,
+          onTap: (index) {
+            BlocProvider.of<NavigationCubit>(context).changePage(page: index);
+            SystemChannels.textInput.invokeMethod('TextInput.hide');
+          },
+          tabBuilder: (int index, bool isActive) {
+            return _buildTabItem(_footerItems[index], isActive);
+          },
         );
       },
+    );
+  }
+
+  Widget _buildTabItem(Map<String, dynamic> item, bool isActive) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Container(
+          padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 16),
+          decoration: BoxDecoration(
+            color: isActive
+                ? const Color.fromARGB(255, 19, 194, 25).withOpacity(0.2)
+                : Colors.transparent,
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Icon(
+            item['icon'] as IconData,
+            size: 22,
+            color: Colors.grey[400],
+          ),
+        ),
+        const Gap(3),
+        Text(
+          item['name'] as String,
+          style: GoogleFonts.inter(
+            color: Colors.grey[400],
+            fontWeight: FontWeight.w600,
+            fontSize: 14,
+          ),
+        ),
+      ],
     );
   }
 }

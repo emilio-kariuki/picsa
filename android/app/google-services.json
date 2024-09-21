@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "203502494436",
+    "firebase_url": "https://projo-f83ae-default-rtdb.firebaseio.com",
+    "project_id": "projo-f83ae",
+    "storage_bucket": "projo-f83ae.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:203502494436:android:dfc78c95e44647401242f1",
+        "android_client_info": {
+          "package_name": "com.ecoville.picsa"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "203502494436-sbajpksdurf9rt6dheikcotnp3of0src.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ecoville.picsa",
+            "certificate_hash": "d3968bd96113ab46c6c1c59ff241339d663e3dbf"
+          }
+        },
+        {
+          "client_id": "203502494436-b2e9a7prusv18vog9tmge6chpeg00sto.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB4k_hezdCbRwsDxY2hBTxlob5vA87g2-U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "203502494436-akkb7388pjv6u9jhias4arqoqgt77qga.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "203502494436-6c0jf65s1tv4otn53v2ff0i76b78cn2r.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.ecoville.picsa"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

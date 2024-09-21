@@ -54,13 +54,13 @@ class BackGroundImage extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         SvgPicture.asset(
-                          AppConstants.APP_LOGO,
+                          APP_LOGO,
                           height: height * 0.08,
                           width: height * 0.08,
                         ),
                         Gap(width * 0.05),
                         Text(
-                          AppConstants.APP_NAME,
+                          APP_NAME,
                           style: GoogleFonts.rubikBubbles(
                             color: Colors.white,
                             fontSize: 50,
@@ -73,7 +73,7 @@ class BackGroundImage extends StatelessWidget {
                     SizedBox(
                       width: width * 0.8,
                       child: Text(
-                        AppConstants.APP_DESCRIPTION,
+                        APP_DESCRIPTION,
                         textAlign: TextAlign.center,
                         style: GoogleFonts.rubikBubbles(
                           color: Colors.white,

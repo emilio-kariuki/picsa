@@ -18,9 +18,7 @@ class _ImagesPageState extends State<ImagesPage> {
     super.initState();
     context.read<EventCubit>()
       ..getEventImages(eventId: widget.eventId)
-      ..getEventById(id: widget.eventId)
-      ..getUsersJoined(eventId: widget.eventId)
-      ..getImagesTaken(eventId: widget.eventId);
+      ..getEventById(id: widget.eventId);
   }
 
   List<String> categories = ["All", "Yours"];
@@ -34,7 +32,6 @@ class _ImagesPageState extends State<ImagesPage> {
       extendBody: true,
       body: SafeArea(
           bottom: false,
-          // top: false,
           child: SingleChildScrollView(
             child: Column(
               children: [
@@ -54,252 +51,36 @@ class _ImagesPageState extends State<ImagesPage> {
                     children: [
                       Row(
                         children: [
-                          GestureDetector(
-                            onTap: () {
-                              context.pop();
-                            },
-                            child: Container(
-                              padding: const EdgeInsets.all(8),
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: Colors.black.withOpacity(0.4),
-                              ),
-                              child: GestureDetector(
-                                  onTap: () {
-                                    context.pop();
-                                  },
-                                  child: SvgPicture.asset(
-                                    AppImages.back,
-                                    height: 2.5 * SizeConfig.heightMultiplier,
-                                    width: 2.5 * SizeConfig.heightMultiplier,
-                                    color: Colors.grey[400],
-                                  )),
-                            ),
-                          ),
+                          _backButton(context),
                           const Spacer(),
-                          GestureDetector(
-                            onTap: () => context.push(
-                              '/camera/${widget.eventId}',
-                            ),
-                            child: Container(
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 3 * SizeConfig.widthMultiplier,
-                                  vertical: 10),
-                              decoration: BoxDecoration(
-                                  color: Colors.black.withOpacity(0.6),
-                                  borderRadius: BorderRadius.circular(10),
-                                  border: Border.all(
-                                      width: 0.3,
-                                      color: const Color.fromARGB(
-                                          255, 103, 103, 103))),
-                              child: Center(
-                                  child: SvgPicture.asset(
-                                AppImages.camera,
-                                height: 17,
-                                width: 17,
-                                color: const Color.fromARGB(255, 103, 103, 103),
-                              )),
-                            ),
-                          ),
+                          _topBarContainer(
+                              function: () => context.push(
+                                    '/camera/${widget.eventId}',
+                                  ),
+                              icon: AppImages.camera),
                           Gap(2 * SizeConfig.widthMultiplier),
-                          GestureDetector(
-                            onTap: () {},
-                            child: Container(
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 3 * SizeConfig.widthMultiplier,
-                                  vertical: 10),
-                              decoration: BoxDecoration(
-                                  color: Colors.black.withOpacity(0.6),
-                                  borderRadius: BorderRadius.circular(10),
-                                  border: Border.all(
-                                      width: 0.3,
-                                      color: const Color.fromARGB(
-                                          255, 103, 103, 103))),
-                              child: Center(
-                                  child: SvgPicture.asset(
-                                AppImages.uplaod,
-                                height: 17,
-                                width: 17,
-                                color: const Color.fromARGB(255, 103, 103, 103),
-                              )),
-                            ),
-                          ),
+                          _topBarContainer(
+                              function: () {}, icon: AppImages.uplaod),
                           Gap(2 * SizeConfig.widthMultiplier),
                           BlocProvider(
                             create: (context) => AppCubit(),
                             child: Builder(builder: (context) {
-                              return GestureDetector(
-                                onTap: () =>
-                                    context.read<AppCubit>().shareContent(
-                                          subject:
-                                              "Share this event with friends and family",
-                                          text:
-                                              "${AppConstants.APP_URL}/event/${widget.eventId}",
-                                        ),
-                                child: Container(
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal:
-                                          3 * SizeConfig.widthMultiplier,
-                                      vertical: 10),
-                                  decoration: BoxDecoration(
-                                      color: Colors.black.withOpacity(0.6),
-                                      borderRadius: BorderRadius.circular(10),
-                                      border: Border.all(
-                                          width: 0.3,
-                                          color: const Color.fromARGB(
-                                              255, 103, 103, 103))),
-                                  child: const Center(
-                                    child: Icon(Icons.share,
-                                        size: 17,
-                                        color:
-                                            Color.fromARGB(255, 103, 103, 103)),
-                                  ),
-                                ),
-                              );
+                              return _topBarContainer(
+                                  function: () =>
+                                      context.read<AppCubit>().shareContent(
+                                            subject:
+                                                "Share this event with friends and family",
+                                            text:
+                                                "$APP_URL/event/${widget.eventId}",
+                                          ),
+                                  icon: AppImages.share);
                             }),
                           )
                         ],
                       ),
                       Gap(2 * SizeConfig.heightMultiplier),
-                      BlocConsumer<EventCubit, EventState>(
-                        buildWhen: (previous, current) =>
-                            current.event != previous.event,
-                        listener: (context, state) {},
-                        builder: (context, state) {
-                          switch (state.status) {
-                            case EventStatus.success:
-                              return Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  SizedBox(
-                                    width: 35 * SizeConfig.widthMultiplier,
-                                    child: Text(
-                                      state.event!.name,
-                                      style: GoogleFonts.rubikBubbles(
-                                          fontSize:
-                                              3 * SizeConfig.textMultiplier,
-                                          color: const Color.fromARGB(
-                                              255, 159, 159, 159),
-                                          fontWeight: FontWeight.w600,
-                                          height: 1.2),
-                                    ),
-                                  ),
-                                  Gap(1 * SizeConfig.heightMultiplier),
-                                  Text(
-                                    DateFormat.yMMMd().format(
-                                        DateTime.parse(state.event!.createdAt)),
-                                    style: GoogleFonts.notoSans(
-                                      fontSize: 2 * SizeConfig.textMultiplier,
-                                      color: const Color.fromARGB(
-                                          255, 159, 159, 159),
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                ],
-                              );
-                            default:
-                              return Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Shimmer.fromColors(
-                                      baseColor:
-                                          const Color.fromARGB(255, 35, 35, 35),
-                                      highlightColor:
-                                          const Color.fromARGB(255, 49, 49, 49),
-                                      child: AnimatedContainer(
-                                        duration: Durations.medium1,
-                                        height: 3 * SizeConfig.heightMultiplier,
-                                        width: 35 * SizeConfig.widthMultiplier,
-                                        decoration: BoxDecoration(
-                                            color: Colors.grey[700],
-                                            borderRadius:
-                                                BorderRadius.circular(10)),
-                                      )),
-                                  Gap(2 * SizeConfig.heightMultiplier),
-                                  Shimmer.fromColors(
-                                      baseColor:
-                                          const Color.fromARGB(255, 35, 35, 35),
-                                      highlightColor:
-                                          const Color.fromARGB(255, 49, 49, 49),
-                                      child: AnimatedContainer(
-                                        duration: Durations.medium1,
-                                        height: 3 * SizeConfig.heightMultiplier,
-                                        width: 25 * SizeConfig.widthMultiplier,
-                                        decoration: BoxDecoration(
-                                            color: Colors.grey[700],
-                                            borderRadius:
-                                                BorderRadius.circular(10)),
-                                      )),
-                                ],
-                              );
-                          }
-                        },
-                      ),
+                      _eventDetails(),
                       Gap(2 * SizeConfig.heightMultiplier),
-                      Row(
-                        children: [
-                          Row(
-                            children: [
-                              SvgPicture.asset(
-                                AppImages.camera,
-                                height: 20,
-                                width: 20,
-                                color: const Color(
-                                  0xff70B93E,
-                                ),
-                              ),
-                              Gap(0.4 * SizeConfig.widthMultiplier),
-                              BlocBuilder<EventCubit, EventState>(
-                                buildWhen: (previous, current) =>
-                                    previous.imagesTaken != current.imagesTaken,
-                                builder: (context, state) {
-                                  return Text(
-                                    state.imagesTaken.toString(),
-                                    style: GoogleFonts.notoSans(
-                                      fontSize: 2 * SizeConfig.textMultiplier,
-                                      color: const Color(
-                                        0xff70B93E,
-                                      ),
-                                      fontWeight: FontWeight.w700,
-                                    ),
-                                  );
-                                },
-                              ),
-                            ],
-                          ),
-                          Gap(2 * SizeConfig.widthMultiplier),
-                          Row(
-                            children: [
-                              SvgPicture.asset(
-                                AppImages.user,
-                                height: 20,
-                                width: 20,
-                                color: const Color(
-                                  0xff70B93E,
-                                ),
-                              ),
-                              Gap(0.4 * SizeConfig.widthMultiplier),
-                              BlocBuilder<EventCubit, EventState>(
-                                buildWhen: (previous, current) =>
-                                    previous.usersJoined != current.usersJoined,
-                                builder: (context, state) {
-                                  return Text(
-                                    state.usersJoined.toString(),
-                                    style: GoogleFonts.notoSans(
-                                      fontSize: 2 * SizeConfig.textMultiplier,
-                                      color: const Color(
-                                        0xff70B93E,
-                                      ),
-                                      fontWeight: FontWeight.w700,
-                                    ),
-                                  );
-                                },
-                              ),
-                            ],
-                          ),
-                          const Spacer(),
-                        ],
-                      ),
                       Gap(2 * SizeConfig.heightMultiplier),
                       BlocProvider(
                         create: (context) => PageCubit(),
@@ -313,9 +94,7 @@ class _ImagesPageState extends State<ImagesPage> {
                                       .read<EventCubit>()
                                       .getEventImages(eventId: widget.eventId);
                                 } else if (state.page == 1) {
-                                  context
-                                      .read<EventCubit>()
-                                      .getUserImages(eventId: widget.eventId);
+                                  context.read<EventCubit>().getUserImages();
                                 }
                               },
                               builder: (context, state) {
@@ -455,11 +234,11 @@ class _ImagesPageState extends State<ImagesPage> {
                                           const NeverScrollableScrollPhysics(),
                                       gridDelegate:
                                           SliverGridDelegateWithFixedCrossAxisCount(
-                                        crossAxisCount: 3,
+                                        crossAxisCount: 4,
                                         mainAxisSpacing:
-                                           0.1* SizeConfig.heightMultiplier,
+                                            0.1 * SizeConfig.heightMultiplier,
                                         crossAxisSpacing:
-                                           0.1* SizeConfig.heightMultiplier,
+                                            0.1 * SizeConfig.heightMultiplier,
                                         childAspectRatio: 1.1,
                                       ),
                                       itemBuilder: (context, index) {
@@ -580,6 +359,172 @@ class _ImagesPageState extends State<ImagesPage> {
           )),
     );
   }
+
+  Widget _eventDetails() {
+    return BlocConsumer<EventCubit, EventState>(
+      buildWhen: (previous, current) => current.event != previous.event,
+      listener: (context, state) {},
+      builder: (context, state) {
+        switch (state.status) {
+          case EventStatus.success:
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(
+                  width: MediaQuery.sizeOf(context).width,
+                  child: Text(
+                    state.event!.name,
+                    style: GoogleFonts.rubikBubbles(
+                        fontSize: 3 * SizeConfig.textMultiplier,
+                        color: const Color.fromARGB(255, 159, 159, 159),
+                        fontWeight: FontWeight.w600,
+                        ),
+                  ),
+                ),
+                Text(
+                  "${DateFormat.yMMMd().format(
+                      DateTime.parse(state.event!.createdAt.toString()))} - ${DateFormat.jm().format(DateTime.parse(state.event!.updatedAt.toString()))}",
+                  style: GoogleFonts.notoSans(
+                    fontSize:1.8 * SizeConfig.textMultiplier,
+                    color: const Color.fromARGB(255, 159, 159, 159),
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                Gap(1 * SizeConfig.heightMultiplier),
+                Row(
+                  children: [
+                    _eventStats(icon: AppImages.camera, stats: 'images'),
+                    Gap(2 * SizeConfig.widthMultiplier),
+                    _eventStats(icon: AppImages.user, stats: 'guests'),
+                    const Spacer(),
+                  ],
+                ),
+              ],
+            );
+          default:
+            return const EventDetailsShimmer();
+        }
+      },
+    );
+  }
+
+  Row _eventStats({required String icon, required String stats}) {
+    return Row(
+      children: [
+        SvgPicture.asset(
+          icon,
+          height: 20,
+          width: 20,
+          color: const Color(
+            0xff70B93E,
+          ),
+        ),
+        Gap(0.4 * SizeConfig.widthMultiplier),
+        BlocBuilder<EventCubit, EventState>(
+          builder: (context, state) {
+            return Text(
+              stats == 'guests'
+                  ? state.event!.guests.length.toString()
+                  : state.event!.images.length.toString(),
+              style: GoogleFonts.notoSans(
+                fontSize: 2 * SizeConfig.textMultiplier,
+                color: const Color(
+                  0xff70B93E,
+                ),
+                fontWeight: FontWeight.w700,
+              ),
+            );
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget _topBarContainer(
+      {required Function() function, required String icon}) {
+    return GestureDetector(
+      onTap: function,
+      child: Container(
+        padding: EdgeInsets.symmetric(
+            horizontal: 3 * SizeConfig.widthMultiplier, vertical: 10),
+        decoration: BoxDecoration(
+            color: Colors.black.withOpacity(0.6),
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(
+                width: 0.3, color: const Color.fromARGB(255, 103, 103, 103))),
+        child: Center(
+            child: SvgPicture.asset(
+          icon,
+          height: 17,
+          width: 17,
+          color: const Color.fromARGB(255, 103, 103, 103),
+        )),
+      ),
+    );
+  }
+
+  Widget _backButton(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        context.pop();
+      },
+      child: Container(
+        padding: const EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: Colors.black.withOpacity(0.4),
+        ),
+        child: GestureDetector(
+            onTap: () {
+              context.pop();
+            },
+            child: SvgPicture.asset(
+              AppImages.back,
+              height: 2.5 * SizeConfig.heightMultiplier,
+              width: 2.5 * SizeConfig.heightMultiplier,
+              color: Colors.grey[400],
+            )),
+      ),
+    );
+  }
+}
+
+class EventDetailsShimmer extends StatelessWidget {
+  const EventDetailsShimmer({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Shimmer.fromColors(
+            baseColor: const Color.fromARGB(255, 35, 35, 35),
+            highlightColor: const Color.fromARGB(255, 49, 49, 49),
+            child: AnimatedContainer(
+              duration: Durations.medium1,
+              height: 3 * SizeConfig.heightMultiplier,
+              width: 35 * SizeConfig.widthMultiplier,
+              decoration: BoxDecoration(
+                  color: Colors.grey[700],
+                  borderRadius: BorderRadius.circular(10)),
+            )),
+        Gap(2 * SizeConfig.heightMultiplier),
+        Shimmer.fromColors(
+            baseColor: const Color.fromARGB(255, 35, 35, 35),
+            highlightColor: const Color.fromARGB(255, 49, 49, 49),
+            child: AnimatedContainer(
+              duration: Durations.medium1,
+              height: 3 * SizeConfig.heightMultiplier,
+              width: 25 * SizeConfig.widthMultiplier,
+              decoration: BoxDecoration(
+                  color: Colors.grey[700],
+                  borderRadius: BorderRadius.circular(10)),
+            )),
+      ],
+    );
+  }
 }
 
 class ImagesShimmer extends StatelessWidget {
@@ -599,7 +544,7 @@ class ImagesShimmer extends StatelessWidget {
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 3,
+          crossAxisCount: 4,
           mainAxisSpacing: 0.1 * SizeConfig.heightMultiplier,
           crossAxisSpacing: 0.1 * SizeConfig.heightMultiplier,
           childAspectRatio: 1.1,

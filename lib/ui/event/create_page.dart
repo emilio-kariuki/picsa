@@ -55,13 +55,13 @@ class CreatePage extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           SvgPicture.asset(
-                            AppConstants.APP_LOGO,
+                            APP_LOGO,
                             height: height * 0.07,
                             width: height * 0.07,
                           ),
                           Gap(width * 0.05),
                           Text(
-                            AppConstants.APP_NAME,
+                            APP_NAME,
                             style: GoogleFonts.rubikBubbles(
                               color: Colors.white,
                               fontSize: 50,
@@ -163,20 +163,23 @@ class CreatePage extends StatelessWidget {
                       ),
                     ),
                     BlocBuilder<UserCubit, UserState>(
-                      buildWhen: (previous, current) => previous.notifications != current.notifications,
+                      buildWhen: (previous, current) =>
+                          previous.notifications != current.notifications,
                       builder: (context, state) {
-                        return state.showBadge ? Positioned(
-                          right: 0,
-                          top: 0,
-                          child: Container(
-                            height: 10,
-                            width: 10,
-                            decoration: const BoxDecoration(
-                              color: Colors.red,
-                              shape: BoxShape.circle,
-                            ),
-                          ),
-                        ) : const SizedBox.shrink();
+                        return state.showBadge
+                            ? Positioned(
+                                right: 0,
+                                top: 0,
+                                child: Container(
+                                  height: 10,
+                                  width: 10,
+                                  decoration: const BoxDecoration(
+                                    color: Colors.red,
+                                    shape: BoxShape.circle,
+                                  ),
+                                ),
+                              )
+                            : const SizedBox.shrink();
                       },
                     ),
                   ],

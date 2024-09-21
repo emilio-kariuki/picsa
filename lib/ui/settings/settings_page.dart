@@ -45,8 +45,8 @@ class SettingsPage extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const ProfileContainer(),
-                        Gap(1 * SizeConfig.heightMultiplier),
-                        const NewSubscriptionButton(),
+                        // Gap(1 * SizeConfig.heightMultiplier),
+                        // const NewSubscriptionButton(),
                         Gap(2 * SizeConfig.heightMultiplier),
                         Text(
                           'Legal',
@@ -75,8 +75,7 @@ class SettingsPage extends StatelessWidget {
                                   title: "Privacy Policy",
                                   function: () => context
                                       .read<AppCubit>()
-                                      .launchBrowser(
-                                          url: AppConstants.APP_PRIVACY),
+                                      .launchBrowser(url: APP_PRIVACY),
                                 );
                               },
                             );
@@ -100,8 +99,7 @@ class SettingsPage extends StatelessWidget {
                                   title: "Terms of Service",
                                   function: () => context
                                       .read<AppCubit>()
-                                      .launchBrowser(
-                                          url: AppConstants.APP_PRIVACY),
+                                      .launchBrowser(url: APP_PRIVACY),
                                 );
                               },
                             );
@@ -119,27 +117,27 @@ class SettingsPage extends StatelessWidget {
                         Gap(1 * SizeConfig.heightMultiplier),
                         BlocProvider(
                           create: (context) => AppCubit(),
-                          child: Builder(
-                            builder: (context) {
-                              return SettingButton(
-                                icon: AppImages.mail,
-                                title: "Email Support",
-                                function: () => context.read<AppCubit>().launchEmail(email: AppConstants.APP_EMAIL),
-                              );
-                            }
-                          ),
+                          child: Builder(builder: (context) {
+                            return SettingButton(
+                              icon: AppImages.mail,
+                              title: "Email Support",
+                              function: () => context
+                                  .read<AppCubit>()
+                                  .launchEmail(email: APP_EMAIL),
+                            );
+                          }),
                         ),
                         BlocProvider(
                           create: (context) => AppCubit(),
-                          child: Builder(
-                            builder: (context) {
-                              return SettingButton(
-                                icon: AppImages.phone,
-                                title: "Phone Support",
-                                function: () => context.read<AppCubit>().launchPhone(phone: AppConstants.APP_PHONE),
-                              );
-                            }
-                          ),
+                          child: Builder(builder: (context) {
+                            return SettingButton(
+                              icon: AppImages.phone,
+                              title: "Phone Support",
+                              function: () => context
+                                  .read<AppCubit>()
+                                  .launchPhone(phone: APP_PHONE),
+                            );
+                          }),
                         ),
                         const SettingsDivider(),
                         Text(
@@ -159,8 +157,7 @@ class SettingsPage extends StatelessWidget {
                               title: "Instagram",
                               function: () => context
                                   .read<AppCubit>()
-                                  .launchBrowser(
-                                      url: AppConstants.APP_INSTAGRAM),
+                                  .launchBrowser(url: APP_INSTAGRAM),
                             );
                           }),
                         ),
@@ -172,8 +169,7 @@ class SettingsPage extends StatelessWidget {
                               title: "Linkedin ",
                               function: () => context
                                   .read<AppCubit>()
-                                  .launchBrowser(
-                                      url: AppConstants.APP_LINKEDIN),
+                                  .launchBrowser(url: APP_LINKEDIN),
                             );
                           }),
                         ),
@@ -185,7 +181,7 @@ class SettingsPage extends StatelessWidget {
                               title: "X(Twitter)",
                               function: () => context
                                   .read<AppCubit>()
-                                  .launchBrowser(url: AppConstants.APP_TWITTER),
+                                  .launchBrowser(url: APP_TWITTER),
                             );
                           }),
                         ),
@@ -351,49 +347,49 @@ class ProfileContainer extends StatelessWidget {
                           ),
                         ),
                         Gap(0.6 * SizeConfig.heightMultiplier),
-                        BlocBuilder<UserCubit, UserState>(
-                          builder: (context, state) {
-                            return GestureDetector(
-                              onTap: state.isPro
-                                  ? () {}
-                                  : () => showModalBottomSheet(
-                                      clipBehavior: Clip.antiAlias,
-                                      backgroundColor: const Color(0xff1E1E1E),
-                                      isScrollControlled: true,
-                                      barrierColor:
-                                          Colors.black.withOpacity(0.6),
-                                      elevation: 5,
-                                      shape: const RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.only(
-                                              topLeft: Radius.circular(30),
-                                              topRight: Radius.circular(30))),
-                                      context: context,
-                                      builder: (context) {
-                                        return const SubscriptionContainer();
-                                      }),
-                              child: Row(
-                                children: [
-                                  state.isPro
-                                      ? Icon(Icons.diamond_outlined,
-                                          size: 2 * SizeConfig.heightMultiplier,
-                                          color: Colors.orange)
-                                      : const SizedBox.shrink(),
-                                  Gap(0.5 * SizeConfig.widthMultiplier),
-                                  Text(
-                                    state.isPro ? "Premium Plan" : "Free Plan",
-                                    overflow: TextOverflow.ellipsis,
-                                    style: GoogleFonts.notoSans(
-                                        fontSize: 2 * SizeConfig.textMultiplier,
-                                        fontWeight: FontWeight.w600,
-                                        color: state.isPro
-                                            ? Colors.orange
-                                            : const Color(0xff70B93E)),
-                                  ),
-                                ],
-                              ),
-                            );
-                          },
-                        ),
+                        // BlocBuilder<UserCubit, UserState>(
+                        //   builder: (context, state) {
+                        //     return GestureDetector(
+                        //       onTap: state.isPro
+                        //           ? () {}
+                        //           : () => showModalBottomSheet(
+                        //               clipBehavior: Clip.antiAlias,
+                        //               backgroundColor: const Color(0xff1E1E1E),
+                        //               isScrollControlled: true,
+                        //               barrierColor:
+                        //                   Colors.black.withOpacity(0.6),
+                        //               elevation: 5,
+                        //               shape: const RoundedRectangleBorder(
+                        //                   borderRadius: BorderRadius.only(
+                        //                       topLeft: Radius.circular(30),
+                        //                       topRight: Radius.circular(30))),
+                        //               context: context,
+                        //               builder: (context) {
+                        //                 return const SubscriptionContainer();
+                        //               }),
+                        //       child: Row(
+                        //         children: [
+                        //           state.isPro
+                        //               ? Icon(Icons.diamond_outlined,
+                        //                   size: 2 * SizeConfig.heightMultiplier,
+                        //                   color: Colors.orange)
+                        //               : const SizedBox.shrink(),
+                        //           Gap(0.5 * SizeConfig.widthMultiplier),
+                        //           Text(
+                        //             state.isPro ? "Premium Plan" : "Free Plan",
+                        //             overflow: TextOverflow.ellipsis,
+                        //             style: GoogleFonts.notoSans(
+                        //                 fontSize: 2 * SizeConfig.textMultiplier,
+                        //                 fontWeight: FontWeight.w600,
+                        //                 color: state.isPro
+                        //                     ? Colors.orange
+                        //                     : const Color(0xff70B93E)),
+                        //           ),
+                        //         ],
+                        //       ),
+                        //     );
+                        //   },
+                        // ),
                       ],
                     ),
                   ),

@@ -1,4 +1,7 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.ecoville.picsa">
+
+    <!-- Permissions -->
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-feature android:name="android.hardware.camera" />
     <uses-feature android:name="android.hardware.camera.autofocus" />
@@ -12,6 +15,7 @@
     <uses-permission android:name="com.android.vending.BILLING" />
     <uses-permission android:name="android.permission.VIBRATE"/>
 
+    <!-- Queries -->
     <queries>
         <intent>
             <action android:name="android.intent.action.VIEW" />
@@ -24,21 +28,30 @@
         <intent>
             <action android:name="android.support.customtabs.action.CustomTabsService" />
         </intent>
-    </queries>
+    </queries>`
     <queries>
         <intent>
             <action android:name="android.intent.action.PROCESS_TEXT"/>
             <data android:mimeType="text/plain"/>
         </intent>
     </queries>
-        
+
+    <!-- Application -->
     <application
         android:label="Picsa Pro"
-        android:name="com.ecoville"
+        android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon">
+        
+        <!-- Meta-data for Firebase Messaging -->
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
             android:resource="@drawable/picsa" />
+        
+        <meta-data android:name="com.posthog.posthog.API_KEY" android:value="phc_Adub8uElbK93gWy1uaMbLjHRJZ6feon3e0HZntXpvTU" />
+        <meta-data android:name="com.posthog.posthog.POSTHOG_HOST" android:value="https://us.i.posthog.com" />
+        <meta-data android:name="com.posthog.posthog.TRACK_APPLICATION_LIFECYCLE_EVENTS" android:value="true" />
+        <meta-data android:name="com.posthog.posthog.DEBUG" android:value="true" />
+        <!-- Main Activity -->
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -47,14 +60,16 @@
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
             android:hardwareAccelerated="true"
             android:windowSoftInputMode="adjustResize">
+            
             <meta-data
-              android:name="io.flutter.embedding.android.NormalTheme"
-              android:resource="@style/NormalTheme"
-              />
+                android:name="io.flutter.embedding.android.NormalTheme"
+                android:resource="@style/NormalTheme"
+            />
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter> 
+            
             <meta-data android:name="flutter_deeplinking_enabled" android:value="true" />
             <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW" />
@@ -65,18 +80,23 @@
                 <data android:host="picsa.pro" />  
             </intent-filter>
         </activity>
+
+        <!-- Services and Receivers -->
         <service android:name="com.google.firebase.messaging.FirebaseMessagingService" android:exported="false" android:directBootAware="true">
             <intent-filter android:priority="-500">
                 <action android:name="com.google.firebase.MESSAGING_EVENT"/>
             </intent-filter>
         </service>
+        
         <receiver android:name="androidx.work.impl.background.systemalarm.ConstraintProxy$StorageNotLowProxy" android:enabled="false" android:exported="false" android:directBootAware="false">
             <intent-filter>
                 <action android:name="android.intent.action.DEVICE_STORAGE_LOW"/>
                 <action android:name="android.intent.action.DEVICE_STORAGE_OK"/>
             </intent-filter>
         </receiver>    
+        
         <service android:name="BillingService" android:exported="true"/>
+        
         <receiver android:name="BillingReceiver" android:exported="true">
             <intent-filter>
                 <action android:name="com.android.vending.billing.IN_APP_NOTIFY" />
@@ -84,6 +104,8 @@
                 <action android:name="com.android.vending.billing.PURCHASE_STATE_CHANGED" />   
             </intent-filter>
         </receiver>
+        
+        <!-- Providers -->
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.provider"
@@ -93,9 +115,13 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/provider_paths" />
         </provider>
+
+        <!-- Flutter Embedding Meta-Data -->
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
+
+        <!-- PostHog Meta-Data -->
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.provider"
@@ -104,10 +130,6 @@
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/provider_paths"/>
-            <meta-data android:name="com.posthog.posthog.API_KEY" android:value="phc_Adub8uElbK93gWy1uaMbLjHRJZ6feon3e0HZntXpvTU" />
-            <meta-data android:name="com.posthog.posthog.POSTHOG_HOST" android:value="https://us.i.posthog.com" />
-            <meta-data android:name="com.posthog.posthog.TRACK_APPLICATION_LIFECYCLE_EVENTS" android:value="true" />
-            <meta-data android:name="com.posthog.posthog.DEBUG" android:value="true" />
         </provider>
     </application>
 </manifest>

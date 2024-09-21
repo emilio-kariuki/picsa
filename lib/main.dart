@@ -1,4 +1,5 @@
 import 'package:firebase_core/firebase_core.dart';
+import 'package:logger/logger.dart';
 import 'package:picsa/domain/blocs/app/subscription_cubit.dart';
 import 'package:picsa/domain/blocs/app/user_cubit.dart';
 import 'package:picsa/domain/service/repository/notification_repository.dart';
@@ -15,6 +16,8 @@ import 'domain/blocs/app/camera_cubit.dart';
 final _configuration = PurchasesConfiguration(
   "goog_uZSqPAlvIUywJYBFwnOxQRzBZMl",
 );
+
+final logger = Logger();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

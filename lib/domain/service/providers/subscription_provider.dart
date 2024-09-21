@@ -11,7 +11,6 @@ class SubscriptionProvider extends SubsciptionTemplate {
     return _subscriptionRepository.getOffers();
   }
 
-
   @override
   Future<bool> purchasePackage(Package package) {
     return _subscriptionRepository.purchasePackage(package);
