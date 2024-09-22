@@ -74,22 +74,24 @@ class ImagePreview extends StatelessWidget {
                             return BlocBuilder<UserCubit, UserState>(
                               builder: (context, state) {
                                 return GestureDetector(
-                                  onTap: state.isPro?() => context.push('/editor',
-                                            extra: {"url": url}):() => showModalBottomSheet(
-                                      clipBehavior: Clip.antiAlias,
-                                      backgroundColor: const Color(0xff1E1E1E),
-                                      isScrollControlled: true,
-                                      barrierColor:
-                                          Colors.black.withOpacity(0.6),
-                                      elevation: 5,
-                                      shape: const RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.only(
-                                              topLeft: Radius.circular(10),
-                                              topRight: Radius.circular(10))),
-                                      context: context,
-                                      builder: (context) {
-                                        return const SubscriptionContainer();
-                                      }) ,
+                                  // onTap: state.isPro?() => context.push('/editor',
+                                  //           extra: {"url": url}):() => showModalBottomSheet(
+                                  //     clipBehavior: Clip.antiAlias,
+                                  //     backgroundColor: const Color(0xff1E1E1E),
+                                  //     isScrollControlled: true,
+                                  //     barrierColor:
+                                  //         Colors.black.withOpacity(0.6),
+                                  //     elevation: 5,
+                                  //     shape: const RoundedRectangleBorder(
+                                  //         borderRadius: BorderRadius.only(
+                                  //             topLeft: Radius.circular(10),
+                                  //             topRight: Radius.circular(10))),
+                                  //     context: context,
+                                  //     builder: (context) {
+                                  //       return const SubscriptionContainer();
+                                  //     }) ,
+                                  onTap: ()=> context.push('/editor',
+                                            extra: {"url": url}),
                                   child: Tooltip(
                                      decoration: BoxDecoration(
                                     color: Colors.grey[100]!.withOpacity(0.9),
@@ -121,28 +123,28 @@ class ImagePreview extends StatelessWidget {
                                                 2 * SizeConfig.heightMultiplier,
                                           ),
                                         ),
-                                        state.isPro
-                                            ? const SizedBox.shrink()
-                                            : Positioned.fill(
-                                                child: Container(
-                                                decoration: BoxDecoration(
-                                                    borderRadius:
-                                                        BorderRadius.circular(8),
-                                                    color:  Colors.black
-                                                        .withOpacity(0.2),
-                                                    ),
-                                                child: Padding(
-                                                  padding: const EdgeInsets.all(13),
-                                                  child: SvgPicture.asset(
-                                                    AppImages.lock,
-                                                    height: 1 *
-                                                        SizeConfig.heightMultiplier,
-                                                    width: 1 *
-                                                        SizeConfig.heightMultiplier,
-                                                    color: Colors.orange,
-                                                  ),
-                                                ),
-                                              )),
+                                        // state.isPro
+                                        //     ? const SizedBox.shrink()
+                                        //     : Positioned.fill(
+                                        //         child: Container(
+                                        //         decoration: BoxDecoration(
+                                        //             borderRadius:
+                                        //                 BorderRadius.circular(8),
+                                        //             color:  Colors.black
+                                        //                 .withOpacity(0.2),
+                                        //             ),
+                                        //         child: Padding(
+                                        //           padding: const EdgeInsets.all(13),
+                                        //           child: SvgPicture.asset(
+                                        //             AppImages.lock,
+                                        //             height: 1 *
+                                        //                 SizeConfig.heightMultiplier,
+                                        //             width: 1 *
+                                        //                 SizeConfig.heightMultiplier,
+                                        //             color: Colors.orange,
+                                        //           ),
+                                        //         ),
+                                        //       )),
                                       ],
                                     ),
                                   ),

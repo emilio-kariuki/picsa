@@ -114,7 +114,7 @@ class _MainAppState extends State<MainApp> {
           debugShowCheckedModeBanner: false,
           builder: (context, child) {
             return UpgradeAlert(
-              upgrader: upgrader,
+              // upgrader: upgrader,
               navigatorKey: appRouter.routerDelegate.navigatorKey,
               child: child ?? const Text('child'),
             );
