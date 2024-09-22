@@ -20,7 +20,7 @@ jobs:
       - uses: actions/checkout@v3
 
       - name: 🤖 Cache Java and Flutter Setup
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: |
             ~/.sdkman/candidates/java
@@ -59,9 +59,9 @@ jobs:
       - name: Create key.properties
         run: |
           echo "storeFile=key.jks" > android/key.properties
-          echo "storePassword=${KEY_STORE_PASSWORD}" >> android/key.properties
-          echo "keyPassword=${KEY_PASSWORD}" >> android/key.properties
-          echo "keyAlias=${ALIAS}" >> android/key.properties
+          echo "storePassword=${{ secrets.KEY_STORE_PASSWORD }}" >> android/key.properties
+          echo "keyPassword=${{ secrets.KEY_PASSWORD }}" >> android/key.properties
+          echo "keyAlias=${{ secrets.ALIAS }}" >> android/key.properties
 
       - name: Install Flutter dependencies
         run: flutter pub get
