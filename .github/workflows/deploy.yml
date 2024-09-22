@@ -25,10 +25,10 @@ jobs:
           path: |
             ~/.sdkman/candidates/java
             ~/.pub-cache
-          key: ${{ runner.os }}-java-zulu-17-flutter-stable-3.22.0-${{ hashFiles('**/build.gradle', '**/pubspec.yaml') }}
+          key: ${{ runner.os }}-java-zulu-17-flutter-stable-3.24.2-${{ hashFiles('**/build.gradle', '**/pubspec.yaml') }}
           restore-keys: |
             ${{ runner.os }}-java-zulu-17-
-            ${{ runner.os }}-flutter-stable-3.22.0-
+            ${{ runner.os }}-flutter-stable-3.24.2-
 
       - uses: actions/setup-java@v3
         with:
@@ -38,7 +38,7 @@ jobs:
       - uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
-          flutter-version: 3.22.0
+          flutter-version: 3.24.2
 
       - name: 🐦 Setup Shorebird
         uses: shorebirdtech/setup-shorebird@v1
@@ -84,7 +84,7 @@ jobs:
       - uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
-          flutter-version: 3.22.0
+          flutter-version: 3.24.2
 
       - name: Download and Set Permissions for Android keystore
         run: |
@@ -111,7 +111,7 @@ jobs:
       - uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
-          flutter-version: 3.22.0
+          flutter-version: 3.24.2
 
       - name: Download and Set Permissions for Android keystore
         run: |
@@ -138,7 +138,7 @@ jobs:
       - uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
-          flutter-version: 3.22.0
+          flutter-version: 3.24.2
 
       - name: 🚀 Shorebird Release
         uses: shorebirdtech/shorebird-release@v0
@@ -161,7 +161,7 @@ jobs:
       - uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
-          flutter-version: 3.22.0
+          flutter-version: 3.24.2
 
       - name: Upload to Firebase App Distribution
         uses: wzieba/Firebase-Distribution-Github-Action@v1
@@ -182,7 +182,7 @@ jobs:
       - uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
-          flutter-version: 3.22.0
+          flutter-version: 3.24.2
 
       - name: Create service_account.json
         run: echo '${{ secrets.SERVICE_ACCOUNT_JSON }}' > service_account.json
