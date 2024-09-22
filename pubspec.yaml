@@ -1,6 +1,6 @@
 name: picsa
-description: "A new Flutter project."
-publish_to: 'none'
+description: "Picsa is a mobile application that allows users to create and share photo albums with friends and family."
+publish_to: none
 version: 0.0.11
 
 environment:
@@ -49,7 +49,7 @@ dependencies:
   purchases_ui_flutter: ^7.0.1
   qr_flutter: ^4.1.0
   sentry_flutter: ^8.2.0
-  share_plus: ^9.0.0
+  share_plus: ^8.0.3
   shared_preferences: ^2.2.2
   shimmer: ^3.0.0
   supabase_flutter: ^2.0.2
@@ -59,6 +59,7 @@ dependencies:
   uuid: ^4.1.0
   vibration: ^1.8.4
   device_info_plus: 9.1.2
+  package_info_plus: 8.0.2
 
 dev_dependencies:
   flutter_test:
