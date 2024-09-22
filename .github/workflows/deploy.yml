@@ -62,13 +62,6 @@ jobs:
           echo "storePassword=${{ secrets.KEY_STORE_PASSWORD }}" >> android/key.properties
           echo "keyPassword=${{ secrets.KEY_PASSWORD }}" >> android/key.properties
           echo "keyAlias=${{ secrets.ALIAS }}" >> android/key.properties
-          - name: Cache Gradle Dependencies
-            uses: actions/cache@v2
-            with:
-              path: ~/.gradle/caches
-              key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-              restore-keys: |
-            ${{ runner.os }}-gradle-
 
       - name: Install Flutter dependencies
         run: flutter pub get
