@@ -87,7 +87,7 @@ class _HomeState extends State<Home> {
           ),
           child: Icon(
             item['icon'] as IconData,
-            size: 22,
+            size: 17,
             color: Colors.grey[400],
           ),
         ),

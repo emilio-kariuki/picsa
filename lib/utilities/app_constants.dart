@@ -20,7 +20,8 @@ const String APP_TWITTER = "https://twitter.com/picsapro";
 const String APP_INSTAGRAM = "https://instagram.com/_picsapro";
 const String APP_LINKEDIN = "https://linkedin.com/in/picsa-pro";
 const String API_DEV_URL = 'http://localhost:4007/api';
+const String SENTRY_KEY = 'https://c9cda213331825e069a1535b08dd02ca@o4507333268275200.ingest.de.sentry.io/4507333270175824';
 const String API_PROD_URL = 'http://84.247.174.84:4007/api';
-const String API_URL = API_DEV_URL;
+const String API_URL = API_PROD_URL;
 
 

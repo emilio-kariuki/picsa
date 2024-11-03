@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:picsa/domain/models/user_model.dart';
 import 'package:picsa/domain/service/repository/notification_repository.dart';
+import 'package:picsa/domain/service/repository/repository.dart';
 import 'package:picsa/main.dart';
 import 'package:picsa/utilities/supabase_config.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
@@ -24,7 +25,7 @@ const androidClientId =
     '203502494436-sbajpksdurf9rt6dheikcotnp3of0src.apps.googleusercontent.com';
 
 final GoogleSignIn googleSignIn = GoogleSignIn(
-  clientId: Platform.isIOS ? iosClientId : androidClientId,
+  signInOption: SignInOption.standard,
   serverClientId: webClientId,
 );
 
@@ -54,7 +55,6 @@ class AuthRepository extends AuthTemplate {
     logger.d('Signing in with Google');
     try {
       final googleUser = await googleSignIn.signIn();
-      logger.d('Google User: $googleUser');
       final googleAuth = await googleUser!.authentication;
       final accessToken = googleAuth.accessToken;
       final idToken = googleAuth.idToken;
@@ -69,19 +69,22 @@ class AuthRepository extends AuthTemplate {
         idToken: idToken,
         accessToken: accessToken,
       );
-      await Purchases.logIn(response.user!.id);
+      
+      // await Purchases.logIn(response.user!.id);
       final token = await NotificationRepository().getNotificationToken();
-      if (Platform.isAndroid) {
-        await Purchases.setPushToken(token);
-      }
+      await Purchases.setPushToken(token);
       final user = UserModel(
           id: response.user!.id,
-          name: response.user!.userMetadata?['full_name'],
+          name: response.user!.userMetadata?['full_name'] ?? 'User',
           email: response.user!.email!,
-          url: response.user!.userMetadata?['avatar_url'],
+          url: response.user!.userMetadata?['avatar_url'] ?? '',
           pro: false,
           active: true,
-          token: token);
+          token: token,
+          createdAt: DateTime.now(),
+          updatedAt: DateTime.now()
+          );
+      await UserRepository().createUser(user: user);
       return user;
     } catch (e) {
       debugPrint(e.toString());

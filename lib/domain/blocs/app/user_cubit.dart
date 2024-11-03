@@ -1,6 +1,7 @@
 import 'package:picsa/domain/models/models.dart';
 
 import 'package:picsa/domain/service/service_locator.dart';
+import 'package:picsa/main.dart';
 import 'package:picsa/utilities/packages.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 
@@ -13,6 +14,7 @@ class UserCubit extends Cubit<UserState> {
   Future<void> getUser() async {
     try {
       final user = await _userProvider.getUser();
+      logger.d('User: $user');
       emit(state.copyWith(
           status: UserStatus.success,
           user: user,

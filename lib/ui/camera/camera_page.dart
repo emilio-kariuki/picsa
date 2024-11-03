@@ -5,6 +5,8 @@ import 'package:picsa/common_widgets/subscription_sheet.dart';
 import 'package:picsa/domain/blocs/app/app_cubit.dart';
 import 'package:picsa/domain/blocs/app/user_cubit.dart';
 import 'package:picsa/domain/blocs/minimal/page_cubit.dart';
+import 'package:picsa/domain/models/images_model.dart';
+import 'package:picsa/domain/providers/socket_provider.dart';
 import 'package:picsa/utilities/packages.dart';
 import '../../domain/blocs/app/camera_cubit.dart';
 import '../../domain/blocs/minimal/bool_cubit.dart';
@@ -35,30 +37,15 @@ class _CameraPageState extends State<CameraPage> {
   bool isFrontCamera = false;
 
   List<String> paths = [];
+  List<ImageModel> images = [];
+  int count = 0;
 
   @override
   void initState() {
     context
-      ..read<EventCubit>().joinEvent(eventId: widget.eventId)
-      ..read<EventCubit>().getEventImages(eventId: widget.eventId);
-    supabase
-        .channel('public:Images')
-        .onPostgresChanges(
-            event: PostgresChangeEvent.insert,
-            schema: 'public',
-            table: 'Images',
-            filter: PostgresChangeFilter(
-              type: PostgresChangeFilterType.eq,
-              column: 'eventId',
-              value: widget.eventId,
-            ),
-            callback: (payload) {
-              debugPrint('Change received: ${payload.toString()}');
-              context
-                  .read<EventCubit>()
-                  .getEventImages(eventId: widget.eventId);
-            })
-        .subscribe();
+      // ..read<EventCubit>().joinEvent(eventId: widget.eventId)
+      .read<EventCubit>().getEventImages(eventId: widget.eventId);
+
     super.initState();
   }
 
@@ -66,6 +53,14 @@ class _CameraPageState extends State<CameraPage> {
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
+    context.read<SocketProvider>().on('images_${widget.eventId}', (data) {
+      final List<ImageModel> images =
+          (data as List).map((e) => ImageModel.fromJson(e)).toList();
+      setState(() {
+        this.images = images;
+        count = images.length;
+      });
+    });
 
     return BlocConsumer<CameraCubit, CameraState>(
       listenWhen: (previous, current) => current.status == CameraStatus.loaded,
@@ -161,9 +156,17 @@ class _CameraPageState extends State<CameraPage> {
                                     builder: (context, state) {
                                       return SizedBox(
                                           width: 0.5 * width,
-                                          child: Text(
-                                            state.event?.name ?? "",
-                                            textAlign: TextAlign.center,
+                                          child: Column(
+                                            children: [
+                                              Text(
+                                                state.event?.name ?? "",
+                                                textAlign: TextAlign.center,
+                                              ),
+                                              Text(
+                                                "$count images",
+                                                textAlign: TextAlign.center,
+                                              ),
+                                            ],
                                           ));
                                     },
                                   )
@@ -380,7 +383,7 @@ class _CameraPageState extends State<CameraPage> {
                     return GestureDetector(
                       onTap: () => context.read<AppCubit>().shareContent(
                             text: "Share this camera image with other peops",
-                            subject: "${APP_URL}/camera/${widget.eventId}",
+                            subject: "$APP_URL/camera/${widget.eventId}",
                           ),
                       child: Container(
                           padding: const EdgeInsets.symmetric(
@@ -512,7 +515,7 @@ class _CameraPageState extends State<CameraPage> {
   }
 }
 
-class CaptureImage extends StatelessWidget {
+class CaptureImage extends StatefulWidget {
   const CaptureImage({
     super.key,
     required this.widget,
@@ -525,14 +528,27 @@ class CaptureImage extends StatelessWidget {
   final List<String> paths;
 
   @override
+  State<CaptureImage> createState() => _CaptureImageState();
+}
+
+class _CaptureImageState extends State<CaptureImage> {
+  List<ImageModel> images = [];
+  @override
   Widget build(BuildContext context) {
     final height = MediaQuery.sizeOf(context).height;
+        context.read<SocketProvider>().on('images_${widget.widget.eventId}', (data) {
+      final List<ImageModel> images =
+          (data as List).map((e) => ImageModel.fromJson(e)).toList();
+      setState(() {
+        this.images = images;
+      });
+    });
     return BlocConsumer<CameraCubit, CameraState>(
       listener: (context, state) {
         if (state.status == CameraStatus.captured) {
           context.read<CameraCubit>().uploadImage(
-              path: state.path, eventId: widget.eventId, isHd: isHd);
-          paths.add(state.path);
+              path: state.path, eventId: widget.widget.eventId, isHd: widget.isHd);
+          widget.paths.add(state.path);
         }
       },
       builder: (context, state) {
@@ -547,8 +563,6 @@ class CaptureImage extends StatelessWidget {
                     padding:
                         EdgeInsets.only(left: 2 * SizeConfig.widthMultiplier),
                     child: BlocBuilder<EventCubit, EventState>(
-                      buildWhen: (previous, current) =>
-                          previous.images != current.images,
                       builder: (context, state) {
                         return SizedBox(
                           height: 6.5 * SizeConfig.heightMultiplier,
@@ -558,12 +572,12 @@ class CaptureImage extends StatelessWidget {
                               itemBuilder: (context, index) {
                                 return GestureDetector(
                                   onTap: () => context.push('/preview',
-                                      extra: {"url": state.images[index].url}),
+                                      extra: {"url": images[index].url}),
                                   child: Stack(
                                     fit: StackFit.loose,
                                     children: [
                                       ImageContainer(
-                                        imageUrl: state.images[index].url,
+                                        imageUrl: images[index].url,
                                         borderRadius: BorderRadius.circular(0),
                                         fit: BoxFit.cover,
                                         height:
@@ -571,7 +585,7 @@ class CaptureImage extends StatelessWidget {
                                         width:
                                             6.5 * SizeConfig.heightMultiplier,
                                       ),
-                                      state.images[index].hd
+                                      images[index].hd
                                           ? Positioned.fill(
                                               bottom: 0.4 *
                                                   SizeConfig.heightMultiplier,
@@ -610,7 +624,7 @@ class CaptureImage extends StatelessWidget {
                               },
                               separatorBuilder: (context, index) =>
                                   Gap(0.7 * SizeConfig.widthMultiplier),
-                              itemCount: state.images.length),
+                              itemCount: images.length),
                         );
                       },
                     ),
@@ -768,3 +782,5 @@ class CameraQr extends StatelessWidget {
     );
   }
 }
+
+

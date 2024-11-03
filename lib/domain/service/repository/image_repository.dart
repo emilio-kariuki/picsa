@@ -1,6 +1,11 @@
+import 'dart:convert';
 import 'dart:io';
 
+import 'package:dio/dio.dart' as uploader;
+import 'package:http_parser/http_parser.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:picsa/main.dart';
+import 'package:picsa/utilities/dio_interceptor.dart';
 import 'package:picsa/utilities/packages.dart';
 
 abstract class ImageTemplate {
@@ -12,6 +17,13 @@ abstract class ImageTemplate {
 }
 
 class ImageRepository extends ImageTemplate {
+  late final Dio _dio;
+
+  ImageRepository() {
+    _dio = Dio();
+    _dio.interceptors.add(DioInterceptor());
+  }
+
   @override
   Future<File> compressImage({required File image}) async {
     try {
@@ -38,27 +50,36 @@ class ImageRepository extends ImageTemplate {
       required bool isHd}) async {
     try {
       File image = File(path);
-      final id = supabase.auth.currentUser!.id;
-      final imageKey =
-          'images/$id/${DateTime.now().millisecondsSinceEpoch}.jpg';
       final compressedImage = isHd ? image : await compressImage(image: image);
-      await supabase.storage.from('picsa').upload(
-            imageKey,
-            compressedImage,
-            retryAttempts: 3,
-          
-          );
-      await supabase.from('Images').upsert(
-        {
-          'id': "$eventId${DateTime.now().millisecondsSinceEpoch.toString()}",
-          'name': imageKey,
-          'url': supabase.storage.from('picsa').getPublicUrl(imageKey),
-          'userId': supabase.auth.currentUser!.id,
-          'eventId': eventId,
-          'hd': isHd,
-        },
-      );
-      debugPrint("The image has been inserted");
+      var formData = uploader.FormData.fromMap({
+        "image": await uploader.MultipartFile.fromFile(compressedImage.path,
+            filename: compressedImage.path.split('/').last,
+            contentType: MediaType('image', 'jpeg')),
+      }, uploader.ListFormat.multi);
+      final response = await _dio.post('$API_URL/images/upload?hd=$isHd',
+          options: Options(
+            contentType: 'multipart/form-data',
+          ),
+          data: formData);
+      if(response.statusCode != 200) {
+        throw Exception('Error uploading image');
+      }
+      logger.d('Image uploaded - ${response.data}');
+      final createImageResponse =  await _dio.post('$API_URL/images/create',
+          options: Options(
+            contentType: 'application/json',
+          ),
+          data: jsonEncode({
+            'name': response.data['name'],
+            'url': response.data['url'],
+            'eventId': eventId,
+            'hd': isHd
+          })
+          ); 
+      if(createImageResponse.statusCode != 200) {
+        throw Exception('Error uploading image');
+      }
+      logger.d('Image created - ${createImageResponse}');
       return true;
     } catch (e) {
       debugPrint(e.toString());
@@ -69,7 +90,7 @@ class ImageRepository extends ImageTemplate {
   @override
   Future<bool> deleteImage({required String path}) async {
     try {
-      await supabase.storage.from('picsa').remove([path]);
+     await supabase.storage.from('picsa').remove([path]);
       return true;
     } catch (e) {
       debugPrint(e.toString());

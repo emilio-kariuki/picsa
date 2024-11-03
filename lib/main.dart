@@ -2,16 +2,17 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:logger/logger.dart';
 import 'package:picsa/domain/blocs/app/subscription_cubit.dart';
 import 'package:picsa/domain/blocs/app/user_cubit.dart';
+import 'package:picsa/domain/providers/socket_provider.dart';
 import 'package:picsa/domain/service/repository/notification_repository.dart';
 import 'package:picsa/domain/service/service_locator.dart';
 import 'package:picsa/firebase_options.dart';
 import 'package:picsa/utilities/packages.dart';
+import 'package:provider/provider.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:upgrader/upgrader.dart';
 import 'domain/blocs/app/auth_cubit.dart';
 import 'domain/blocs/app/camera_cubit.dart';
-
 
 final _configuration = PurchasesConfiguration(
   "goog_uZSqPAlvIUywJYBFwnOxQRzBZMl",
@@ -48,12 +49,20 @@ void main() async {
   ]);
   await NotificationRepository().initializeNotifications();
   // FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-  await SentryFlutter.init((options) {
-    options.dsn =
-        'https://c9cda213331825e069a1535b08dd02ca@o4507333268275200.ingest.de.sentry.io/4507333270175824';
-    options.tracesSampleRate = 1.0;
-    options.profilesSampleRate = 1.0;
-  }, appRunner: () => runApp(const MainApp()));
+  await SentryFlutter.init(
+    (options) {
+      options.dsn = SENTRY_KEY;
+      options.tracesSampleRate = 1.0;
+      options.profilesSampleRate = 1.0;
+    },
+    appRunner: () => runApp(
+      ChangeNotifierProvider(
+        lazy: false,
+        create: (context) => SocketProvider()..connect(),
+        child: const MainApp(),
+      ),
+    ),
+  );
 }
 
 class MainApp extends StatefulWidget {

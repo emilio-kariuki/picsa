@@ -15,11 +15,43 @@
       },
       "oauth_client": [
         {
+          "client_id": "203502494436-3s165r19n2d4tao7gl8b3lu0fp5qn0l4.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ecoville.picsa",
+            "certificate_hash": "c5bf479f662c7454464dc157954dd9034250d4c8"
+          }
+        },
+        {
+          "client_id": "203502494436-eckvubhpptuocgtgaeus0mgr9d625l9i.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ecoville.picsa",
+            "certificate_hash": "ffde4a211df5864350b1569a8f1fb61c015dd54e"
+          }
+        },
+        {
+          "client_id": "203502494436-kjqt52ko3fkqqfo1mnd14smhqv1ei4tq.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ecoville.picsa",
+            "certificate_hash": "2f995eaa2e4000fc4cf3e70da5f92e725f6f7aac"
+          }
+        },
+        {
           "client_id": "203502494436-sbajpksdurf9rt6dheikcotnp3of0src.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.ecoville.picsa",
             "certificate_hash": "d3968bd96113ab46c6c1c59ff241339d663e3dbf"
+          }
+        },
+        {
+          "client_id": "203502494436-vmiomn3qfpj7nmsn9an6m6pv372867l6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ecoville.picsa",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
           }
         },
         {

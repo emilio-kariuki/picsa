@@ -36,7 +36,7 @@ class UserRepository extends UserTemplate {
         'pro': false,
       };
       final response =
-          await _dio.post('$API_URL/users/${user.id}', data: jsonEncode(data));
+          await _dio.post('$API_URL/users/create', data: jsonEncode(data));
       if (response.statusCode != 201) {
         throw Exception('Error creating user');
       }
@@ -66,7 +66,7 @@ class UserRepository extends UserTemplate {
       logger.d("user response: ${user.name}");
       return user;
     } catch (e) {
-      debugPrint(e.toString());
+      logger.e(e);
       throw Exception('Error getting user');
     }
   }
