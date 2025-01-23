@@ -50,11 +50,18 @@ PODS:
   - file_picker (0.0.1):
     - DKImagePickerController/PhotoGallery
     - Flutter
+  - Firebase/Auth (10.25.0):
+    - Firebase/CoreOnly
+    - FirebaseAuth (~> 10.25.0)
   - Firebase/CoreOnly (10.25.0):
     - FirebaseCore (= 10.25.0)
   - Firebase/Messaging (10.25.0):
     - Firebase/CoreOnly
     - FirebaseMessaging (~> 10.25.0)
+  - firebase_auth (4.20.0):
+    - Firebase/Auth (= 10.25.0)
+    - firebase_core
+    - Flutter
   - firebase_core (2.32.0):
     - Firebase/CoreOnly (= 10.25.0)
     - Flutter
@@ -62,6 +69,14 @@ PODS:
     - Firebase/Messaging (= 10.25.0)
     - firebase_core
     - Flutter
+  - FirebaseAppCheckInterop (10.29.0)
+  - FirebaseAuth (10.25.0):
+    - FirebaseAppCheckInterop (~> 10.17)
+    - FirebaseCore (~> 10.0)
+    - GoogleUtilities/AppDelegateSwizzler (~> 7.8)
+    - GoogleUtilities/Environment (~> 7.8)
+    - GTMSessionFetcher/Core (< 4.0, >= 2.1)
+    - RecaptchaInterop (~> 100.0)
   - FirebaseCore (10.25.0):
     - FirebaseCoreInternal (~> 10.0)
     - GoogleUtilities/Environment (~> 7.12)
@@ -218,6 +233,7 @@ PODS:
   - PurchasesHybridCommonUI (13.0.1):
     - PurchasesHybridCommon (= 13.0.1)
     - RevenueCatUI (= 5.2.3)
+  - RecaptchaInterop (100.0.0)
   - RevenueCat (5.2.3)
   - RevenueCatUI (5.2.3):
     - RevenueCat (= 5.2.3)
@@ -253,6 +269,7 @@ DEPENDENCIES:
   - device_info_plus (from `.symlinks/plugins/device_info_plus/ios`)
   - emoji_picker_flutter (from `.symlinks/plugins/emoji_picker_flutter/ios`)
   - file_picker (from `.symlinks/plugins/file_picker/ios`)
+  - firebase_auth (from `.symlinks/plugins/firebase_auth/ios`)
   - firebase_core (from `.symlinks/plugins/firebase_core/ios`)
   - firebase_messaging (from `.symlinks/plugins/firebase_messaging/ios`)
   - Flutter (from `Flutter`)
@@ -281,6 +298,8 @@ SPEC REPOS:
     - DKImagePickerController
     - DKPhotoGallery
     - Firebase
+    - FirebaseAppCheckInterop
+    - FirebaseAuth
     - FirebaseCore
     - FirebaseCoreInternal
     - FirebaseInstallations
@@ -305,6 +324,7 @@ SPEC REPOS:
     - PromisesObjC
     - PurchasesHybridCommon
     - PurchasesHybridCommonUI
+    - RecaptchaInterop
     - RevenueCat
     - RevenueCatUI
     - SDWebImage
@@ -325,6 +345,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/emoji_picker_flutter/ios"
   file_picker:
     :path: ".symlinks/plugins/file_picker/ios"
+  firebase_auth:
+    :path: ".symlinks/plugins/firebase_auth/ios"
   firebase_core:
     :path: ".symlinks/plugins/firebase_core/ios"
   firebase_messaging:
@@ -379,8 +401,11 @@ SPEC CHECKSUMS:
   emoji_picker_flutter: fe2e6151c5b548e975d546e6eeb567daf0962a58
   file_picker: 15fd9539e4eb735dc54bae8c0534a7a9511a03de
   Firebase: 0312a2352584f782ea56f66d91606891d4607f06
+  firebase_auth: 5719ddc9f654b813405899480e84971bd8e61235
   firebase_core: a626d00494efa398e7c54f25f1454a64c8abf197
   firebase_messaging: 06391e8f35dc65a00c56580266285263d2861f10
+  FirebaseAppCheckInterop: 6a1757cfd4067d8e00fccd14fcc1b8fd78cfac07
+  FirebaseAuth: c0f93dcc570c9da2bffb576969d793e95c344fbb
   FirebaseCore: 7ec4d0484817f12c3373955bc87762d96842d483
   FirebaseCoreInternal: df84dd300b561c27d5571684f389bf60b0a5c934
   FirebaseInstallations: 913cf60d0400ebd5d6b63a28b290372ab44590dd
@@ -418,6 +443,7 @@ SPEC CHECKSUMS:
   purchases_ui_flutter: 41a5533feb2c0f52d8e23a3f671ef84d13e0cc8c
   PurchasesHybridCommon: 6e5772e574ce345922c42f31403cf72a0ba762bf
   PurchasesHybridCommonUI: 015291e795d694c83ab1fd35caf3716c7c1f7cdf
+  RecaptchaInterop: 7d1a4a01a6b2cb1610a47ef3f85f0c411434cb21
   RevenueCat: 86e4486345a6f7740fecb1eeff91eeff8708eee1
   RevenueCatUI: c19388c5f35ef5beea1b9b7a2593479f12303dc6
   SDWebImage: 73c6079366fea25fa4bb9640d5fb58f0893facd8

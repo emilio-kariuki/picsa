@@ -373,7 +373,7 @@ class _ImagesPageState extends State<ImagesPage> {
                 SizedBox(
                   width: MediaQuery.sizeOf(context).width,
                   child: Text(
-                    state.event!.name,
+                    state.event!.name ?? "",
                     style: GoogleFonts.rubikBubbles(
                         fontSize: 3 * SizeConfig.textMultiplier,
                         color: const Color.fromARGB(255, 159, 159, 159),
@@ -424,8 +424,8 @@ class _ImagesPageState extends State<ImagesPage> {
           builder: (context, state) {
             return Text(
               stats == 'guests'
-                  ? state.event!.guests.length.toString()
-                  : state.event!.images.length.toString(),
+                  ? state.event!.guests!.length.toString()
+                  : state.event!.images!.length.toString(),
               style: GoogleFonts.notoSans(
                 fontSize: 2 * SizeConfig.textMultiplier,
                 color: const Color(

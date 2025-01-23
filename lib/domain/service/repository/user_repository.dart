@@ -40,9 +40,9 @@ class UserRepository extends UserTemplate {
       if (response.statusCode != 201) {
         throw Exception('Error creating user');
       }
-      await Purchases.logIn(user.id);
-      await Purchases.setEmail(user.email);
-      await Purchases.setDisplayName(user.name);
+      await Purchases.logIn(user.id ?? "");
+      await Purchases.setEmail(user.email ?? "");
+      await Purchases.setDisplayName(user.name ?? "");
       await Purchases.setPushToken(token);
       await Purchases.collectDeviceIdentifiers();
 

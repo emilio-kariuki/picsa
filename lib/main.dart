@@ -38,8 +38,8 @@ void main() async {
       postgrestOptions: const PostgrestClientOptions(
         schema: 'public',
       ));
-  await Purchases.configure(_configuration);
-  await Purchases.setLogLevel(LogLevel.info);
+  // await Purchases.configure(_configuration);
+  // await Purchases.setLogLevel(LogLevel.info);
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );

@@ -9,24 +9,24 @@ List<UserModel> userModelFromJson(String str) => List<UserModel>.from(json.decod
 String userModelToJson(List<UserModel> data) => json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
 class UserModel {
-    final String id;
-    final String email;
-    final String name;
-    final String url;
-    final String token;
-    final bool pro;
-    final bool active;
+    final String? id;
+    final String? email;
+    final String? name;
+    final String? url;
+    final String? token;
+    final bool? pro;
+    final bool? active;
     final DateTime ?createdAt;
     final DateTime ?updatedAt;
 
     UserModel({
-        required this.id,
-        required this.email,
-        required this.name,
-        required this.url,
-        required this.token,
-        required this.pro,
-        required this.active,
+         this.id,
+         this.email,
+         this.name,
+         this.url,
+         this.token,
+         this.pro,
+         this.active,
          this.createdAt,
          this.updatedAt,
     });
@@ -62,8 +62,8 @@ class UserModel {
         token: json["token"],
         pro: json["pro"],
         active: json["active"],
-        createdAt: DateTime.parse(json["createdAt"]) ?? DateTime.now(),
-        updatedAt: DateTime.parse(json["updatedAt"]) ?? DateTime.now(),
+        createdAt: DateTime.parse(json["createdAt"]),
+        updatedAt: DateTime.parse(json["updatedAt"]),
     );
 
     Map<String, dynamic> toJson() => {
@@ -78,3 +78,5 @@ class UserModel {
         "updatedAt": updatedAt!.toIso8601String(),
     };
 }
+
+UserModel defaultUserModel = UserModel();
